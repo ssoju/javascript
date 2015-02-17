@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        .select-wrap, .select-wrap .sel_r {
+            display: inline-block;
+            width:100px;
+            height:20px;
+            border: 1px solid #000;
+        }
+
+        .select_open {
+            border: 1px solid #555;
+        }
+        .select_open ul {
+            margin:0;
+            padding:0;
+            list-style: none;
+        }
+        .select_open ul li {
+            width: 100px;
+            height: 20px;
+        }
+
+        .js-selectbox { width: 100px; }
+    </style>
+</head>
+<body>
+<div class="select-wrap">
+    <select class="js-selectbox">
+        <option value="a">a</option>
+        <option value="b">b</option>
+        <option value="c" selected="selected">c</option>
+        <option value="d">d</option>
+        <option value="e">e</option>
+    </select>
+</div>
+
+<div class="select-wrap">
+    <select class="js-selectbox">
+        <option value="a">a</option>
+        <option value="b">b</option>
+        <option value="c">c</option>
+        <option value="d">d</option>
+        <option value="e">e</option>
+    </select>
+</div>
+
+<script src="../../../js/lib/jquery.js"></script>
+<script src="../../../js/release/common.js"></script>
+<script src="../../../js/release/ui/selectbox.js"></script>
+<script>
+    $(function () {
+        $('.js-selectbox').selectbox();
+    });
+</script>
+</body>
+</html>
