@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<div>
+    <h4>파이어폭스에서 한글키 이벤트의 버그를 우회적으로 해결한 모듈입니다.</h4>
+    <textarea id="text1" dta-limit="100" data-count-target="#text1_cnt" rows="5" cols="80"></textarea>
+    <span id="text1_cnt">0/100</span>
+</div>
+
+<div id="options">
+    <label><input type="checkbox" id="autoResize" value="resize">자동리사이징</label>
+    <label><input type="checkbox" id="checkCount" value="counting" checked="checked">문자카운팅</label>
+    <label><input type="checkbox" id="allowPaste" value="paste" checked="checked">붙여넣기 허용</label>
+</div>
+
+<script src="../../../js/lib/jquery.js"></script>
+<script src="../../../js/release/common.js"></script>
+<script>
+    common.importJs.baseUrl = '../../../';
+    common.importJs([
+        'js/release/ui/textcontrol.js'
+    ], function () {
+        $('textarea').textControl();
+    });
+
+    $('#options').on('click', '[type=checkbox]', function (e) {
+        $('#text1').textControl('release').css('height','');
+        $('#text1').textControl({
+            autoResize: $('#autoResize').prop('checked'),
+            checkCount: $('#checkCount').prop('checked'),
+            allowPaste: $('#allowPaste').prop('checked')
+        });
+    });
+</script>
+</body>
+</html>
