@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+
+        /* common */
+        body, p, ul, ol, li, dl, dt, dd, form, table, th, td, fieldset, input, textarea, select, button, h1, h2, h3, h4, h5, h6, pre	{margin:0; padding:0; -webkit-text-size-adjust:none;}
+        body, input, textarea, select, table, button, pre	{color:#333; font-family:'Malgun Gothic', Helvetica, Arial, sans-serif; font-size:13px; line-height:16px;}
+        html, body	{height:100%;}
+        fieldset, img, iframe	{border:0;}
+        table	{width:100%; border:none; border-collapse:collapse;}
+        table tr th, table tr td	{border:none;}
+        legend, caption	{visibility:hidden; width:0; height:0; font-size:0; line-height:0;}
+        ul, ol, li	{list-style:none;}
+        a	{color:#333; text-decoration:none;}
+        em	{font-style:normal;}
+        form	{display:inline;}
+        section, article, header, footer, nav, aside, hgroup, figure	{display:block;}
+        h1, h2, h3, h4, h5, h6	{font-weight:;}
+
+        * {-webkit-tap-highlight-color:rgba(0,0,0,0);}
+        a, button	{-webkit-tap-highlight-color:rgba(0,0,0,0.3);}
+        a.disabled, button:disabled	{-webkit-tap-highlight-color:rgba(0,0,0,0);}
+
+        button {border:0px;background-color: transparent;}
+
+        :focus{outline:none;}
+        .outline :focus{outline:2px solid #9ec0f7;}
+
+        .hide { display: none; }
+
+        .content {
+            padding: 10px;
+        }
+
+        .content h2 {
+            margin-bottom: 20px;
+        }
+
+        .content dl {
+            margin-top: 40px;
+        }
+
+        .ui-calendar-container {width:500px;}
+        .btn-calendar .ui-calendar-container {width:240px !important; border:1px solid black;border-ra}
+        .ui-calendar-container .ui-calendar-header	{position:relative; width:100%; line-height:24px; text-align:center;}
+        .ui-calendar-container .ui-calendar-header a	{display:block; position:absolute; top:-4px; width:24px; height:24px;}
+        .ui-calendar-container .ui-calendar-header a:after	{content:""; display:block; position:absolute; top:4px; left:7px; width:9px; height:16px; background:url('http://stimg.emart.com/app/images/common/bg_ico_month_move.png') 0 0 no-repeat; background-size:18px 70px;}
+        .ui-calendar-container .ui-calendar-header .ui-calendar-prev	{position:absolute; top:2px; left:10px;}
+        .ui-calendar-container .ui-calendar-header .ui-calendar-prev:after	{background-position:0 0;}
+        .ui-calendar-container .ui-calendar-header .ui-calendar-prev.disabled	{cursor:default;}
+        .ui-calendar-container .ui-calendar-header .ui-calendar-prev.disabled:after	{background-position: 0 -20px !important;}
+        .ui-calendar-container .ui-calendar-header .ui-calendar-next	{position:absolute; top:2px; right:10px;}
+        .ui-calendar-container .ui-calendar-header .ui-calendar-next:after	{position:absolute; left:auto; right:7px; background-position:-9px 0 !important;}
+        .ui-calendar-container .ui-calendar-header .ui-calendar-next.disabled	{cursor:default;}
+        .ui-calendar-container .ui-calendar-header .ui-calendar-next.disabled:after	{background-position: -9px -20px !important;}
+
+        .ui-calendar-container .ui-calendar-text	{font-size:12px; line-height:16px;}
+        .ui-calendar-container .ui-calendar-text em	{font-size:21px; letter-spacing:0; line-height:16px;}
+        .ui-calendar-container .open_info			{float:right; margin-top:10px;}
+        .ui-calendar-container .open_info li		{display:inline-block; width:30px; height:30px; margin-left:14px; padding-right:0;}
+        .ui-calendar-container .open_info li span	{display:inline-block; margin-top:5px; text-align:center;}
+        .ui-calendar-container .open_info li.close	{background:url('http://stimg.emart.com/app/images/common/ico_cal_info.png') 2px 0 no-repeat; background-size:24px 150px; color:#14161a;}
+        .ui-calendar-container .open_info li.today	{background:url('http://stimg.emart.com/app/images/common/ico_cal_info.png') 1px -31px no-repeat; background-size:24px 150px; color:#ffc61c;}
+        .ui-calendar-container .ui-calendar-date		{margin-top:10px;}
+        .ui-calendar-container .ui-calendar-date:after	{clear:both; display:block; content:"";}
+        .ui-calendar-container .ui-calendar-table		{width:100%;}
+        .ui-calendar-container .ui-calendar-table th	{background-color: #efefef; height:24px; font-size:13px; color:#333 !important; text-align:center; vertical-align:middle;}
+        .ui-calendar-container .ui-calendar-table td	{height:24px; padding:4px 0 2px 0; font-size:13px; color:#333; border-bottom:1px solid #e6e6e6; text-align:center; vertical-align:middle; line-height:19px; letter-spacing:0;}
+        .ui-calendar-container .ui-calendar-table td a	{display:block;}
+        .ui-calendar-container .ui-calendar-table .ui-calendar-day	{cursor:pointer;}
+        .ui-calendar-container .ui-calendar-table .ui-calendar-sunday * {color:#0d5d85;}
+        .ui-calendar-container .ui-calendar-table .ui-calendar-saturday * {color:#a62121;}
+        .ui-calendar-container .ui-calendar-table .ui-calendar-holiday	{background:url('http://stimg.emart.com/app/images/common/ico_cal_info.png') center 4px no-repeat; background-size:24px 150px;}
+        .ui-calendar-container .ui-calendar-table .ui-calendar-today	{background:url('http://stimg.emart.com/app/images/common/ico_cal_info.png') center -102px no-repeat; background-size:24px 150px;}
+        .ui-calendar-container .ui-calendar-table .ui-calendar-go	{background:url('http://stimg.emart.com/app/images/common/ico_cal_info.png') center -29px no-repeat; background-size:24px 150px;}
+        .ui-calendar-container .ui-calendar-table .ui-calendar-active	{background:url('http://stimg.emart.com/app/images/common/ico_cal_info.png') center 4px no-repeat; background-size:24px 150px;}
+
+        .ui-calendar-container .ui-calendar-table .ui-calendar-today.ui-calendar-active	{background:url('http://stimg.emart.com/app/images/common/ico_cal_info.png') center -102px no-repeat, url('http://stimg.emart.com/app/images/common/ico_cal_info.png') center 4px no-repeat; background-size:24px 150px, 24px 150px;} /* 오늘 & 선택한 일 */
+        .ui-calendar-container .ui-calendar-table .ui-calendar-today.ui-calendar-holiday	{background:url('http://stimg.emart.com/app/images/common/ico_cal_info.png') center -102px no-repeat, url('http://stimg.emart.com/app/images/common/ico_cal_info.png') center 4px no-repeat; background-size:24px 150px, 24px 150px;} /* 오늘 & 휴점일 */
+        .ui-calendar-container .ui-calendar-table .ui-calendar-today.ui-calendar-go	{background:url('http://stimg.emart.com/app/images/common/ico_cal_info.png') center -29px no-repeat, url('http://stimg.emart.com/app/images/common/ico_cal_info.png') center -102px no-repeat; background-size:24px 150px, 24px 150px;} /* 오늘 & 구매일 */
+        .ui-calendar-container .ui-calendar-table .ui-calendar-holiday.ui-calendar-go	{background: url('http://stimg.emart.com/app/images/common/ico_cal_info.png') center -29px no-repeat, url('http://stimg.emart.com/app/images/common/ico_cal_info.png') center 4px no-repeat; background-size:24px 150px, 24px 150px;} /* 휴점일 & 구매일 */
+        .ui-calendar-container .ui-calendar-table .ui-calendar-today.ui-calendar-holiday.ui-calendar-go	{background:url('http://stimg.emart.com/app/images/common/ico_cal_info.png') center -29px no-repeat, url('http://stimg.emart.com/app/images/common/ico_cal_info.png') center -102px no-repeat, url('http://stimg.emart.com/app/images/common/ico_cal_info.png') center 4px no-repeat; background-size:24px 150px, 24px 150px, 24px 150px;} /* 구매일 & 오늘 & 휴점일*/
+
+
+
+    </style>
+</head>
+<body>
+
+<div class="content">
+    <dl>
+        <dt><h2>1. 인라인 달력</h2></dt>
+        <dd>
+            <div class="ui-calendar" data-custom-days-target2="#prev_visited_days" data-today="20150123"
+                 data-holidays="['2015-01-14','2015-01-28']">
+                <script type="text/json" id="prev_visited_days">
+
+                </script>
+            </div>
+        </dd>
+    </dl>
+    <dl>
+        <dt><h2>버튼달력</h2></dt>
+        <dd class="btn-calendar">
+           <span><input id="cal" type="text"><button type="button" class="ui-calendar" style="border:1px solid #565656;background-color: #efefef;width:60px;" data-input-target="#cal">달력보기</button></span>
+        </dd>
+    </dl>
+</div>
+
+<script src="../../../js/lib/jquery.js"></script>
+<script src="../../../js/release/common.js"></script>
+<script src="../../../js/release/ui/calendar.js"></script>
+<script>
+    $(function () {
+        $('.ui-calendar').calendar({header:true});
+    });
+</script>
+</body>
+</html>
