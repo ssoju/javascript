@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        /* tab */
+        #tab1 .tab	{position:relative; width:720px; height:40px; border-bottom:2px solid #6b44cc}
+        #tab1 .tab	ul	{position:absolute; list-style: none; height:40px; top:0; left:0; zoom:1;padding: 0;}
+        #tab1 .tab	ul:after	{content:"."; display:block; height:0px; clear:both; visibility:hidden}
+        #tab1 .tab	ul	li	{float:left; width:144px; line-height:1em}
+        #tab1 .tab	ul	li	a	{display:block; height:25px; padding-top:14px; border:1px solid #ababab; border-bottom:0; background:#d9d9d9; font-size:14px; font-weight:bold; text-align:center}
+        #tab1 .tab	ul	li	a:hover		{padding-top:14px; border:1px solid #8f8f8f; border-bottom:0; background:#f9f9f9; color:#333; text-decoration:none}
+        #tab1 .tab	ul	li	a:active	{border:1px solid #808080; border-bottom:0; background:#bfbfbf;}
+        #tab1 .tab	ul	li.on	a	{padding-top:13px; border:2px solid #6b44cc; border-bottom:2px solid #fff; background:#fff; color:#333; text-decoration:none}
+        #tab1 .tab    .tab-content {position:absolute;left:0;top:56px;width:720px;background-color: #efefef;height:50px;}
+
+        #tab2 .tab	{position:relative; width:720px; height:40px; border-bottom:2px solid #6b44cc}
+        #tab2 .tab	ul	{position:absolute; list-style: none; height:40px; top:0; left:0; zoom:1;padding: 0;}
+        #tab2 .tab	ul:after	{content:"."; display:block; height:0px; clear:both; visibility:hidden}
+        #tab2 .tab	ul	li	{float:left; width:144px; line-height:1em}
+        #tab2 .tab	ul	li	a	{display:block; height:25px; padding-top:14px; border:1px solid #ababab; border-bottom:0; background:#d9d9d9; font-size:14px; font-weight:bold; text-align:center}
+        #tab2 .tab	ul	li	a:hover		{padding-top:14px; border:1px solid #8f8f8f; border-bottom:0; background:#f9f9f9; color:#333; text-decoration:none}
+        #tab2 .tab	ul	li	a:active	{border:1px solid #808080; border-bottom:0; background:#bfbfbf;}
+        #tab2 .tab	ul	li.on	a	{padding-top:13px; border:2px solid #6b44cc; border-bottom:2px solid #fff; background:#fff; color:#333; text-decoration:none}
+        #tab2 .tab .tab-content {position:absolute;left:0;top:40px;width:720px;background-color: #efefef;height:50px;display: none;}
+        #tab2 .tab li.on .tab-content {display: block;}
+
+    </style>
+</head>
+<body>
+<div id="tab1">
+    <div>1. 컨첸츠요소가 li 바깥에 위치하는 경우(ul에 data-tab-type="outer" 추가)</div>
+    <div class="tab">
+        <ul data-tab-type="outer">
+            <li class="on"><a href="#a">menu 1</a></li>
+            <li><a href="#b">menu 2</a></li>
+            <li><a href="#c">menu 3</a></li>
+            <li><a href="#d">menu 4</a></li>
+            <li><a href="#e">menu 5</a></li>
+        </ul>
+        <div class="tab-content" id="a">a</div>
+        <div class="tab-content" id="b" style="display: none;">b</div>
+        <div class="tab-content" id="c" style="display: none;">c</div>
+        <div class="tab-content" id="d" style="display: none;">d</div>
+        <div class="tab-content" id="e" style="display: none;">e</div>
+    </div>
+</div>
+<br>
+<br>
+<br>
+<br>
+<br>
+외부에서 탭을 변경하기<a href="#" onclick="$('#tab1 .tab>ul').tab('selectTab', 2);return false;">세번째 탭 활성</a>
+<br>
+<br>
+<br>
+<br>
+<div id="tab2">
+    <div>2. 컨첸츠요소가 li 내부에 위치하는 경우</div>
+    <div class="tab">
+        <ul data-selected-index="2">
+            <li class="on"><a href="#a2">menu 1</a>
+                <div class="tab-content" id="a2">a</div>
+            </li>
+            <li><a href="#b2">menu 2</a>
+                <div class="tab-content" id="b2">b</div>
+            </li>
+            <li><a href="#c2">menu 3</a>
+                <div class="tab-content" id="c2">c</div>
+            </li>
+            <li><a href="#d2">menu 4</a>
+                <div class="tab-content" id="d2">d</div>
+            </li>
+            <li><a href="#e2">menu 5</a>
+                <div class="tab-content" id="e2">e</div>
+            </li>
+        </ul>
+    </div>
+</div>
+<script src="../../../js/lib/jquery.js"></script>
+<script src="../../../js/release/common.js"></script>
+<script src="../../../js/release/ui/tab.js"></script>
+<script>
+
+$(function () {
+    var tab = new common.ui.Tab('#tab1 .tab>ul');
+    tab.on('tabchanged', function (e, data) {
+        alert(data.selectedIndex + '번째 탭이 선택되었습니다');
+    });
+
+    $('#tab2 .tab>ul').tab().on('tabchanged', function (e, data) {
+        alert(data.selectedIndex + '번째(인덱스) 탭이 선택되었습니다');
+    });
+});
+
+</script>
+</body>
+</html>
