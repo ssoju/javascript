@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        .content > div { padding: 5px 0; }
+    </style>
+</head>
+<body>
+<div class="content">
+    <div><span>placeholder모듈은 placeholder속성을 지원하지 않는 브라우저에서만 동작합니다.</span></div>
+    <div><input placeholder="제목을 입력해주세요."></div>
+    <div><textarea id="text1" placeholder="내용을 입력해주세요." rows="5" cols="80"></textarea></div>
+</div>
+
+
+<script src="../../../js/lib/jquery.js"></script>
+<script src="../../../js/release/common.js"></script>
+<script src="../../../js/release/ui/placeholder.js"></script>
+<script>
+    $('input, textarea').placeholder();
+</script>
+</body>
+</html>
