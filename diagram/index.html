@@ -1,0 +1,439 @@
+
+<!DOCTYPE html>
+<head>
+    <meta charset='utf-8'>
+</head>
+<body>
+<div id='example'></div>
+<script src="d3.min.js"></script>
+<script src="multiline-text.js"></script>
+<script src="class-diagram.js"></script>
+<script>
+    var svg = d3.select('#example').append('svg')
+            .attr({
+                width: 1002,
+                height: 5000
+            });
+    d3.classDiagram.addMarkers(svg.append('defs'));
+
+    var classes = [
+        {
+            x: 40, y: 20, width: 160,
+            classname: 'common',
+            attributes: [
+                'name:string = "common"',
+                'debug: false'/*,
+                'number: object',
+                'string: object',
+                'object: object',
+                'array: object',
+                'date: object',
+                'uri: object',
+                'css3:object',
+                'Cookie: object',
+                'tmpInput: element',
+                'tmpNode: element',
+                'browser: object',
+                'PubSub: object',
+                'Env: object',
+                'ui:function|object',
+                'keyCode: object',
+                'util: object'*/
+            ],
+            methods: [
+                'each: function',
+                'extend: function',
+                'clone: function',
+                'is: function',
+                'type: function',
+                'isEmpty: function',
+                'hasOwn: function',
+                'namespace: function',
+                'addon: function',
+                'ns: function',
+                'timeStart: function',
+                'timeEnd: function',
+                'getHost: function',
+                'getPageUrl: function',
+                'delayRun: function',
+                'toArray: function',
+                'getUniqId: function',
+                'nextSeq: function',
+                'template: function',
+                'importJs: function',
+                'importCss: function',
+                'Class: function',
+                'Base: function',
+                'Listener: function'
+            ]
+        },
+        {
+            x: 240, y: 20, width: 160,
+            classname: 'common.string',
+            methods: [
+                'trim: function',
+                'replaceAll: function',
+                'byteLength: function',
+                'getFileExt: function',
+                'getFileName: function',
+                'cutByByte: function',
+                'indexByByte: function',
+                'capitalize: function',
+                'camelize: function',
+                'dasherize: function',
+                'toFirstLower: function',
+                'repeat: function',
+                'escapeHTML: function',
+                'unescapeHTML: function',
+                'toggle: function',
+                'format: function',
+                'sprintf: function',
+                'stripTags: function',
+                'stripScripts: function'
+            ]
+        },
+        {
+            x: 440, y: 20, width: 160,
+            classname: 'common.number',
+            methods: [
+                'zeroPad: function',
+                'addComma: function',
+                'random: function',
+                'limit: function',
+                'pad: function'
+            ]
+        },
+        {
+            x: 640, y: 20, width: 160,
+            classname: 'common.date',
+            attributes: [
+                'MONTHS_NAME:array',
+                'MONTHS_FULLNAME:array'
+            ],
+            methods: [
+                'format: function',
+                'isValid: function',
+                'between: function',
+                'compare: function',
+                'equalsYMH: function',
+                'isAfter: function',
+                'isBefore: function',
+                'calcDate: function',
+                'parse: function',
+                'monthDiff: function',
+                'daysInMonth: function',
+                'prettyDuration: function',
+                'msToTime: function',
+                'diffTime: function',
+                'weekOfYear: function',
+                'isLeapYear: function',
+                'add: function',
+                'normalize: function'
+            ]
+        },
+        {
+            x: 840, y: 20, width: 160,
+            classname: 'common.object',
+            methods: [
+                'keys: function',
+                'values: function',
+                'map: function',
+                'hasItems: function',
+                'toQueryString: function',
+                'traverse: function',
+                'remove: function',
+                'stringify: function',
+                'has: function'
+            ]
+        },
+        {
+            x: 240, y: 420, width:160,
+            classname: 'common.css3',
+            attributes:[
+                'support: boolean',
+                'support3D:boolean',
+                'vendor: string'
+            ],
+            methods: [
+                'has: function',
+                'prefix: function'
+            ]
+        },
+        {
+            x: 440, y: 420, width:160,
+            classname: 'common.Cookie',
+            attributes:[
+                'defaults: object'
+            ],
+            methods: [
+                'set: function',
+                'get: function',
+                'remove: function',
+                'setItem: function',
+                'removeItem: function'
+            ]
+        },
+        {
+            x: 640, y: 420, width:160,
+            classname: 'common.uri',
+            methods:[
+                'addParam: function',
+                'parseQuery: function',
+                'parseUrl: function',
+                'removeHash: function'
+            ]
+        },
+        {
+            x: 840, y: 420, width:160,
+            classname: 'common.array',
+            methods:[
+                'append: function',
+                'map: function',
+                'every: function',
+                'any: function',
+                'shuffle: function',
+                'filter: function',
+                'include: function',
+                'indexOf: function',
+                'removeAt: function',
+                'remove: function',
+                'max: function',
+                'min: function',
+                'reverse: function',
+                'different: function'
+            ]
+        },
+        {
+            x: 40, y: 600, width:160,
+            classname: 'common.keyCode',
+            attributes:[
+                'ESCAPE: number',
+                'TAB: number',
+                'BACKSPACE: number',
+                'ENTER: number',
+                'DELETE: number',
+                'LEFT: number',
+                'UP: number',
+                'RIGHT: number',
+                'DOWN: number',
+                'PAGE_UP:number',
+                'PAGE_DOWN:number',
+                'HOME: number',
+                'END: number',
+                'SPACE: number'
+            ]
+        },
+        {
+            x: 240, y: 600, width:160,
+            classname: 'common.Env',
+            attributes:[
+                'configs: object'
+            ],
+            methods: [
+                'get: function',
+                'set: function'
+            ]
+        },
+        {
+            x: 440, y: 600, width:160,
+            classname: 'common.PubSub',
+            methods: [
+                'on: function',
+                'one: function',
+                'off: function',
+                'trigger: function',
+                'triggerHandler: function'
+            ]
+        },
+        {
+            x: 640, y: 600, width:160,
+            classname: 'common.browser',
+            attributes: [
+                'isMobile: boolean',
+                'isRetina: boolean',
+                'isAndroid: boolean',
+                'isOpera: boolean',
+                'isWebKit: boolean',
+                'isTouch: boolean',
+                'isIE: boolean',
+                'version: boolean',
+                'isOldIE: boolean',
+                'isWin: boolean',
+                'isMac: boolean',
+                'isLinux: boolean',
+                'is64Bit:boolean',
+                'isChrome: boolean',
+                'isGecko: boolean',
+                'isAir: boolean',
+                'isIOS: boolean',
+                'isSafari: boolean',
+                'isIETri4:boolean',
+                'msPointer: boolean',
+                'pointer: boolean'
+            ]
+        },
+        {
+            x: 40, y: 1260, width: 160,
+            classname: 'common.Base',
+            attributes: [
+            ],
+            methods: [
+                'initialize: function',
+                'release: function'
+            ]
+        },
+        {
+            x: 240, y: 1260, width: 160,
+            classname: 'common.ui.View',
+            attributes: [
+                '$el: jQuery',
+                'options: object',
+                'selectors: object',
+                'parentClass: function'
+            ],
+            methods: [
+                'on: function',
+                'one: function',
+                'off: function',
+                'trigger: function',
+                'triggerHandler: function',
+                'supr: function',
+                'suprMethod: function',
+                'updateSelector: function',
+                '$: function',
+                'setOption: function',
+                'getOption: function',
+                'option: function',
+                'instance: function',
+                'getElement: function'
+            ]
+        },
+        {
+            x: 440, y: 1260, width: 160,
+            classname: 'common.ui.Tab',
+            attributes: [
+                '$tabs: jQuery',
+                '$contents: jQuery'
+            ],
+            methods: [
+                'select: function'
+            ]
+        },
+        {
+            x: 440, y: 1400, width: 160,
+            classname: 'common.ui.Selectbox',
+            attributes: [
+                '$label: jQuery',
+                '$list: jQuery'
+            ],
+            methods: [
+                'select: function'
+            ]
+        },
+        {
+            x: 440, y: 1540, width: 160,
+            classname: 'common.ui.Placeholder',
+            attributes: [
+                '$el: jQuery',
+            ],
+            methods: [
+                'update: function'
+            ]
+        },
+        {
+            x: 440, y: 1660, width: 160,
+            classname: 'common.ui.Modal',
+            attributes: [
+            ],
+            methods: [
+                'show: function',
+                'hide: function',
+                'center: function'
+            ]
+        }
+    ];
+
+    var boxes = d3.classDiagram.createClasses(classes);
+    svg.selectAll('text').attr('font-family', '고딕체');
+    var connectors = [{
+        points: [
+            {x: boxes.get('common.Base').rightX(), y: boxes.get('common.Base').y + 50},
+            {x: boxes.get('common.ui.View').x, y: boxes.get('common.ui.View').y + 50}
+        ],
+        markerEnd: 'filledDiamond'
+    },{
+        points: [
+            {x: boxes.get('common.ui.View').rightX(), y: boxes.get('common.ui.View').y + 50},
+            {x: boxes.get('common.ui.Tab').x, y: boxes.get('common.ui.Tab').y + 50}
+        ],
+        markerEnd: 'filledDiamond'
+    },{
+        points: [
+            {x: boxes.get('common.ui.View').rightX(), y: boxes.get('common.ui.View').y + 50},
+            {x: boxes.get('common.ui.Selectbox').x, y: boxes.get('common.ui.Selectbox').y + 50}
+        ],
+        markerEnd: 'filledDiamond'
+    },{
+        points: [
+            {x: boxes.get('common.ui.View').rightX(), y: boxes.get('common.ui.View').y + 50},
+            {x: boxes.get('common.ui.Placeholder').x, y: boxes.get('common.ui.Placeholder').y + 50}
+        ],
+        markerEnd: 'filledDiamond'
+    },{
+        points: [
+            {x: boxes.get('common.ui.View').rightX(), y: boxes.get('common.ui.View').y + 50},
+            {x: boxes.get('common.ui.Modal').x, y: boxes.get('common.ui.Modal').y + 50}
+        ],
+        markerEnd: 'filledDiamond'
+    }];
+    d3.classDiagram.createConnectors(connectors);
+/*
+    var connectors = [
+        {
+            points: [
+                {x: boxes.User.rightX(), y: boxes.Micropost.midY()},
+                {x: boxes.Micropost.x, y: boxes.Micropost.midY()}
+            ],
+            markerEnd: 'filledDiamond'
+        },
+        {
+            points: [
+                {x: boxes.Relationship.midX() - 20, y: boxes.User.bottomY()},
+                {x: boxes.Relationship.midX() - 20, y: boxes.Relationship.y}
+            ],
+            markerEnd: 'filledDiamond'
+        },
+        {
+            points: [
+                {x: boxes.Relationship.midX() + 20, y: boxes.User.bottomY()},
+                {x: boxes.Relationship.midX() + 20, y: boxes.Relationship.y}
+            ],
+            markerEnd: 'filledDiamond'
+        },
+        {
+            points: [
+                {x: boxes.User.x, y: boxes.User.bottomY() - 20},
+                {x: boxes.User.x - 20, y: boxes.User.bottomY() - 20},
+                {x: boxes.User.x - 20, y: boxes.User.bottomY() + 20},
+                {x: boxes.User.x + 20, y: boxes.User.bottomY() + 20},
+                {x: boxes.User.x + 20, y: boxes.User.bottomY()}
+            ],
+            markerEnd: 'diamond'
+        },
+        {
+            points: [
+                {x: boxes.User.rightX(), y: boxes.User.bottomY() - 20},
+                {x: boxes.User.rightX() + 20, y: boxes.User.bottomY() - 20},
+                {x: boxes.User.rightX() + 20, y: boxes.User.bottomY() + 20},
+                {x: boxes.User.rightX() - 20, y: boxes.User.bottomY() + 20},
+                {x: boxes.User.rightX() - 20, y: boxes.User.bottomY()}
+            ],
+            markerEnd: 'diamond'
+        }
+    ];
+
+    d3.classDiagram.createConnectors(connectors);
+*/
+</script>
+</body>
+</html>
