@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+현재 당신의 위치는...<div id="info"></div>
+<script src="../../../js/lib/jquery.js"></script>
+<script src="../../../js/release/common.js"></script>
+<script src="../../../js/release/module/geolocation.js"></script>
+<script>
+    var geo = new common.module.Geolocation();
+    geo.getCurrentPosition({
+        timeout: 20000
+    }).done(function(position) {
+        $('#info').html('위도: '+ position.coords.latitude + ', 경도:' + position.coords.longitude);
+    }).fail(function(err) {
+        $('#info').html(err.message);
+    });
+</script>
+</body>
+</html>
