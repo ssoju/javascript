@@ -1,31 +1,33 @@
-(function (core, undefined) {
+(function (undefined) {
 
     var messages = {
-        required: '[data-name]항목은 필수입력 항목입니다.',
-        matches: '[data-name]항목은 {0}항목과 동일해야 합니다.',
-        email: '[data-name]항목이 이메일 형식에 맞지 않습니다.',
-        //emails: 'The %s field must contain all valid email addresses.',
-        minlength: '[data-name]항목의 최소길이는 {0}입니다.',
-        maxlength: '[data-name]항목의 최대길이는 {0}입니다',
-        exactlength: '[data-name]항목은 {0}길이여야 합니다.',
-        rangelength: '[data-name] 길이가 {0}와 {1}사이',
-        minchecked: '[data-name]항목의 최소 {0}개 이상 체크.',
-        maxchecked: '[data-name]항목의 최대 {0}개 이하 체크',
-        exactchecked: '[data-name]항목은 {0}개 체크.',
-        rangechecked: '{0} ~ {1} 개 체크',
-        alpha: '영문자만 유효.',
-        alnum: '영문자와 숫자만 유효.',
-        numeric: '숫자, ., -만 유효.',
-        integer: '- 숫자만 유효.',
-        decimal: '데시몰만 유효',
-        nozero: '0으로 시작하면 안됨',
-        file: '{0}파일만 유효합니다.',
-        url: 'url 주소만.',
-        gt_date: 'this.value > date.',
-        lt_date: 'this.value < date.',
-        eqgt_date: 'this.value <= date.',
-        eqlt_date: 'this.value >= date',
-        regexp: '[data-pattern] 정규식에 안맞습니다.'
+        required: "'[name]'항목은 필수입력 항목입니다.",
+        matches: "'[name]'항목은 {0}항목과 동일해야 합니다.",
+        email: "'[name]'항목이 이메일 형식에 맞지 않습니다.",
+        //emails: "The %s field must contain all valid email addresses.",
+        minlength: "'[name]'항목의 최소길이는 {0}입니다.",
+        maxlength: "'[name]'항목의 최대길이는 {0}입니다",
+        exactlength: "'[name]'항목은 {0}길이여야 합니다.",
+        rangelength: "'[name]'항목의 길이가 {0}와 {1}사이여야 합니다.",
+        minchecked: "'[name]'항목의 최소 {0}개 이상 체크해 주세요.",
+        maxchecked: "'[name]'항목의 최대 {0}개 이하 체크해 주세요.",
+        exactchecked: "'[name]'항목은 {0}개 체크해 주세요.",
+        rangechecked: "'[name]'항목은 {0}개에서 {1}개 사이에만 체크해 주세요.",
+        alpha: "'[name]'항목은 영문자만 유효합니다.",
+        alnum: "'[name]'항목은 영문자와 숫자만 유효합니다.",
+        numeric: "'[name]'항목은 숫자, ., -만 유효합니다.",
+        integer: "'[name]'항목은 -, 숫자만 유효합니다.",
+        decimal: "'[name]'항목은 -, ., 숫자만 유효합니다.",
+        nozero: "'[name]'항목은 0으로 시작하면 안됩니다.",
+        file: "'[name]'항목은 {0}확장자만 유효합니다.",
+        url: "url주소 형식이 잘못 되었습니다.",
+        tel: "전화번호 형식이 잘못 되었습니다.",
+        mobile: "휴대폰번호 형식이 잘못 되었습니다.",
+        gt_date: "'[name]'날짜는 '[target_name']날짜보다 이후여야 합니다.",
+        lt_date: "'[name]'날짜는 '[target_name']날짜보다 이전이어야 합니다.",
+        eqgt_date: "'[name]'날짜는 '[target_name']날짜와 같거나 이후여야 합니다.",
+        eqlt_date: "'[name]'날짜는 '[target_name']날짜와 같거나 이전이어야 합니다.",
+        regexp: "[data-pattern] 정규식에 안맞습니다."
     };
 
     var ruleRegex = /^(.+?)\((.+)\)$/,
@@ -39,8 +41,10 @@
         ipRegex = /^((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){3}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})$/i,
         base64Regex = /[^a-zA-Z0-9\/\+=]/i,
         numericDashRegex = /^[\d\-\s]+$/,
+        telRegex = /^\d{2,3}-\d{3,4}-\d{4}$/,
+        mobileRegex = /^(010|011|17|018|019)-\d{3,4}-\d{4}$/,
         urlRegex = /^((http|https):\/\/(\w+:{0,1}\w*@)?(\S+)|)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?$/,
-        dateRegex = /\d{4}-\d{1,2}-\d{1,2}/;
+        dateRegex = /^\d{4}-\d{1,2}-\d{1,2}/;
 
 
     function typeName(el) {
@@ -52,6 +56,8 @@
     }
 
     function getValue(el){
+        if(typeof el === 'string') { return el; }
+
         var type = typeName(el),
             items;
         if(type === 'checkbox' || type === 'radio') {
@@ -61,7 +67,7 @@
             }
             return '';
         }
-        return el.value;
+        return el.value.trim();
     }
 
     function getCheckedCount(el) {
@@ -93,21 +99,38 @@
         return validDate;
     }
 
-    /**
-     * @class
-     * @name common.module.Validator
-     * @extends common.Base
-     */
-    var Validator = core.ui('Validator', /** @lends common.module.Validator# */{
-        bindjQuery: 'validator',
-        initialize: function (el, options) {
-            var me = this;
-            me.errors = [];
-            me.form = $(el).get(0);
-            me.messages = core.clone(messages);
-            me.befores = {};
-            me.afters = {};
-        },
+    function getInputName(el) {
+        var x;
+        if(x = el.getAttribute('data-name')) {
+            return x;
+        }
+        if(x = el.getAttribute('id')) {
+            if(x = $('label[for='+x+']')[0]) {
+                return x.innerText;
+            }
+        }
+        return el.name;
+    }
+
+    var FormValidator = function (el, options) {
+        var me = this;
+        me.errors = [];
+        me.form = el;
+        me.messages = messages;
+        me.befores = {};
+        me.afters = {};
+        me.options = options || {};
+
+        me.form.addEventListener('submit', function(e) {
+            if(!me.run()){
+                e.preventDefault();
+                return false;
+            }
+        })
+    };
+
+    FormValidator.prototype = {
+        constructor: FormValidator,
         setMessage: function (rule, message) {
             this.messages[rule] = message;
 
@@ -123,11 +146,11 @@
         },
         addRule: function(){
             /*
-            {
-                message: '',
-                regexp: //
-            }
-            */
+             {
+             message: '',
+             regexp: //
+             }
+             */
         },
         run: function () {
             if(!this._validateForm()){
@@ -135,15 +158,17 @@
             }
         },
         _normalizeMessage: function(el, msg, params) {
-            return msg && msg.replace(/\{([a-z0-9-]+)\}/g, function(v, s) {
-                if(/[0-9]+/.test(s)){
-                    return params[s|0] || '';
-                } else {
-                    return el.getAttribute('data-' + s) || params[s] || 'unknown';
-                }
-            }).replace(/\[([a-z0-9-]+)\]/g, function(v, s) {
+            return msg && msg.replace(/\[name\]/, function(v, s) {
+                    return getInputName(el);
+                }).replace(/\{([a-z0-9-]+)\}/g, function(v, s) {
+                    if(/[0-9]+/.test(s)){
+                        return params[s|0] || '';
+                    } else {
+                        return el.getAttribute('data-' + s) || params[s] || 'unknown';
+                    }
+                }).replace(/\[([a-z0-9-]+)\]/g, function(v, s) {
                     return el.getAttribute(s) || '';
-            }) || 'unknown msg';
+                }) || 'unknown msg';
         },
         _showError: function() {
             var error = this.errors[0],
@@ -188,8 +213,8 @@
                 }
                 for(var i = -1, rule; (rule = rules[++i]) && (matches = rule.match(paramRegex)); ) {
                     result[matches[1]] = {
-                        params: matches[2] ? core.array.map((matches[2]||'').split(/,\s*/g), function(val) {
-                            return core.is(val, 'number') ? val|0 : val;
+                        params: matches[2] ? (matches[2]||'').split(/,\s*/g).map(function(val) {
+                            return typeof val == 'number' ? val|0 : val;
                         }) : []
                     }
                 }
@@ -202,11 +227,14 @@
                 fn;
 
             for(var name in rules) { if(!rules.hasOwnProperty(name)){ continue; }
+                if(!rules['required'] && !element.value.trim()){ continue; }
                 if(fn = me._rules[name]) {
+                    delete me['currentTarget'];
                     if(!fn.apply(me, [element].concat(rules[name].params))){
                         me.errors.push({
                             rule: name,
                             el: element,
+                            target: me.currentTarget,
                             params: rules[name].params
                         });
                         return false;
@@ -228,27 +256,40 @@
                 var el = this.form[matchName];
 
                 if (el) {
-                    return element.value === el.value;
+                    return element.value === getValue(el);
                 }
 
                 return false;
             },
             email: function (element, other) {
-                var val = element.value, domain;
+                var val = getValue(element), domain;
                 if(other && (domain = element.form.elements[other])) {
-                    val += '@' + domain.value;
+                    val += '@' + getValue(domain);
                 }
                 return emailRegex.test(val);
             },
-
+            tel: function (element, tel2name, tel3name) {
+                var val = getValue(element);
+                if(arguments.length > 1) {
+                    val += '-' + getValue(element.form[tel2name]) + '-' + getValue(element.form[tel3name]);
+                }
+                return telRegex.test(val);
+            },
+            mobile: function (element, tel2name, tel3name) {
+                var val = getValue(element);
+                if(arguments.length > 1) {
+                    val += '-' + getValue(element.form[tel2name]) + '-' + getValue(element.form[tel3name]);
+                }
+                return mobileRegex.test(val);
+            },
             minlength: function (element, length) {
-                return (element.value.length >= parseInt(length, 10));
+                return (getValue(element).length >= parseInt(length, 10));
             },
             maxlength: function (element, length) {
-                return (element.value.length <= parseInt(length, 10));
+                return (getValue(element).length <= parseInt(length, 10));
             },
             exactlength: function (element, length) {
-                return (element.value.length === length|0);
+                return (getValue(element).length === length|0);
             },
             rangelength: function(element, min, max){
                 var cnt = getCheckedCount(element);
@@ -268,48 +309,47 @@
                 var cnt = getCheckedCount(element);
                 return cnt >= min|0 && cnt <= max|0;
             },
-
             lt: function (element, param) {
-                if (!decimalRegex.test(element.value)) {
+                if (!decimalRegex.test(getValue(element))) {
                     return false;
                 }
 
                 return (parseFloat(element.value) > parseFloat(param));
             },
             gt: function (element, param) {
-                if (!decimalRegex.test(element.value)) {
+                if (!decimalRegex.test(getValue(element))) {
                     return false;
                 }
 
-                return (parseFloat(element.value) < parseFloat(param));
+                return (parseFloat(getValue(element)) < parseFloat(param));
             },
             alpha: function (element) {
-                return (alphaRegex.test(element.value));
+                return (alphaRegex.test(getValue(element)));
             },
             alnum: function (element) {
-                return (alphaNumericRegex.test(element.value));
+                return (alphaNumericRegex.test(getValue(element)));
             },
             numeric: function (element) {
-                return (numericRegex.test(element.value));
+                return (numericRegex.test(getValue(element)));
             },
             integer: function (element) {
-                return (integerRegex.test(element.value));
+                return (integerRegex.test(getValue(element)));
             },
             decimal: function (element) {
-                return (decimalRegex.test(element.value));
+                return (decimalRegex.test(getValue(element)));
             },
             nozero: function (element) {
-                return (naturalNoZeroRegex.test(element.value));
+                return (naturalNoZeroRegex.test(getValue(element)));
             },
             url: function (element) {
-                return (urlRegex.test(element.value));
+                return (urlRegex.test(getValue(element)));
             },
             file: function (element, type) {
                 if (element.type !== 'file') {
                     return true;
                 }
 
-                var ext = element.value.substr((element.value.lastIndexOf('.') + 1)),
+                var ext = element.value.substr((getValue(element).lastIndexOf('.') + 1)),
                     typeArray = type.split(';'),
                     inArray = false,
                     i = 0,
@@ -323,61 +363,71 @@
 
                 return inArray;
             },
+            date: function(element, format) {
+                return dateRegex.test(getValue(element));
+            },
             gt_date: function (element, date) {
-                var enteredDate = parseDate(element.value),
-                    validDate = parseDate(date);
+                var enteredDate = parseDate(getValue(element)),
+                    validDate = parseDate(element.form[date] ? getValue(element.form[date]) : date);
 
                 if (!validDate || !enteredDate) {
                     return false;
                 }
-
-                return enteredDate > validDate;
+                if(enteredDate > validDate) { return true; }
+                else {
+                    element.form[date] && (this.currentTarget = element.form[date]);
+                    return false;
+                }
             },
             lt_date: function (element, date) {
-                var enteredDate = parseDate(element.value),
-                    validDate = parseDate(date);
+                var enteredDate = parseDate(getValue(element)),
+                    validDate = parseDate(element.form[date] ? getValue(element.form[date]) : date);
 
                 if (!validDate || !enteredDate) {
                     return false;
                 }
 
-                return enteredDate < validDate;
+                if(enteredDate < validDate) { return true; }
+                else {
+                    element.form[date] && (this.currentTarget = element.form[date]);
+                    return false;
+                }
             },
             eqgt_date: function (element, date) {
-                var enteredDate = parseDate(element.value),
-                    validDate = parseDate(date);
+                var enteredDate = parseDate(getValue(element)),
+                    validDate = parseDate(element.form[date] ? getValue(element.form[date]) : date);
 
                 if (!validDate || !enteredDate) {
                     return false;
                 }
 
-                return enteredDate >= validDate;
+                if(enteredDate >= validDate) { return true; }
+                else {
+                    element.form[date] && (this.currentTarget = element.form[date]);
+                    return false;
+                }
             },
             eqlt_date: function (element, date) {
-                var enteredDate = parseDate(element.value),
-                    validDate = parseDate(date);
+                var enteredDate = parseDate(getValue(element)),
+                    validDate = parseDate(element.form[date] ? getValue(element.form[date]) : date);
 
                 if (!validDate || !enteredDate) {
                     return false;
                 }
 
-                return enteredDate <= validDate;
+                if(enteredDate <= validDate) { return true; }
+                else {
+                    element.form[date] && (this.currentTarget = element.form[date]);
+                    return false;
+                }
             },
             regexp: function(element) {
                 var regstr = element.getAttribute('data-pattern');
                 var regexp =new RegExp(regstr);
-                return regexp.test(element.value);
+                return regexp.test(getValue(element));
             }
         }
-    });
+    };
 
-    common.module('Validator', Validator);
-
-    if (typeof define !== 'undefined' && define.amd) {
-        define([], function () {
-            return Validator;
-        });
-    }
-
-})(window[LIB_NAME]);
-
+    window.FormValidator = FormValidator;
+})();
