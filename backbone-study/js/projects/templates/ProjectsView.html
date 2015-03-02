@@ -1,0 +1,63 @@
+<article class="list_project">
+	<%if(items.length){%>
+	<ul class="list">
+		<%_.each(items, function(item) {%>
+		<li>
+			<div class="project" data-id="<%-item.prj_id%>">
+				<div class="project_info">
+					<a href="#" class="name">
+						<span class="img">
+							<img src="<%-(item.picture?'/image?img='+encodeURIComponent(item.picture):'/images/noimg_576x200.png')%>" alt="">
+						</span>
+						<span class="txt"><%-item.name%></span>
+					</a>
+					<div class="address">
+						<em>파견지:</em>
+						<a href="http://m.map.naver.com/search.nhn?query=<%-encodeURIComponent(item.address)%>" target="_blank"><%-item.address%></a>
+					</div>
+					<button type="button" class="btn_ico bookmark <%-(item.bookmark>0?'on':'')%>" data-id="<%-item.prj_id%>" data-type="project"><span class="hide">즐겨찾기</span></button>
+					<button type="button" class="btn_ico close_detail"><span class="hide">닫기</span></button>
+				</div>
+				<!-- 리스트 -->
+				<div class="project_contacts">
+					<%_.each(item.bizparts, function(grp) {%>
+						<%if(grp.members.length === 0){ return; }%>
+						<div class="list_contacts" style="position: relative;">
+							<h1 class="tit"><%-grp.bizpart_name%></h1><!-- fixed시 .fixed -->
+							<ul class="list">
+								<% _.each(grp.members, function(member) { %>
+								<li data-id="<%-member.mem_id%>">
+									<div class="contacts_summary">
+										<div class="identity">
+												<span class="img" style="background-image:url('<%-(member.picture ? '/image?img='+encodeURIComponent(member.picture) : '/images/noimg_120x80.png')%>');"></span>
+												<span class="txt">
+													<span class="name"><%-member.name%></span>
+													<span class="position"><%-member.rank_name%></span>
+												</span>
+										</div>
+										<div class="wrap_btn">
+											<a href="tel:<%-member.mobile%>" class="btn_ico phone"><span class="hide">전화</span></a>
+											<a href="sms:<%-member.mobile%>" class="btn_ico sms"><span class="hide">문자</span></a>
+											<a href="mailto:<%-member.email%>" class="btn_ico email"><span class="hide">이메일</span></a>
+											<a href="#" class="btn_ico bookmark <%-(member.bookmark>0?'on':'')%>" data-id="<%-member.mem_id%>" data-type="member"><span class="hide">즐겨찾기</span></a>
+										</div>
+									</div>
+								</li>
+								<% }); %>
+							</ul>
+						</div>
+					<%});%>
+				</div>
+				<!-- //리스트 -->			
+			</div>
+		</li>
+		<%});%>
+	</ul>
+	<%}else{%>
+		<div class="contents">
+			<div class="noSearch">
+				<p>검색된 결과가 없습니다.</p>
+			</div>
+		</div>
+	<%}%>
+</article>
