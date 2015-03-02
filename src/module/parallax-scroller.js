@@ -15,7 +15,10 @@
         REGEXP_STYLE = /\s*([a-z\-]+)(?:\[([a-z\-]+)\])*\s*:\s*([^px|%]+?)([px|%]*)\s*(?:;|$)/gi; // style 파싱
     /* ===== [E] Constant Variables ============================================= */
 
-
+    /* 사용
+    // 0에서 100에서 스크롤될 때 div요소를 left:0->100, left:0->100, opacity:0 -> 1 으로 애니에미션이 된다.
+    <div class="item" data-frame="0 {top:0;left:0;opacity:0;} 100{top:100;left:100;opacity:1}">...</div>
+    */
 
     /* ===== [S] RequestAnimationRequest Function ============================================= */
     window.requestAnimationFrame = (function() {
