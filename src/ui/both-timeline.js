@@ -1,7 +1,7 @@
 /*!
  * @authror: 김승일
  * @email: comahead@vi-nyl.com
- * @created: 2014-06-27
+ * @created: 2013-06-27
  * @description: framework
  */
 (function($, core, undefined) {
