@@ -2,7 +2,7 @@
     "use strict"; 
  
     core.ui('Tabs', {    
-        $mixins: [core.EventListener],
+        $mixins: [core.Listener],
         $statics: { 
             ON_CHANGED_TAB: 'changedTab' 
         },
@@ -56,40 +56,44 @@
         });
     }
  
-//})();
+})();
 
-        $(function () {
-            // 1. 클래스 객체를 직접 생성
-            var tabs = new common.ui.Tabs('#tab', {
-                selectedIndex: 2,	
-                on: {					
-                    'changedTab': function (e, index) {
-                        alert(index + '번째 탭이 선택되었습니다.');
-                    }
-                }
-            });
- 
-            tabs.on('changedTab', function (e, index) { 
+// 사용예
+$(function () {
+    // 1. 클래스 객체를 직접 생성
+    var tabs = new common.ui.Tabs('#tab', {
+        selectedIndex: 2,	
+        on: {					
+            'changedTab': function (e, index) {
                 alert(index + '번째 탭이 선택되었습니다.');
-            });
- 
-            $('#tab').on('changedTab', function (e, index) {
+            }
+        }
+    });
+
+    tabs.on('changedTab', function (e, index) { 
+        alert(index + '번째 탭이 선택되었습니다.');
+    });
+
+    $('#tab').on('changedTab', function (e, index) {
+        alert(index + '번째 탭이 선택되었습니다.');
+    });
+    tabs.select(2); 
+
+    // jquery 모듈방식으로 사용
+    $('#tabs').tabs({
+        // 옵션
+        selectedIndex: 2,
+        on: {
+            // 이벤트 핸들러 등록
+            changedTab: function (e, index) {
                 alert(index + '번째 탭이 선택되었습니다.');
-            });
-            tabs.select(2); 
- 
-            $('#tabs').tabs({
-                selectedIndex: 2,
-                on: {
-                    changedTab: function (e, index) {
-                        alert(index + '번째 탭이 선택되었습니다.');
-                    }
-                }
-            });
- 
-            $('#tabs').tabs('select', 2);
- 
-            require('Tabs', function(Tabs) {
-                new Tabs('#d-tab');
-            });
-        });
+            }
+        }
+    });
+
+    $('#tabs').tabs('select', 2);
+
+    require('Tabs', function(Tabs) {
+        new Tabs('#d-tab');
+    });
+});
