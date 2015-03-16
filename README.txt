@@ -1,4 +1,4 @@
-//(function(){
+(function(){
     "use strict"; 
  
     core.ui('Tabs', {    
@@ -93,4 +93,3 @@
                 new Tabs('#d-tab');
             });
         });
-        
