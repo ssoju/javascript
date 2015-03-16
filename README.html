@@ -4,24 +4,32 @@
     "use strict"; 
  
     core.ui('Tabs', {    
+        // 리스너 mixin
         $mixins: [core.Listener],
+        // static 변수 등록
         $statics: { 
             ON_CHANGED_TAB: 'changedTab' 
         },
+        // 싱글톤 여부
         ///// $singleton: true, 
- 
+        // jquery 에 바인딩될 이름
         bindjQuery: 'tabs',	// $('#d-tab').tabs({옵션들});
+        // 모듈명
         name: 'Tabs', 
+        // 기본옵션
         defaults: { 
             selectedIndex: 1
         },
+        // 엘리먼트를 자동으로 검색해서 멤버변수로 설정
         selectors: {
-            tabs: 'li.tab', 
-            contents: 'div.cont'
+            tabs: 'li.tab',     // = this.$tabs = this.$el.find('li.tab');
+            contents: 'div.cont'    // = this.$contents = this.$el.find('div.cont');
         },
+        // 특정요소에 이벤트 등록
         events: {
             'click li.tab a': 'onTabSelect' 
         },
+        // 생성자
         initialize: function (el, options) { 
             var me = this;
  
