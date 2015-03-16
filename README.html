@@ -4,6 +4,8 @@
     "use strict"; 
  
     core.ui('Tabs', {    
+        // 상속할 부모 클래스
+        $extend: core.ui.Component,
         // 리스너 mixin
         $mixins: [core.Listener],
         // static 변수 등록
