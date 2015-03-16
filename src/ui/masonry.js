@@ -24,7 +24,7 @@
                     me.update();
                 });
             },
-            // 기본작업 140127_수정
+            
             init: function() {
                 var me = this,
                     timer = null,
