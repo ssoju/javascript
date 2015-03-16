@@ -37,8 +37,7 @@
                     ajaxDone = true;
                 })
 
-                //더보기 클릭시 레이아웃 재정렬 140127_추가
-                $('#conts > button.more').bind('click.tiles', function() {
+                me.$('button.more').bind('click.masonry', function() {
                     //nextId = $("#scrollArtists").find('div>ul>li').last().attr('data-nextId');
                     var start = me.$el.find(me.options.itemSelector).length;
                     clearInterval(timer2);
