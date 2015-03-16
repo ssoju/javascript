@@ -1,7 +1,7 @@
 /*!
  * @author common.ui.modal.js
  * @email comahead@vi-nyl.com
- * @create 2014-11-25
+ * @create 2013-11-25
  * @license MIT License
  */
 (function ($, core, undefined) {
@@ -10,10 +10,7 @@
         $win = $(window),
         browser = core.browser,
         ui = core.ui,
-        isTouch = browser.isTouch,
-        zIndex = 9000,
-        nextZIndex = function () { var ret = zIndex; zIndex+=2; return ret; },
-        shiftZIndex = function (){ zIndex-=2; };
+        isTouch = browser.isTouch;
 
 
     // Modal ////////////////////////////////////////////////////////////////////////////
