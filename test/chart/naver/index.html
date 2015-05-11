@@ -1,0 +1,192 @@
+
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Nwagon demo</title>
+
+	<style>
+		*{margin:0;padding:0;}
+		div{padding:0px; overflow: hidden; height: auto;}
+		.hgroup{padding:20px;background-color:#e9e9e9;}
+		.hgroup h1{font-family:Tahoma;}
+		.hgroup p{margin:10px 0;font-size:10px}
+		h2{margin:0;padding:20px;border:1px solid #000;background-color:#f9f9f9;border-width:1px 0;font-family:Tahoma;}
+		h3 {margin-left:-30px;}
+	</style>
+
+	<link rel='stylesheet' href='Nwagon.css' type='text/css'>
+	<link rel='stylesheet' href='../../../../../../src/pretty/pretty.css' type='text/css'>
+	<script src='../../../../../../js/lib/jquery.js'></script>
+	<script src='Nwagon.js'></script>
+
+</head>
+<body>
+	<br>
+	<br>
+	<div style="padding-left: 50px;">
+		<h3>장점</h3>
+		<ul>
+			<li>
+				심플하다
+			</li>
+			<li>
+				접근이 용이하다
+			</li>
+            <li>
+                브라우저에 독립적이다
+            </li>
+            <li>
+                웹접근성이 고려돼 있다
+            </li>
+		</ul>
+		<br>
+		<br>
+
+		<h3>단점</h3>
+		<ul>
+			<li>
+				사이즈 조절 api 미지원
+			</li>
+			<li>
+				색상을 이미지패턴으로 표시하는 기능 미지원(단, 색상, 굵기, 투명도, 폰트 등은 옵션과 css로 수정가능)
+			</li>
+			<li>
+				커스터마이징이 상당히 제한적
+			</li>
+		</ul>
+		<br>
+		<br>
+		<br>
+		* 네이버차트는 차트로서의 기능보다는 단순히 브라우저에 따라 vml, svg를 분기해서 똑같은 모양으로 그려주는 것에 중점을 둔듯한 느낌.
+		<br>
+		<br>
+		<br>
+        <xmp>
+<script>
+    var options = {
+        'legend':{
+            names: ['08-12', '08-19', '08-26', '09-02', '09-09', '09-16', '9-23']
+        },
+        'dataset':{
+            title:'Playing time per day',
+            values: [[77,47, 66], [76,53, 66], [49,62, 45], [58,86, 76], [48, 85, 76], [56, 48,83], [56, 48,83]],
+            colorset: ['#DC143C','#FF8C00', '#2EB400'],
+            fields:['Company A', 'Company B', 'Company C']
+        },
+        'chartDiv' : 'chart7',
+        'chartType' : 'line',
+        'leftOffsetValue': 50,
+        'bottomOffsetValue': 60,
+        'chartSize' : {width:700, height:300},
+        'minValue' : 40,
+        'maxValue' : 100,
+        'increment' : 10
+    };
+
+    Nwagon.chart(options);
+</script>
+        </xmp>
+		<br>
+	</div>
+
+	<h2>Line Chart with offset values</h2>
+	<div id="chart7"></div>
+	<script>
+		var options = {
+			'legend':{
+				names: ['08-12', '08-19', '08-26', '09-02', '09-09', '09-16', '9-23']
+					},
+			'dataset':{
+				title:'Playing time per day', 
+				values: [[77,47, 66], [76,53, 66], [49,62, 45], [58,86, 76], [48, 85, 76], [56, 48,83], [56, 48,83]],
+				colorset: ['#DC143C','#FF8C00', '#2EB400'],
+				fields:['Company A', 'Company B', 'Company C']
+			},
+			'chartDiv' : 'chart7',
+			'chartType' : 'line',
+			'leftOffsetValue': 50,
+			'bottomOffsetValue': 60,
+			'chartSize' : {width:700, height:300},
+			'minValue' : 40,
+			'maxValue' : 100,
+			'increment' : 10
+		};
+
+		Nwagon.chart(options);
+	</script>	
+
+	<h2>Multi Column chart</h2>	
+	<div id="chart19"></div>
+	<script>
+		var options = {
+			'legend':{
+				names: ['08-12', '08-19', '08-26', '09-02', '09-09', '09-16','09-16', '09-16', '09-16'],
+				hrefs: []
+					},
+			'dataset':{
+				title:'Playing time per day', 
+				values: [[5,7,2,6], [2,5,7,4], [7,2,3,6], [6,1,5,3], [5,3,8,8], [8,3,1,6], [6,3,9,8], [6,2,6,2], [8,2,4,2]],
+				colorset: ['#DC143C','#FF8C00', '#2EB400', '#666666'],
+				fields:['Working Time', 'Late count', 'Blah','Vacation']
+				},
+			'chartDiv' : 'chart19',
+			'chartType' : 'multi_column',
+			'chartSize' : {width:700, height:300},
+			'maxValue' : 10,
+			'increment' : 1
+		};
+
+		Nwagon.chart(options);
+
+	</script>
+
+
+	<h2>Stacked Column chart</h2>	
+	<div id="chart17"></div>
+	<script>
+		var options = {
+			'legend':{
+				names: ['08-12', '08-19', '08-26', '09-02', '09-09', '09-16','09-16', '09-16', '09-16', '09-16', '09-16', '09-16'],
+				hrefs: []
+					},
+			'dataset':{
+				title:'Playing time per day', 
+				values: [[5,7,2,6], [2,5,7,4], [7,2,3,6], [6,1,5,3], [5,3,8,8], [8,3,1,6], [6,3,9,8], [6,2,6,2], [6,2,6,2],[6,2,6,2], [5,3,8,8], [8,3,1,6]],
+				colorset: ['#DC143C','#FF8C00', '#2EB400', '#666666'],
+				fields:['Working Time', 'Late count', 'Blah','Vacation']
+				},
+			'chartDiv' : 'chart17',
+			'chartType' : 'stacked_column',
+			'chartSize' : {width:700, height:300},
+			'maxValue' : 30,
+			'increment' : 3
+		};
+
+		Nwagon.chart(options);
+
+	</script>
+
+
+	<h2>Pie Chart with colorblind safe colors</h2>
+	<div id="chart"></div>
+	<script>
+		
+		var options = {
+			'dataset': {
+				title: 'Web accessibility status',
+				values:[18, 12, 3, 10, 7],
+				colorset: ['transparent', '#e69f00', '#cc79a7', '#009e73', '#0072b2'],
+				fields: ['A', 'B',  'C', 'D', 'E'] 
+			},
+			'donut_width' : 100, 
+			'core_circle_radius':0,
+			'chartDiv': 'chart',
+			'chartType': 'pie',
+			'chartSize': {width:600, height:300}
+		};
+
+		Nwagon.chart(options);
+	</script>
+ 
+</body>
+</html>

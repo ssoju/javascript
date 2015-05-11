@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<form id="frm" onsubmit="return false" rel="async">
+    <div>이름: <input name="name" data-name="이름" data-valid="required"> =  data-valid="required"</div>
+    <div>영문이름: <input name="eng_name" data-name="영문이름" data-valid="required|minlength(4)|alpha"> =  data-valid="required|minlength(4)|alpha"</div>
+    <div>이메일: <input name="email" data-name="이메일" data-valid="required|email"> =  data-valid="required|email"</div>
+    <div>이메일2: <input name="email_1" data-name="이메일" data-valid="required|email(email_2)"> <input name="email_2" data-name="이메일"> = data-valid="required|email(email_2)</div>
+    <div>나이: <input name="age" data-name="나이" data-valid="required|integer"> = data-valid="required|integer"</div>
+    <div>암호: <input name="pwd1" data-name="암호" data-valid="required|minlength(8)"> = data-valid="required|minlength(8)"</div>
+    <div>암호확인: <input name="pwd2" data-name="암호확인" data-valid="required|minlength(8)|match(pwd1)"> = data-valid="required|minlength(8)|match(pwd1)"</div>
+    <div>정규식: <input name="zipcode" data-name="정규식" data-valid="regexp" data-pattern="^[0-9]+$"> = data-valid="regexp" data-pattern="^[0-9]+$"</div>
+    <div>관심사: <input name="favorite" data-name="관심사" type="checkbox" data-valid="required|rangechecked(2, 3)" value="a"> <input name="favorite" type="checkbox" value="b"> <input name="favorite" type="checkbox" value="c"> <input name="favorite" type="checkbox" value="d"> = data-valid="required|rangechecked(2, 3)"</div>
+    <div><input type="file" name="file" data-valid="file(jpg;gif)"> -  data-valid="file(jpg;gif)"</div>
+    <div><button>등록</button></div>
+</form>
+<script src="../../../../js/lib/jquery.js"></script>
+<script src="../../../../js/release/common.js"></script>
+<script src="../module/validate.js"></script>
+<script>
+    $('#frm').validator({
+
+        validAfter: {
+            // eng_name 의 밸리데이션을 추가로 체크하고자 할 경우(기본 밸리데이션 체크를 통과후)
+            'eng_name': function (el) {
+                if(el.value !== 'axlrose'){
+                    this.errors.push({
+                        msg: '영어이름은 무조건 axlrose여야 합니다.',
+                        el: el
+                    })
+                    return false;
+                }
+                return true;
+            }
+        },
+    });
+
+</script>
+</body>
+</html>

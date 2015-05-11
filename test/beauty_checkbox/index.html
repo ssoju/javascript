@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="../../../../lib/jquery.js"></script>
+    <script src="../../../../release/common.js"></script>
+    <style>
+        ul, li {
+            list-style: none;
+        }
+
+        li {
+            float: left;
+        }
+
+        .ui_radiocheck {
+            background-color: #efefef;
+            width: 24px;
+            height: 24px;
+            position: relative;
+            float: left;
+        }
+
+        .focus {
+            border: 1px dotted #000;
+        }
+
+        .checked {
+            background-color: #009998;
+        }
+    </style>
+</head>
+<body>
+<form>
+    <div>
+        <ul>
+            <li>
+                <input type="checkbox" name="hobby" value="a" id="hobbya"><label for="hobbya">취미1</label>
+            </li>
+            <li>
+                <input type="checkbox" name="hobby" value="b" id="hobbyb" checked="checked"><label for="hobbyb">취미2</label>
+            </li>
+            <li>
+                <input type="checkbox" name="hobby" value="c" id="hobbyc"><label for="hobbyc">취미3</label>
+            </li>
+        </ul>
+    </div>
+    <div>
+        <ul>
+            <li>
+                <input type="radio" name="favor" value="a" id="favora"><label for="favora">특기 1</label>
+            </li>
+            <li>
+                <input type="radio" name="favor" value="b" id="favorb"><label for="favorb">특기 2</label>
+            </li>
+            <li>
+                <input type="radio" name="favor" value="c" id="favorc"><label for="favorc">특기 3</label>
+            </li>
+        </ul>
+    </div>
+</form>
+<script>
+    common.importJs('../../ui/beauty-checkbox', function() {
+        common.beautyCheckbox();
+    });
+</script>
+</body>
+</html>

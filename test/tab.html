@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        .js-tab {
+            list-style: none;
+            display: block;
+            position: relative;
+        }
+
+        .js-tab li {
+            float: left;
+
+        }
+        .js-tab li > div {
+            display: none;
+        }
+
+        .js-tab li.on > div {
+            display:inherit;
+        }
+    </style>
+</head>
+<body>
+
+<ul class="js-tab">
+    <li>
+        <a href="#tab1">Tab1</a>
+        <div id="tab1">content1</div>
+    </li>
+    <li>
+        <a href="#tab2">Tab2</a>
+        <div id="tab2">content2</div>
+    </li>
+</ul>
+<script src="/js/lib/jquery.js"></script>
+<script src="/js/release/common.js"></script>
+<script>
+    common.importJs([
+        '/js/release/ui/tab.js'
+    ]).done(function () {
+
+        $('.js-tab').tab();
+
+    });
+</script>
+</body>
+</html>

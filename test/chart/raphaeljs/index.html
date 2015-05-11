@@ -1,0 +1,148 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Raphaël · Pie Chart</title>
+    <link rel="stylesheet" href="demo.css"media="screen">
+    <script src="raphael.js"></script>
+    <script src="jquery.js"></script>
+    <script src="pie.js"></script>
+    <style media="screen">
+        #holder {
+            margin:0;
+            left: auto;
+            top:auto;
+            width: 700px;
+            height: 700px;
+        }
+    </style>
+</head>
+<body>
+<br>
+<br>
+<div style="padding-left: 50px;">
+    <h3>장점</h3>
+    <ul>
+        <li>
+            강력한 그래픽관련 API 제공
+        </li>
+        <lI>
+            리사이징을 위한 API가 따로 있어서 리사이징이 쉽다(아랫 샘플참조)
+        </lI>
+        <li>
+            브라우저에 독립적이다
+        </li>
+        <li>
+            웹접근성이 고려됨(페이지에 데이타정보가 담긴 테이블(표)만 있으면 이를 바탕으로 그려준다.)
+        </li>
+    </ul>
+    <br>
+    <br>
+
+    <h3>단점</h3>
+    <ul>
+        <li>
+            차트 전용 라이브러리가 아니다.
+        </li>
+        <li>
+            라파엘사이트에서 제공되는 차트의 기능과 종류는 상당히 제한적이다.
+        </li>
+        <li>
+            자체적으로 라파엘을 이용해서 차트를 만들어야 한다.(하지만 전세계 구루들에 의해 만들어진 차트들이 많이 공유되어 있기는 합니다.)
+        </li>
+    </ul>
+    <br>
+    <br>
+    <br>
+    * raphaeljs은 원래 svg, vml를 이용하여 웹상에 그래픽적인 엘리먼트를 그릴 수 있게 하기위한 라이브러리로<br>
+    차트를 위한 용도는 아닙니다.<br>
+    <br>
+    <br>
+    <xmp>
+var r = Raphael("holder");
+r.text(320, 70, "Static Pie Chart").attr({ font: "20px sans-serif" });
+r.piechart(320, 240, 150, [55, 20, 13, 32, 5, 1, 2, 10]);
+
+//====================================================================
+var r = Raphael("holder"),
+data1 = [[55, 20, 13, 32, 5, 1, 2, 10], [10, 2, 1, 5, 32, 13, 20, 55], [12, 20, 30]],
+data2 = [[55, 20, 13, 32, 5, 1, 2, 10], [10, 2, 1, 5, 32, 13, 20, 55], [12, 20, 30]],
+data3 = [[55, 20, 13, 32, 5, 1, 2, 10], [10, 2, 1, 5, 32, 13, 20, 55], [12, 20, 30]],
+txtattr = { font: "12px sans-serif" };
+
+r.text(160, 10, "Single Series Chart").attr(txtattr);
+r.text(480, 10, "Multiline Series Chart").attr(txtattr);
+r.text(160, 250, "Multiple Series Stacked Chart").attr(txtattr);
+r.text(480, 250, 'Multiline Series Stacked Vertical Chart. Type "round"').attr(txtattr);
+
+r.barchart(10, 10, 300, 220, [[55, 20, 13, 32, 5, 1, 2, 10]], 0, {type: "sharp"});
+r.barchart(330, 10, 300, 220, data1);
+r.barchart(10, 250, 300, 220, data2, {stacked: true});
+r.barchart(330, 250, 300, 220, data3, {stacked: true, type: "round"});
+
+//====================================================================
+var lines = r.linechart(330, 250, 300, 220, [[1, 2, 3, 4, 5, 6, 7],[3.5, 4.5, 5.5, 6.5, 7, 8]], [[12, 32, 23, 15, 17, 27, 22], [10, 20, 30, 25, 15, 28]], { nostroke: false, axis: "0 0 1 1", symbol: "circle", smooth: true }).hoverColumn(function () {
+this.tags = r.set();
+
+for (var i = 0, ii = this.y.length; i < ii; i++) {
+this.tags.push(r.tag(this.x, this.y[i], this.values[i], 160, 10).insertBefore(this).attr([{ fill: "#fff" }, { fill: this.symbols[i].attr("fill") }]));
+}
+}, function () {
+this.tags && this.tags.remove();
+});
+
+lines.symbols.attr({ r: 6 });
+    </xmp>
+    <br>
+    <br>
+</div>
+
+<table>
+    <tbody>
+    <tr>
+        <th scope="row">Ruby</th>
+        <td>40%</td>
+    </tr>
+    <tr>
+        <th scope="row">JavaScript</th>
+        <td>26%</td>
+    </tr>
+    <tr>
+        <th scope="row">Shell</th>
+        <td>5%</td>
+    </tr>
+    <tr>
+        <th scope="row">Python</th>
+        <td>5%</td>
+    </tr>
+    <tr>
+        <th scope="row">PHP</th>
+        <td>4%</td>
+    </tr>
+    <tr>
+        <th scope="row">C</th>
+        <td>4%</td>
+    </tr>
+    <tr>
+        <th scope="row">Perl</th>
+        <td>3%</td>
+    </tr>
+    <tr>
+        <th scope="row">C++</th>
+        <td>2%</td>
+    </tr>
+    <tr>
+        <th scope="row">Java</th>
+        <td>2%</td>
+    </tr>
+    <tr>
+        <th scope="row">Objective-C</th>
+        <td>2%</td>
+    </tr>
+    </tbody>
+</table>
+<div id="holder"></div>
+<p id="copy">Demo of <a href="http://raphaeljs.com/">Raphaël</a>—JavaScript Vector Library</p>
+</body>
+</html>

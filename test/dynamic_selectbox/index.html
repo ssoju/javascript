@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<p>
+    모바일디바이스에서<br>
+
+    상위 셀렉트박스를 변경한뒤 '다음' 버튼을 클릭했을 때,<br>
+
+    ajax를 통한 동적으로 추가된 항목들이 띄워져있는 기본 셀렉트박스에 반영이 안되는 문제가 있습니다.
+</p>
+<select id="parent">
+    <option value="">선택해주세요</option>
+    <option value="result.html">첫번째</option>
+    <option value="result2.html">두번째</option>
+</select>
+-
+<select id="child">
+
+</select>
+<br>
+<br>
+<br>
+<br>
+* ajax통신시 async: false 옵션을 주면 해결됨<br>
+<select id="parent2">
+    <option value="">선택해주세요</option>
+    <option value="result.html">첫번째</option>
+    <option value="result2.html">두번째</option>
+</select>
+-
+<select id="child2">
+
+</select>
+
+
+
+<script src="../../../../lib/jquery.js"></script>
+<script>
+$('#parent').on('change', function () {
+    $('#child').empty();
+    $.ajax({
+        url: this.value
+    }).done(function(res) {
+        res = $.parseJSON(res);
+        $.each(res, function (i, val) {
+            $('#child')[0].options[i] = new Option(val.name, val.value);
+        });
+    });
+});
+
+$('#parent2').on('change', function () {
+    $('#child2').empty();
+    $.ajax({
+        url: this.value,
+        async: false
+    }).done(function(res) {
+        res = $.parseJSON(res);
+        $.each(res, function (i, val) {
+            $('#child2')[0].options[i] = new Option(val.name, val.value);
+        });
+    });
+});
+</script>
+</body>
+</html>

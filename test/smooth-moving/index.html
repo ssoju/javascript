@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        .box {
+            position: relative;
+            height:100px;
+            width:1000px;
+            border: 1px solid blue;
+        }
+
+        .btn {
+            position: absolute;
+            top:0;
+            left:0;
+            height: 100px;
+            width:50px;
+            background-color: red;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+<div class="box">
+    <div class="btn"></div>
+</div>
+
+<script src="../../../../../js/lib/jquery.js"></script>
+<script>
+
+    (function(window) {
+        var lastTime = 0,
+                vendors = ['webkit', 'moz'],
+                requestAnimationFrame = window.requestAnimationFrame,
+                cancelAnimationFrame = window.cancelAnimationFrame,
+                i = vendors.length;
+
+        // try to un-prefix existing raf
+        while (--i >= 0 && !requestAnimationFrame) {
+            requestAnimationFrame = window[vendors[i] + 'RequestAnimationFrame'];
+            cancelAnimationFrame = window[vendors[i] + 'CancelRequestAnimationFrame'];
+        }
+
+        // polyfill with setTimeout fallback
+        // heavily inspired from @darius gist mod: https://gist.github.com/paulirish/1579671#comment-837945
+        if (!requestAnimationFrame || !cancelAnimationFrame) {
+            requestAnimationFrame = function(callback) {
+                var now = +Date.now(),
+                        nextTime = Math.max(lastTime + 16, now);
+                return setTimeout(function() {
+                    callback(lastTime = nextTime);
+                }, nextTime - now);
+            };
+
+            cancelAnimationFrame = clearTimeout;
+        }
+
+        // export to window
+        window.requestAnimationFrame = requestAnimationFrame;
+        window.cancelAnimationFrame = cancelAnimationFrame;
+    }(window));
+
+
+    function Mover(el){
+        var me = this;
+
+        me.options = {
+
+        };
+
+        me.view = el;
+        me.btn = $(el).find('.btn').get(0);
+        // me.indicator = null;
+        me.min = 0;
+        me.max = $(el).width() - $(me.btn).width();
+        //me.relative = ($(el).width() - 30) / me.max;
+        me.offset = 0;
+        me.reference = null;
+        me.pressed = false;
+        me.xform = 'webkitTransform';
+        me.velocity = null; // 속도
+        me.frame = null;
+        me.timestamp = null;
+        me.ticker = null;
+        me.amplitude = null; // 크기
+        me.target = null;
+        me.timeConstant = 325;  // ms
+
+        if('ontouchstart' in window) {
+            me._bindTouchEvent();
+        }
+        me._bindMouseEvent();
+    };
+
+    Mover.prototype = {
+        constructor: Mover,
+
+        _bindMouseEvent: function(){
+            var me = this;
+
+            $(me.view).on({
+                mousedown: me.tap.bind(me)
+            });
+
+            $(document).on({
+                mousemove: me.drag.bind(me),
+                mouseup: me.release.bind(me)
+            });
+        },
+
+        _bindTouchEvent: function () {
+            var me = this;
+
+            $(me.view).on({
+                touchstart: me.tap.bind(me),
+                touchmove: me.drag.bind(me),
+                touchend: me.release.bind(me)
+            });
+        },
+        _getPosX: function(e){
+            // touch
+            if(e.targetTouches && (e.targetTouches.length >= 1)) {
+                return e.targetTouches[0].pageX;
+            }
+            // mouse
+            return e.pageX;
+        },
+
+        _scroll: function(x) {
+            var me = this;
+
+            me.offset = (x > me.max) ? me.max : (x < me.min) ? me.min : x;
+            if(me.view.style[me.xform]) {
+                me.btn.style[me.xform] = 'translateX(' + (me.offset) + 'px)';
+            } else {
+                me.btn.style.left = me.offset+'px';
+            }
+            //me.indicator.style[me.xform] = 'translateX('+(me.offset+me.relative)+'px)';
+        },
+
+        _track: function () {
+            var me = this,
+                    now, elapsed, delta, v;
+
+            now = Date.now();
+            elapsed = now - me.timestamp;
+            me.timestamp = now;
+            delta = me.offset - me.frame;
+            me.frame = me.offset;
+
+            v = 1000 * delta / (1 + elapsed);
+            me.velocity = 0.8 * v + 0.2 * me.velocity;
+        },
+
+        autoScroll: function(){
+            var me = this,
+                    elapsed, delta;
+
+            if(me.amplitude) {
+                elapsed = Date.now() - me.timestamp;
+                delta = -me.amplitude * Math.exp(-elapsed / me.timeConstant);
+                if(delta > 0.5 || delta < -0.5) {
+                    me._scroll(me.target + delta);
+                    requestAnimationFrame(me.autoScroll.bind(me));
+                } else {
+                    me._scroll(me.target);
+                }
+            }
+        },
+
+        tap: function(e) {
+            var me = this;
+
+            me.pressed = true;
+            me.reference = me._getPosX(e);
+
+            me.velocity = me.amplitude = 0;
+            me.frame = me.offset;
+            me.timestamp = Date.now();
+            clearInterval(me.ticker);
+            me.ticker = setInterval(me._track.bind(me), 100);
+
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        },
+
+        drag: function(e) {
+            var me = this,
+                    y, delta;
+            if(me.pressed) {
+                y = me._getPosX(e);
+                delta = y - me.reference;
+                if(delta > 2 || delta < -2) {
+                    me.reference = y;
+                    me._scroll(me.offset + delta);
+                }
+            }
+
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        },
+
+        release: function (e) {
+            var me = this;
+
+            me.pressed = false;
+            clearInterval(me.ticker);
+            if(me.velocity > 10 || me.velocity < -10) {
+                me.amplitude = 0.8 * me.velocity;
+                me.target = Math.round(me.offset + me.amplitude);
+                me.timestamp = Date.now();
+                requestAnimationFrame(me.autoScroll.bind(me));
+            }
+
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        }
+
+    };
+
+    new Mover($('.box').get(0));
+</script>
+</body>
+</html>

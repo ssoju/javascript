@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimal-ui" />
+    <title></title>
+    <style>
+        html, body {
+            height: 100%;
+        }
+        body, p, ul, ol, li, dl, dt, dd, form, table, th, td, fieldset, input, textarea, select, button, h1, h2, h3, h4, h5, h6, pre {
+            margin: 0;
+            padding: 0;
+        }
+        button {
+            display: inline-block;
+            margin: 0;
+            padding: 0;
+            border: none;
+            background: none;
+            text-align: center;
+            vertical-align: middle;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+        a, button {
+            -webkit-tap-highlight-color: rgba(0,0,0,0.3);
+        }
+        body, input, textarea, select, table, button, pre {
+            color: #333;
+            font-family: 'Malgun Gothic', Helvetica, Arial, sans-serif;
+            font-size: 13px;
+            line-height: 16px;
+        }
+        #body {
+            height: 100%;
+        }
+        #wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        #contents.img_view {
+            overflow: hidden;
+            position: relative;
+            height: 100%;
+            margin: 0;
+            padding: 0 !important;
+        }
+        #contents {
+            position: relative;
+            left: 0;
+            z-index: 15;
+            width: 100%;
+            min-height: 100%;
+            padding: 12px 16px 105px 16px;
+            -webkit-box-sizing: border-box;
+        }
+        .hide {
+            display: block;
+            overflow: hidden;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            text-indent: -9999px;
+        }
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+        }
+        .img_view .img_control {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 10;
+            width: 100%;
+            height: 50px;
+            background-color: #292c33;
+            opacity: 0.9;
+        }
+        .img_view .img_control .btn_control {
+            display: block;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 50px;
+        }
+        .img_view .img_control button.btn_zoom {
+            margin-left: -50px;
+            background-position: 0 0;
+        }
+        .img_view .img_control button {
+            position: absolute;
+            top: 1px;
+            left: 50%;
+            width: 48px;
+            height: 48px;
+            background: url('http://stimg.emart.com/app/images/content/bg_img_viewer.png') no-repeat 0 0;
+            background-size: 96px 96px;
+        }
+        .img_view .img_control button:disabled {
+            opacity: 0.6;
+        }
+        .img_view .img_control button.btn_out {
+            margin-left: 2px;
+            background-position: -48px 0;
+        }
+        .img_view .img_detail {
+            overflow: hidden;
+            position: relative;
+            z-index: 5;
+            height: 100%;
+            background-color: #ccc;
+        }
+        .img_view .img_detail img {
+            width: 100%;
+            height: 100%;
+        }
+        .none {
+            display: none !important;
+        }
+        input, textarea, select, img {
+            border: none;
+            border-radius: 0;
+            vertical-align: middle;
+            -webkit-appearance: none;
+        }
+        .img_view .img_page button {
+            position: absolute;
+            top: 0;
+            width: 48px;
+            height: 48px;
+            background: url('http://stimg.emart.com/app/images/content/bg_img_viewer.png') no-repeat 0 0;
+            background-size: 96px 96px;
+        }
+        .img_view .img_page button.btn_next {
+            right: 0;
+            background-position: -48px -48px;
+        }
+        .img_view .img_page button {
+             position: absolute;
+             top: 0;
+             width: 48px;
+             height: 48px;
+             background: url('http://stimg.emart.com/app/images/content/bg_img_viewer.png') no-repeat 0 0;
+             background-size: 96px 96px;
+         }
+        .img_view .img_page {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            z-index: 10;
+            width: 100%;
+            height: 48px;
+            background-color: #292c33;
+            opacity: 0.9;
+            text-align: center;
+            line-height: 48px;
+        }
+        .img_view .img_page button.btn_pre {
+            left: 0;
+            background-position: 0 -48px;
+        }
+        .img_view .img_page .num {
+            display: block;
+            color: #b2b2b2;
+            font-size: 16px;
+            font-weight: bold;
+            line-height: 48px;
+        }
+        .img_view .img_page .num em {
+            font-style: normal;
+        }
+        .fc_white {
+            color: #fff;
+        }
+        .img_view .img_page button:disabled {
+            opacity: 0.6;
+        }
+        .img_view .btn_closed {
+            display: block;
+            position: absolute;
+            top: 10px;
+            right: 12px;
+            z-index: 10;
+            height: 29px;
+            padding: 0 10px;
+            border: 1px solid #68696e;
+            border-radius: 3px;
+            color: #ccc;
+            line-height: 29px;
+        }
+    </style>
+</head>
+<body>
+<div id="body">
+    <div id="wrapper">
+        <div class="loading"><span>로딩중</span></div>
+        <!-- contents -->
+        <section id="contents" class="img_view d-img-view">
+            <div class="img_control d-viewer-ui">
+					<span class="btn_control">
+						<button type="button" class="btn_zoom d-plus"><span class="hide">확대</span></button>
+						<button type="button" class="btn_out d-minus" disabled="disabled"><span class="hide">축소</span></button>
+					</span>
+            </div>
+
+            <div class="img_detail d-content" data-width="1535" data-height="2125">
+                <!-- test img -->
+                <img class="none" src="" alt="" data-src="@ad01.jpg">
+                <img class="none" src="" alt="" data-src="@ad02.jpg">
+                <img class="none" src="" alt="" data-src="@ad03.jpg">
+                <!-- //test img -->
+            </div>
+            <div class="img_page d-viewer-ui">
+                <button type="button" class="btn_pre d-prev" style="color:white;" disabled="disabled"></button>
+                <span class="num"><em class="fc_white d-current-page">1</em> / <em class="d-total-page">2</em></span>
+                <button type="button" class="btn_next d-next" style="color:white;"></button>
+            </div>
+            <a href="#" class="btn_closed d-win-close d-viewer-ui">닫기</a>
+        </section>
+        <!-- //contents -->
+    </div>
+</div>
+
+<script src="../../../../lib/jquery.js"></script>
+<script src="../../../../lib/hammer.js"></script>
+<script src="../../../../release/common.js"></script>
+<script src="../../ui/pinchzoomer.js"></script>
+<script>
+$(function () {
+   new common.ui.MultiPageImageViewer('.d-img-view');
+});
+</script>
+</body>
+</html>

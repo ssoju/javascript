@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        div {
+            margin: 0;
+            padding:0;
+        }
+        .active {
+            color:red;
+        }
+        .ui_carousel, .ui_carousel .ui_wrapper_outer, .ui_carousel .ui_wrapper {
+            width:100%;
+            height:100%;
+            position: relative;
+        }
+
+        .ui_carousel .ui_navi {
+            position: absolute;
+            bottom: 0;
+            left:0;
+            right:0;
+            height:22px;
+            text-align:center;
+        }
+        .ui_wrapper_outer {
+            overflow: hidden;
+        }
+        .ui_wrapper {
+            z-index:-1;
+        }
+        .ui_prev {
+            position: absolute;
+            left: 0;
+            top: 50%;
+        }
+        .ui_next {
+            position: absolute;
+            right: 0;
+            top: 50%;
+        }
+
+        .ui_item {
+            height: 100%;
+            float: left;
+        }
+    </style>
+
+    <script src="../../../../lib/jquery.js"></script>
+    <script src="../../../../release/common.js"></script>
+    <script src="../../ui/response-carousel.js"></script>
+</head>
+<body>
+<div style="width:100%;height:240px;">
+<div class=" ui_carousel">
+    <div class="ui_wrapper_outer">
+        <nav class="ui_navi">
+            <button type="button" class="ui_control ui_play" title="배너 시작">▶</button>
+            <!--button type="button" class="btn stop ui_control ui_stop" title="배너 멈춤">■</button-->
+            <span class="ui_indicators_wrap">
+                <a href="#" class="ui_indicator" title="1번 배너 제목(혹은 내용) 보기"><span>○</span></a>
+            </span>
+        </nav>
+        <button type="button" class="ui_control ui_prev" title="이전 배너 보기">&lt;</button>
+        <button type="button" class="ui_control ui_next" title="다음 배너 보기">&gt;</button>
+        <div class="ui_wrapper">
+            <div class="ui_item" id="slide01" style="text-align: center; font-size: 30px; line-height: 200px; width: 219px; background-color: rgb(55, 77, 35);">1</div>
+            <div class="ui_item" id="slide02" style="text-align: center; font-size: 30px; line-height: 200px; width: 219px; background-color: rgb(209, 131, 204);">2</div>
+            <div class="ui_item" id="slide03" style="text-align: center; font-size: 30px; line-height: 200px; width: 219px; background-color: rgb(165, 57, 117);">3</div>
+            <div class="ui_item" id="slide03" style="text-align: center; font-size: 30px; line-height: 200px; width: 219px; background-color: rgb(103, 182, 250);">4</div>
+            <div class="ui_item" id="slide03" style="text-align: center; font-size: 30px; line-height: 200px; width: 219px; background-color: rgb(192, 140, 189);">5</div>
+            <div class="ui_item" id="slide03" style="text-align: center; font-size: 30px; line-height: 200px; width: 219px; background-color: rgb(220, 209, 86);">6</div>
+            <div class="ui_item" id="slide03" style="text-align: center; font-size: 30px; line-height: 200px; width: 219px; background-color: rgb(89, 122, 124);">7</div>
+        </div>
+    </div>
+</div>
+</div>
+
+<script>
+    $('.ui_carousel').responseCarousel({
+        activeClass: 'active'
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        .slide_wrap	a	{text-decoration:none}
+        .slide_wrap	a:hover,
+        .slide_wrap	a:focus	{color:#000; text-decoration:underline}
+        .slide_wrap	ul	{margin:0; padding:0; list-style:none}
+        .slide_wrap	button	{cursor:pointer}
+        .slide_wrap	img	{border:0}
+
+        .slide_wrap	{}
+        .slide_wrap	.btn	{display:block; position:absolute; top:50%; width:30px; height:50px; margin-top:-25px; z-index:2}
+        .slide_wrap	.prev	{left:0}
+        .slide_wrap	.next	{right:0}
+        .slide_posi	{position:relative; width:500px; height:282px; overflow:hidden}
+        .slide_posi	.indicators	{position:absolute; right:10px; bottom:10px; left:10px; text-align:center; z-index:2}
+        .slide_posi	.indicators	.active	{color:#fff; font-weight:bold}
+        .slide_posi	.indicators	.btn	{display:inline; position:static; width:auto; height:auto; margin:0; vertical-align:middle}
+
+
+        .slide	{display:none; position:absolute; top:0; left:0; width:500px; height:282px; overflow:hidden; z-index:1}
+        .slide	.txt_wrap	{position:absolute; top:10px; left:10px}
+        .slide	p	{margin:0; color:#fff; font-size:14px; font-weight:normal}
+        .slide	.title	{font-size:18px}
+        .slide	img	{width:500px; height:282px}
+
+        .slide.active	{display:block}
+    </style>
+
+    <script src="../../../../lib/jquery.js"></script>
+    <script src="../../../../release/common.js"></script>
+    <script src="../../ui/carousel.js"></script>
+</head>
+<body>
+
+<div class="slide_wrap ui_carousel">
+    <h1 class="slide_title">타이틀</h1> <!-- 어떠한 tag를 사용해도 무관합니다 -->
+    <div class="slide_posi">
+        <nav class="indicators">
+            <button type="button" class="btn play ui_control ui_play" title="배너 시작">▶</button>
+            <!--button type="button" class="btn stop ui_control ui_stop" title="배너 멈춤">■</button-->
+            <a href="#" class="ui_indicator" title="1번 배너 제목(혹은 내용) 보기"><span>○</span></a>
+            <a href="#" class="ui_indicator" title="2번 배너 제목(혹은 내용) 보기"><span>○</span></a>
+            <a href="#" class="ui_indicator" title="3번 배너 제목(혹은 내용) 보기"><span>○</span></a>
+        </nav>
+        <button type="button" class="btn prev ui_control ui_prev" title="이전 배너 보기">&lt;</button>
+        <button type="button" class="btn next ui_control ui_next" title="다음 배너 보기">&gt;</button>
+        <div class="slide_list ui_wrapper">
+            <div class="slide ui_item" id="slide01">
+                <header class="txt_wrap">
+                    <p class="title">1번 배너 제목</p>
+                    <p>1번 배너 내용</p>
+                    <a href="#">링크</a>
+                </header>
+                <figure class="img_wrap">
+                    <img src="./images/FULL_01.gif" alt="">
+                </figure>
+            </div>
+            <div class="slide ui_item" id="slide02">
+                <header class="txt_wrap">
+                    <p class="title">2번 배너 제목</p>
+                    <p>2번 배너 내용</p>
+                </header>
+                <figure class="img_wrap">
+                    <img src="./images/FULL_02.gif" alt="">
+                </figure>
+            </div>
+            <div class="slide ui_item" id="slide03">
+                <header class="txt_wrap">
+                    <p class="title">3번 배너 제목</p>
+                    <p>3번 배너 내용</p>
+                </header>
+                <figure class="img_wrap">
+                    <img src="./images/FULL_03.gif" alt="">
+                </figure>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $('.ui_carousel').carousel({
+        activeClass: 'active'
+    });
+</script>
+</body>
+</html>
