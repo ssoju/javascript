@@ -1,7 +1,7 @@
 /*!
  * @author slider
  * @email comahead@gmail.com
- * @create 2015-01-09
+ * @create 2013-01-09
  * @license MIT License
  */
 (function (ctx, $, core, undefined) {

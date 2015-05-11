@@ -1,7 +1,7 @@
 /**
  * Authror: 김승일
  * Email: comahead@gmail.com
- * Created date: 2014-04-30
+ * Created date: 2013-04-30
  * Description: 지오로케이션 모듈
  */
 (function ($, core, undefined) {

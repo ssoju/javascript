@@ -1,7 +1,7 @@
 /*!
  * @author appcmd.js
  * @email comahead@gmail.com
- * @create 2015-01-16
+ * @create 2013-01-16
  * @license MIT License
  */
 (function ($, core, undefined) {

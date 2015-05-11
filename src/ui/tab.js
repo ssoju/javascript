@@ -1,7 +1,7 @@
 /*!
  * @author tab.js
  * @email comahead@gmail.com
- * @create 2014-12-08
+ * @create 2013-12-08
  * @license MIT License
  */
 (function ($, core) {

@@ -1,7 +1,7 @@
 /*!
  * @author axl.ui.calendar.js
  * @email comahead@gmail.com
- * @create 2014-11-25
+ * @create 2013-11-25
  * @license MIT License
  */
 (function ( $, core, undefined) {
@@ -55,7 +55,7 @@
                 label: '<span class="ui_calendar_day" title="{{-title}}">{{=day}}</span>',
                 button: '<button class="ui_calendar_day" title="{{-title}}" {{-disabled}}>{{=day}}</button>'
             },
-            holidays: [],               // 휴일 날짜 -> ['2014-04-05', '2014-05-12'],
+            holidays: [],               // 휴일 날짜 -> ['2013-04-05', '2013-05-12'],
             summary: '캘린더입니다. 글은 일요일, 월요일, 화요일, 수요일, 목요일, 금요일, 토요일 순으로 나옵니다.',
             colWidth: '32px', // 셀 너비
             caption: '달력',

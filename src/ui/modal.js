@@ -1,7 +1,7 @@
 /*!
  * @author axl.ui.modal.js
  * @email comahead@gmail.com
- * @create 2014-11-25
+ * @create 2013-11-25
  * @license MIT License
  */
 (function ($, core, undefined) {

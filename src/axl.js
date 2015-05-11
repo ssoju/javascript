@@ -1929,8 +1929,8 @@ window.LIB_DIV_DEBUG = false;
              * @param {string} date 날짜 문자열
              * @returns {boolean} 유효한 날자인지 여부
              * @example
-             * axl.date.isValid('2014-13-23'); // false
-             * axl.date.isValid('2014-11-23'); // true
+             * axl.date.isValid('2013-13-23'); // false
+             * axl.date.isValid('2013-11-23'); // true
              */
             isValid: function(date) {
                 try {
@@ -1948,8 +1948,8 @@ window.LIB_DIV_DEBUG = false;
              * @param {Date} end 만료일시
              * @return {boolean} 두날짜 사이에 있는지 여부
              * @example
-             * axl.date.between('2014-09-12', '2014-09-11', '2014=09-12'); // true
-             * axl.date.between('2014-09-12', '2014-09-11', '2014=09-11') // false
+             * axl.date.between('2013-09-12', '2013-09-11', '2013=09-12'); // true
+             * axl.date.between('2013-09-12', '2013-09-11', '2013=09-11') // false
              */
             between: function (date, start, end) {
                 if(!date.getDate) { date = core.date.parse(date); }
@@ -1967,8 +1967,8 @@ window.LIB_DIV_DEBUG = false;
              * @param {Date} date2 날짜2
              * @return {number} -1: date1가 이후, 0: 동일, 1:date2가 이후
              * @example
-             * var d1 = new Date(2014, 11, 23);
-             * var d2 = new Date(2014, 09, 23);
+             * var d1 = new Date(2013, 11, 23);
+             * var d2 = new Date(2013, 09, 23);
              *
              * axl.date.compare(d1, d2); // -1
              * axl.date.compare(d1, d1); // 0
@@ -1983,7 +1983,7 @@ window.LIB_DIV_DEBUG = false;
              * @param {Date|string} date2 날짜2
              * @return {boolean} 두 날짜의 년월일이 동일한지 여부
              * @example
-             * axl.date.equalsYMH('2014-12-23 11:12:23', '2014-12-23 09:00:21'); // true
+             * axl.date.equalsYMH('2013-12-23 11:12:23', '2013-12-23 09:00:21'); // true
              */
             equalsYMH: function(a, b) {
                 var ret = true;
@@ -2004,7 +2004,7 @@ window.LIB_DIV_DEBUG = false;
              * @param {Date} date 체크할 날짜
              * @return {boolean} 주어진 날짜가 지정된 날짜의 이후인지 체크
              * @example
-             * axl.date.isAfter('2014-12-23', '2013-12-23'); // false
+             * axl.date.isAfter('2013-12-23', '2013-12-23'); // false
              */
             isAfter: function (value, date) {
                 return compare(value, date || new Date()) === 1;
@@ -2017,7 +2017,7 @@ window.LIB_DIV_DEBUG = false;
              * @param {Date} date 체크할 날짜
              * @return {boolean} 주어진 날짜가 지정된 날짜의 이후인지 체크
              * @example
-             * axl.date.isBefore('2014-12-23', '2013-12-23'); // true
+             * axl.date.isBefore('2013-12-23', '2013-12-23'); // true
              */
             isBefore: function (value, date) {
                 return compare(value, date || new Date()) === -1;
@@ -2030,10 +2030,10 @@ window.LIB_DIV_DEBUG = false;
              * @param {string} format 포맷
              * @returns {Date|string} format지정값에 따라 결과를 날짜형 또는 문자열로 변환해서 반환
              * @example
-             * axl.date.calcDate('2014-12-23', '-3m'); // 2014-09-23(Date)
-             * axl.date.calcDate('2014-12-23', '-3m', 'yyyy/MM/dd'); // '2014/09/23'(string)
+             * axl.date.calcDate('2013-12-23', '-3m'); // 2013-09-23(Date)
+             * axl.date.calcDate('2013-12-23', '-3m', 'yyyy/MM/dd'); // '2013/09/23'(string)
              *
-             * axl.date.calcDate('2014-12-23', '-10d'); // 2014-12-13(Date)
+             * axl.date.calcDate('2013-12-23', '-10d'); // 2013-12-13(Date)
              */
             calcDate: function(date, type, format) {
                 date = this.parse(date);
@@ -2069,11 +2069,11 @@ window.LIB_DIV_DEBUG = false;
              * @param {string} dateStringInRange 날짜 형식의 문자열
              * @return {Date} 주어진 날짜문자열을 파싱한 값을 Date형으로 반환
              * @example
-             * axl.date.parse('2014-11-12');
-             * // Wed Nov 12 2014 00:00:00 GMT+0900 (대한민국 표준시)
+             * axl.date.parse('2013-11-12');
+             * // Wed Nov 12 2013 00:00:00 GMT+0900 (대한민국 표준시)
              *
              * axl.date.parse('20141112');
-             * // Wed Nov 12 2014 00:00:00 GMT+0900 (대한민국 표준시)
+             * // Wed Nov 12 2013 00:00:00 GMT+0900 (대한민국 표준시)
              */
             parse: (function() {
                 var isoExp = /^\s*(\d{4})(\d{2})(\d{2})(\d{2})?(\d{2})?(\d{2})?\s*$/;
@@ -2113,7 +2113,7 @@ window.LIB_DIV_DEBUG = false;
              * @param {Date} d1 날짜 1
              * @param {Date} d2 날짜 2
              * @return {number} 두날짜의 월차
-             * axl.date.monthDiff('2011-02-12', '2014-11-23'); // 44
+             * axl.date.monthDiff('2011-02-12', '2013-11-23'); // 44
              */
             monthDiff: function(d1, d2) {
                 d1 = this.parse(d1);
@@ -2133,7 +2133,7 @@ window.LIB_DIV_DEBUG = false;
              * @param {number} month 월
              * @return {Date} 주어진 년월이 마지막 날짜
              * @example
-             * axl.date.daysInMonth(2014, 2); // 28
+             * axl.date.daysInMonth(2013, 2); // 28
              */
             daysInMonth: function(year, month) {
                 var dd = new Date(year|0, month|0, 0);
@@ -2277,7 +2277,7 @@ window.LIB_DIV_DEBUG = false;
              * @param {Date} date 날짜
              * @returns {number}
              * @example
-             * axl.date.weekOfYear(new Date); // 2 // 2015-01-05를 기준으로 했을 때
+             * axl.date.weekOfYear(new Date); // 2 // 2013-01-05를 기준으로 했을 때
              */
             weekOfYear : (function() {
                 var ms1d = 1000 * 60 * 60 * 24,
@@ -2297,7 +2297,7 @@ window.LIB_DIV_DEBUG = false;
              * @param {number} y 년도
              * @returns {boolean}
              * @example
-             * axl.date.isLeapYear(2014); // false
+             * axl.date.isLeapYear(2013); // false
              */
             isLeapYear: function ( y ) {
                 if ( toString.call( y ) === '[object Date]' ) { y = y.getUTCFullYear(); }
@@ -2311,8 +2311,8 @@ window.LIB_DIV_DEBUG = false;
              * @param {number} value 가감 크기
              * @returns {Date} 가감된 날짜의 Date객체
              * @example
-             * // 2014-06-10에서 y(년도)를 -4 한 값을 계산
-             * var d = axl.date.add(new Date(2014, 5, 10), 'y', -4); // 2010-06-10
+             * // 2013-06-10에서 y(년도)를 -4 한 값을 계산
+             * var d = axl.date.add(new Date(2013, 5, 10), 'y', -4); // 2010-06-10
              */
             add: function(date, interval, value) {
                 var d = new Date(date.getTime());
@@ -3661,7 +3661,7 @@ window.LIB_DIV_DEBUG = false;
 /*!
  * @author axl.ui.js
  * @email comahead@gmail.com
- * @create 2014-12-02
+ * @create 2013-12-02
  * @license MIT License
  */
 (function ($, core) {

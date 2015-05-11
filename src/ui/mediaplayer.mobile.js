@@ -1,5 +1,5 @@
 /**
- * Created by comahead on 2014. 7. 5..
+ * Created by comahead on 2013. 7. 5..
  * @author 김승일
  */ (function($, core, ui, undefined) {
     "use strict";

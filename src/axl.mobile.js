@@ -2,7 +2,7 @@
  * 모바일전용 스크립트
  *
  * @author 김승일
- * @version 1.0 (2014. 5. 8) 최초생성
+ * @version 1.0 (2013. 5. 8) 최초생성
  * @depends jQuery 1.9.1
  */ (function($, core, ui, undefined) {
     "use strict";

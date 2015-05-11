@@ -1,7 +1,7 @@
 /*!
  * @author beauty-checkbox
  * @email comahead@gmail.com
- * @create 2015-03-20
+ * @create 2013-03-20
  * @license MIT License
  */
 (function (ctx, $, core, undefined) {
