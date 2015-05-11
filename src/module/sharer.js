@@ -17,10 +17,6 @@
         APP: 4
     };
 
-    /**
-     * @namespace
-     * @name common.module.Sharer
-     */
     var Sharer = /** @lends common.module.Sharer */{
         types: /** @lends common.module.Sharer.types */{ //['facebook', 'twitter', 'kakaotalk', 'kakaostory'/* , 'googleplus'*/],
             'facebook': /** @lends common.module.Sharer.types.facebook */{
@@ -169,8 +165,6 @@
             });
         }
     };
-
-    common.module('Sharer', Sharer);
 
     if (typeof define === "function" && define.amd) {
         define([], function() {

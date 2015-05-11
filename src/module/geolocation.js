@@ -11,16 +11,9 @@
      * 네이티브 지오로케이션를 좀더 사용하기 쉽도록 작성된 Wrapper 클래스
      * @class
      * @name common.module.Geolocation
-     * @example
-     * var geo = common.module.Geolocation.getInstance();
-     * geo.getCurrentPosition({
-     *    timeout: 20000
-     * }).done(function(position) {
-     *     // position.coords.latitude;
-     *     // position.coords.longitude;
-     * });
+     *
      */
-    var Geolocation = core.Class(/**@lends common.module.Geolocation# */{
+    var Geolocation = core.Class(/**@lends common.module.Geolocation */{
         $singleton: true, // 싱글톤
         /**
          * 생성자
@@ -133,7 +126,6 @@
         }
     });
 
-    common.module('Geolocation', Geolocation);
     if (typeof define === "function" && define.amd) {
         define([], function() {
             return Geolocation;

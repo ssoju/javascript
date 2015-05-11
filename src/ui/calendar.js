@@ -1,7 +1,7 @@
 /*!
  * @author common.ui.calendar.js
  * @email comahead@vi-nyl.com
- * @create 2013-04-25
+ * @create 2014-11-25
  * @license MIT License
  */
 (function ( $, core, undefined) {
@@ -43,17 +43,17 @@
             startSelectYear: '2004',
             endSelectYear: '+1',
             template: {
-                header: '<button class="ui-calendar-prev">이전달</button>' +
-                '<span class="ui-calendar-text"></span>' +
-                '<button class="ui-calendar-next">다음달</button>',
+                header: '<button class="ui_calendar_prev">이전달</button>' +
+                '<span class="ui_calendar_text"></span>' +
+                '<button class="ui_calendar_next">다음달</button>',
 
-                selectHeader: '<a href="#" class="ui-calendar-prev"><span class="hide">이전달</span></a>' +
-                '<select class="ui-calendar-years y_selct" title="해당년 선택란"></select>' +
-                '<select class="ui-calendar-months m_selct" title="해당월 선택란"><option value="1">01</option><option value="2">02</option><option value="3">03</option><option value="4">04</option><option value="5">05</option><option value="6">06</option><option value="7">07</option><option value="8">08</option><option value="9">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option></select>' +
-                '<a href="#" class="ui-calendar-next"><span class="hide">다음달</span></a>',
+                selectHeader: '<a href="#" class="ui_calendar_prev"><span class="hide">이전달</span></a>' +
+                '<select class="ui_calendar_years y_selct" title="해당년 선택란"></select>' +
+                '<select class="ui_calendar_months m_selct" title="해당월 선택란"><option value="1">01</option><option value="2">02</option><option value="3">03</option><option value="4">04</option><option value="5">05</option><option value="6">06</option><option value="7">07</option><option value="8">08</option><option value="9">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option></select>' +
+                '<a href="#" class="ui_calendar_next"><span class="hide">다음달</span></a>',
 
-                label: '<span class="ui-calendar-day" title="{{-title}}">{{=day}}</span>',
-                button: '<button class="ui-calendar-day" title="{{-title}}" {{-disabled}}>{{=day}}</button>'
+                label: '<span class="ui_calendar_day" title="{{-title}}">{{=day}}</span>',
+                button: '<button class="ui_calendar_day" title="{{-title}}" {{-disabled}}>{{=day}}</button>'
             },
             holidays: [],               // 휴일 날짜 -> ['2014-04-05', '2014-05-12'],
             summary: '캘린더입니다. 글은 일요일, 월요일, 화요일, 수요일, 목요일, 금요일, 토요일 순으로 나옵니다.',
@@ -292,12 +292,12 @@
                 opts = me.options,
                 timer, tmpl;
 
-            tmpl = '<div class="ui-calendar-container">' +
+            tmpl = '<div class="ui_calendar_container">' +
             (opts.header !== false ?
-            '<div class="ui-calendar-header">' +
+            '<div class="ui_calendar_header">' +
             (opts.header && opts.useSelectbox ? opts.template.selectHeader : opts.template.header) +
             '</div>' : '') +
-            '<div class="ui-calendar-date"></div>' +
+            '<div class="ui_calendar_date"></div>' +
             '</div>'
 
             me._remove();
@@ -315,13 +315,13 @@
                 me.$el.after(me.$calendar);
             }
             me.$calendar.off('.calendar')
-                .on('click.calendar mousedown.calendar', '.ui-calendar-prev, .ui-calendar-next', function(e){
+                .on('click.calendar mousedown.calendar', '.ui_calendar_prev, .ui_calendar_next', function(e){
                     // 이전 / 다음
                     e.preventDefault();
                     if(me.$el.hasClass('disabled')){ return; }
 
                     var $el = $(e.currentTarget),
-                        isPrev = $el.hasClass('ui-calendar-prev');
+                        isPrev = $el.hasClass('ui_calendar_prev');
 
                     switch (e.type) {
                         case 'click':
@@ -341,7 +341,7 @@
                             break;
                     }
                 })
-                .on('click.calendar', '.ui-calendar-day', function(e) {
+                .on('click.calendar', '.ui_calendar_day', function(e) {
                     // 날짜 클릭
                     e.preventDefault();
                     if(me.$el.hasClass('disabled')){ return; }
@@ -356,7 +356,7 @@
                         me.$input.val(format)
                     }
 
-                    e = $.Event('selected.calendar');
+                    e = $.Event('calendar:selected');
                     e.target = e.currentTarget = this;
                     me.$el[opts.isBubble ? 'trigger' : 'triggerHandler'](e, {
                         target: this,
@@ -369,8 +369,8 @@
                     });
 
                     if(me.isInline && opts.isClickActive !== false){
-                        me.$calendar.find('.ui-calendar-active').removeClass('ui-calendar-active');
-                        $this.addClass('ui-calendar-active');
+                        me.$calendar.find('.ui_calendar_active').removeClass('ui_calendar_active');
+                        $this.addClass('ui_calendar_active');
                     }
 
                     if(!e.isDefaultPrevented() && !me.isInline) {
@@ -381,8 +381,8 @@
                 });
 
             if(opts.header && opts.useSelectbox) {
-                me.$yearSelectbox = me.$calendar.find('.ui-calendar-years');
-                me.$monthSelectbox = me.$calendar.find('.ui-calendar-months');
+                me.$yearSelectbox = me.$calendar.find('.ui_calendar_years');
+                me.$monthSelectbox = me.$calendar.find('.ui_calendar_months');
 
                 me.$yearSelectbox[0].options.length = 0;
                 for(var i = me.startSelectYear; i <= me.endSelectYear; i++) {
@@ -472,14 +472,14 @@
                 isOtherMonth = false,
                 i, j, y, m, d, week, len, cell, customClass;
 
-            html += '<table class="ui-calendar-table" border="1" summary="'+opts.summary+'"><caption>'+opts.caption+'</caption>';
+            html += '<table class="ui_calendar_table" border="1" summary="'+opts.summary+'"><caption>'+opts.caption+'</caption>';
             html += '<colgroup>';
             for(i = 0; i < 7; i++) {
                 html += '<col width="'+opts.colWidth+'" />';
             }
             html += '</colgroup><thead>';
             for(i = 0; i < 7; i++) {
-                html += '<th class="ui-calendar-dayname ' + (i === 0 ? ' ui-calendar-sunday' : i === 6 ? ' ui-calendar-saturday' : '') + '" scope="col">';
+                html += '<th class="ui_calendar_dayname ' + (i === 0 ? ' ui_calendar_sunday' : i === 6 ? ' ui_calendar_saturday' : '') + '" scope="col">';
                 html += opts.weekNames[i];
                 html += '</th>';
             }
@@ -510,13 +510,13 @@
                     customClass = me.customDays ? ' '+me._getClassCustomDay(y, m, d) : '';
                     cell.cls = customClass;
 
-                    html += '<td class="ui-calendar-'+ dateUtil.format(nowd, 'yyyyMMdd') + ' ui-calendar-cell';
+                    html += '<td class="ui_calendar_'+ dateUtil.format(nowd, 'yyyyMMdd') + ' ui_calendar_cell';
                     if(opts.showOtherMonths && isOtherMonth || !isOtherMonth) {
-                        html += (isHoliday ? ' ui-calendar-holiday' : '')
-                        + (j === 0 ? ' ui-calendar-sunday' : j === 6 ? ' ui-calendar-saturday' : '')
-                        + (isToday ? ' ui-calendar-today' : '');
+                        html += (isHoliday ? ' ui_calendar_holiday' : '')
+                        + (j === 0 ? ' ui_calendar_sunday' : j === 6 ? ' ui_calendar_saturday' : '')
+                        + (isToday ? ' ui_calendar_today' : '');
                     }
-                    html += (isOtherMonth ? ' ui-calendar-other' : '')
+                    html += (isOtherMonth ? ' ui_calendar_other' : '')
                     + cell.cls
                     + '" data-year="'+y+'" data-month="'+m+'" data-day="'+d+'">';
 
@@ -546,8 +546,8 @@
             } // for
             html += '</tbody></table>';
 
-            me.$calendar.find('.ui-calendar-date').html(html);
-            me.$calendar.find('.ui-calendar-text').text(dateUtil.format(me.currDate, 'yyyy-MM'));
+            me.$calendar.find('.ui_calendar_date').html(html);
+            me.$calendar.find('.ui_calendar_text').text(dateUtil.format(me.currDate, 'yyyy-MM'));
 
             if(opts.header && opts.useSelectbox){
                 me._selectCurrentDate();
@@ -650,10 +650,10 @@
             }
 
             /*
-             me.$calendar.find('.ui-calendar-holiday').removeClass('ui-calendar-holiday');
+             me.$calendar.find('.ui_calendar_holiday').removeClass('ui_calendar_holiday');
              core.each(me.options.holidays, function(day, i) {
              day = dateUtil.parse(day);
-             me.findDateCell(day).addClass('ui-calendar-holiday');
+             me.findDateCell(day).addClass('ui_calendar_holiday');
              });
              */
             me._renderDate();
@@ -678,11 +678,11 @@
 
             me._renderDate();
             /*
-             me.$calendar.find('td.ui-calendar-today').removeClass('ui-calendar-today');
+             me.$calendar.find('td.ui_calendar_today').removeClass('ui_calendar_today');
              if(to.getFullYear() === cur.getFullYear()
              && to.getMonth() === cur.getMonth()) {
              // 오늘날짜가 현재월에 해당하면, 활성화 해줌
-             me.findDateCell(to).addClass('ui-calendar-today');
+             me.findDateCell(to).addClass('ui_calendar_today');
              }
              */
         },

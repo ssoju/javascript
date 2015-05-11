@@ -1,7 +1,6 @@
 /*!
  * @author 김승일
  * @email comahead@vi-nyl.com
- * @created 2013-03-12
  */;
 (function($, core, undefined) {
 
@@ -24,7 +23,7 @@
                     me.update();
                 });
             },
-            
+            // 기본작업 140127_수정
             init: function() {
                 var me = this,
                     timer = null,
@@ -37,7 +36,8 @@
                     ajaxDone = true;
                 })
 
-                me.$('button.more').bind('click.masonry', function() {
+                //더보기 클릭시 레이아웃 재정렬 140127_추가
+                $('#conts > button.more').bind('click.tiles', function() {
                     //nextId = $("#scrollArtists").find('div>ul>li').last().attr('data-nextId');
                     var start = me.$el.find(me.options.itemSelector).length;
                     clearInterval(timer2);

@@ -8,7 +8,11 @@
     "use strict";
     var $doc = $(document),
         $win = $(window),
-        isTouch = core.browser.isTouch;
+        isTouch = core.browser.isTouch,
+		KEY_PAGEUP = 33,
+		KEY_PAGEDOWN = 34,
+		KEY_UP = 38,
+		KEY_DOWN = 40;
 
     // 커스텀 스크롤 클래스
     core.ui('Scrollview', {
@@ -36,12 +40,38 @@
                 return;
             }
 
+
             me.scrollRate = me.containerHeight / me.contentHeight;
             me.scrollBarHeight = me.containerHeight * me.scrollRate;
             me.scrollHeight = me.containerHeight - me.scrollBarHeight;
             me.isMouseDown = false;
             me.moveY = 0;
 
+            me.smoothAnimate = new core.ui.SmoothAnimator({max: me.$scrollArea.prop('scrollHeight') - me.containerHeight, min: 0});
+            me.smoothAnimate.on('move', function(e, data) {
+                me.$scrollArea.scrollTop(data.delta);
+            });
+
+            new core.ui.Gesture(me.$scrollBar, {
+                direction: 'vertical'
+            });
+            me.$scrollBar.on((function(){
+                var startY = 0;
+                return {
+                    'gesturestart': function(e) {
+                        me.isMouseDown = true;
+                        startY = parseInt(me.$scrollBar.css('top'), 10);
+                    },
+                    'gesturemove': function(e, data) {
+                        me._move(startY + data.diff.y);
+                    },
+                    'gestureend': function(){
+                        me.isMouseDown = false;
+                    }
+                };
+            })());
+
+            /*
             me.$scrollBar.on('mousedown touchstart', function(e) {
                 e.preventDefault();
                 if (isTouch) {
@@ -51,81 +81,96 @@
                 me.isMouseDown = true;
                 me.currY = parseInt($(this).css('top'), 10);
                 me.downY = me._getY(e);
+
+                $doc.on(['mouseup',' touchend',' mousemove',' touchmove', ' touchcancel', ''].join('.'+me.cid+'scrollbar'), function(e) {
+                    if (!me.isMouseDown) {
+                        return;
+                    }
+
+                    switch (e.type) {
+                        case 'mouseup':
+                        case 'touchend':
+                        case 'touchcancel':
+                            me.isMouseDown = false;
+                            me.moveY = 0;
+
+                            $doc.off('.'+me.cid+'scrollbar');
+                            break;
+                        case 'mousemove':
+                        case 'touchmove':
+                            me.moveY = me._getY(e);
+                            me._move(me.currY - (me.downY - me.moveY));
+
+                            e.preventDefault();
+                            break
+                    }
+                });
                 return false;
             });
-
-            $doc.on('mouseup touchend mousemove touchmove', function(e) {
-                if (!me.isMouseDown) {
-                    return;
-                }
-
-                switch (e.type) {
-                    case 'mouseup':
-                    case 'touchend':
-                        me.isMouseDown = false;
-                        me.moveY = 0;
-                        break;
-                    case 'mousemove':
-                    case 'touchmove':
-                        me.moveY = me._getY(e);
-                        me._move(me.currY - (me.downY - me.moveY));
-
-                        e.preventDefault();
-                        break
-                }
-            });
+            */
 
             me.$scrollArea.on('scroll', function() {
                 if (!me.isMouseDown) {
-                    me.update();
+                    me._updateScrollBar();
                 }
+                me.smoothAnimate.goto(me.$scrollArea.scrollTop(), false);
             }).on('mousewheel DOMMouseScroll', function(e) {
                 e.preventDefault();
                 e = e.originalEvent;
                 var delta = e.wheelDelta || -e.detail;
 
-                me.$scrollArea.scrollTop(me.$scrollArea.scrollTop() - delta);
+                me.smoothAnimate.goto(me.$scrollArea.scrollTop() - delta);
             });
 
-            if(isTouch) {
-                me.$scrollArea.on('touchstart touchmove touchend touchcancel', function(){
-                    var isTouchDown = false,
-                        moveY = 0,
-                        currY = 0,
-                        downY = 0;
-                    return function(e) {
-                        //e.stopPropagation();
-                        switch(e.type) {
-                            case 'touchstart':
-                                isTouchDown = true;
-                                moveY = 0;
-                                currY = me.$scrollArea.scrollTop();
-                                downY = me._getY(e);
-                                break;
-                            case 'touchmove':
-                                if(!isTouchDown) { return; }
-                                moveY = me._getY(e);
-                                me.$scrollArea.scrollTop(currY + (downY - moveY));
-                                break;
-                            case 'touchend':
-                            case 'touchcancel':
-                                isTouchDown = false;
-                                moveY = 0;
-                                break;
-                        }
-                    };
-                }());
-            }
+            new core.ui.Gesture(me.$scrollArea, {
+                direction: 'vertical'
+            });
 
-            me.update();
+            me.$scrollArea.on((function() {
+                return {
+                    'gesturestart': function(e) {
+                        me.smoothAnimate.start(0, me.$scrollArea.scrollTop());
+                    },
+                    'gesturemove': function(e, data) {
+                        me.smoothAnimate.move(data.diff.y);
+                    },
+                    'gestureend': function(e) {
+                        me.smoothAnimate.end();
+                    }
+                }
+            })());
+
+            if(!isTouch) {
+				me.$el.attr('tabindex', 0).on('keyup', function(e) {
+					var isUpDown = e.which === KEY_UP || e.which === KEY_DOWN,
+						isPageUpDown = e.which === KEY_PAGEUP || e.which === KEY_PAGEDOWN,
+						isUp = e.which === KEY_UP || e.which === KEY_PAGEUP;;
+
+					if(!isUpDown && !isPageUpDown){ return; }
+					if(e.target !== this && e.target.className.indexOf('ui_scrollbar') < 0){ return; }
+
+					me.scroll(isUp ? 'up' : 'down', isUpDown ? .1 : .5);
+				});
+			}
+
+            me._updateScrollBar();
         },
 
-        update: function() {
+		scroll: function(dir, r){
+			var me = this;
+			dir = dir === 'up' ? -1 : 1;
+			r = r || .1;
+			
+			me.$scrollArea.scrollTop(me.$scrollArea.scrollTop() + (me.containerHeight * r * dir));
+		},
+
+        _updateScrollBar: function() {
             var me = this;
 
-            me.contentTop = me.$scrollArea.scrollTop();
-            me.$scrollBar.css('height', me.scrollBarHeight).find('span.bg_mid').css('height', me.scrollBarHeight - 11);
-            me.$scrollBar.css('top', me.contentTop * me.scrollRate);
+            me.$scrollBar.css({
+				'height': me.scrollBarHeight,
+				'top': me.$scrollArea.scrollTop() * me.scrollRate
+			}).find('span.bg_mid').css('height', me.scrollBarHeight - 11);
         },
         _move: function(top) {
             var me = this;

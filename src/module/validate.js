@@ -1,3 +1,6 @@
+/*!
+ * @author 김승일(comahead@vi-nyl.com)
+*/
 (function (undefined) {
 
     var messages = {
@@ -112,6 +115,14 @@
         return el.name;
     }
 
+    function byteLength(value) {
+        var l = 0;
+        for (var i=0, len = value.length; i < len; i++) {
+            l += (value.charCodeAt(i) > 255) ? 2 : 1;
+        }
+        return l;
+    }
+
     var FormValidator = function (el, options) {
         var me = this;
         me.errors = [];
@@ -121,6 +132,14 @@
         me.afters = {};
         me.options = options || {};
 
+        $.each(me.options.validBefore||{}, function(k, v) {
+            me.addValidBefore(k, v);
+        });
+
+        $.each(me.options.validAfter||{}, function(k, v) {
+            me.addValidAfter(k, v);
+        });
+
         me.form.addEventListener('submit', function(e) {
             if(!me.run()){
                 e.preventDefault();
@@ -129,130 +148,13 @@
         })
     };
 
-    FormValidator.prototype = {
-        constructor: FormValidator,
-        setMessage: function (rule, message) {
-            this.messages[rule] = message;
-
-            return this;
-        },
-        registerCallback: function (name, handler, isBefore) {
-            if (name && typeof name === 'string' && handler && typeof handler === 'function') {
-                if(isBefore){ this.befores[name] = handler; }
-                else { this.afters[name] = handler; }
-            }
-
-            return this;
-        },
-        addRule: function(){
-            /*
-             {
-             message: '',
-             regexp: //
-             }
-             */
-        },
-        run: function () {
-            if(!this._validateForm()){
-                this._showError();
-            }
-        },
-        _normalizeMessage: function(el, msg, params) {
-            return msg && msg.replace(/\[name\]/, function(v, s) {
-                    return getInputName(el);
-                }).replace(/\{([a-z0-9-]+)\}/g, function(v, s) {
-                    if(/[0-9]+/.test(s)){
-                        return params[s|0] || '';
-                    } else {
-                        return el.getAttribute('data-' + s) || params[s] || 'unknown';
-                    }
-                }).replace(/\[([a-z0-9-]+)\]/g, function(v, s) {
-                    return el.getAttribute(s) || '';
-                }) || 'unknown msg';
-        },
-        _showError: function() {
-            var error = this.errors[0],
-                el = error.el,
-                params = error.params;
-
-            alert(this._normalizeMessage(el, this.errors[0].msg || messages[this.errors[0].rule], params));
-            this.errors[0].el.focus();
-        },
-        _validateForm: function () {
-            var me = this,
-                elements = me.form.elements,
-                success = true,
-                fn;
-
-            me.errors = [];
-            if(!elements.length) { return true; }
-
-            for (var i = -1, element; element = elements[++i]; ) {
-                if ((fn = me.befores[element.name]) && !fn.call(me, element)) { success = false; break; }
-                if(success && me._validateField(element)) {
-                    if (fn = me.afters[element.name]) {
-                        if (!fn.call(me, element)) { success = false; break; }
-                    }
-                } else {
-                    success = false;
-                    break;
-                }
-            }
-
-            return success;
-        },
-        _parseRules: (function(){
-            var paramRegex = /^([a-z]+)(?:\((.+)\)$)*/;
-            return function(element){
-                var rules = (element.getAttribute('data-valid')||'').split('|'),
-                    matches, result = {};
-
-                if(element.hasAttribute('required')){
-                    result['required'] = true;
-                    element.removeAttribute('required');
-                }
-                for(var i = -1, rule; (rule = rules[++i]) && (matches = rule.match(paramRegex)); ) {
-                    result[matches[1]] = {
-                        params: matches[2] ? (matches[2]||'').split(/,\s*/g).map(function(val) {
-                            return typeof val == 'number' ? val|0 : val;
-                        }) : []
-                    }
-                }
-                return result;
-            };
-        })(),
-        _validateField: function (element) {
-            var me = this,
-                rules =  me._parseRules(element),
-                fn;
-
-            for(var name in rules) { if(!rules.hasOwnProperty(name)){ continue; }
-                if(!rules['required'] && !element.value.trim()){ continue; }
-                if(fn = me._rules[name]) {
-                    delete me['currentTarget'];
-                    if(!fn.apply(me, [element].concat(rules[name].params))){
-                        me.errors.push({
-                            rule: name,
-                            el: element,
-                            target: me.currentTarget,
-                            params: rules[name].params
-                        });
-                        return false;
-                    }
-                } else {
-                    throw new Error('[Validator] '+name+'는 지원하지 않는 규칙입니다.');
-                }
-            }
-
-            return true;
-        },
-
-        _rules: {
+    $.extend(FormValidator, {
+        rules: {
             required: function (element) {
                 var value = getValue(element);
                 return !!(value);
             },
-            matches: function (element, matchName) {
+            match: function (element, matchName) {
                 var el = this.form[matchName];
 
                 if (el) {
@@ -292,10 +194,18 @@
                 return (getValue(element).length === length|0);
             },
             rangelength: function(element, min, max){
-                var cnt = getCheckedCount(element);
-                return cnt >= min && cnt <= max;
+                var len = getValue(element).length;
+                return len >= min && len <= max;
             },
-
+            minbyte: function (element, length) {
+                return (byteLength(getValue(element)) >= parseInt(length, 10));
+            },
+            maxbyte: function (element, length) {
+                return (byteLength(getValue(element)) <= parseInt(length, 10));
+            },
+            exactbyte: function (element, length) {
+                return (byteLength(getValue(element)) === length|0);
+            },
             minchecked: function (element, min) {
                 return getCheckedCount(element) >= min|0;
             },
@@ -307,7 +217,8 @@
             },
             rangechecked: function(element, min, max){
                 var cnt = getCheckedCount(element);
-                return cnt >= min|0 && cnt <= max|0;
+                if(typeof max === 'undefined'){ max = min; }
+                return cnt >= min && cnt <= max;
             },
             lt: function (element, param) {
                 if (!decimalRegex.test(getValue(element))) {
@@ -426,8 +337,129 @@
                 var regexp =new RegExp(regstr);
                 return regexp.test(getValue(element));
             }
+        },
+        addRule: function(name, handler) {
+            this.rules[name] = handler;
+        }
+    });
+
+    FormValidator.prototype = {
+        constructor: FormValidator,
+        setMessage: function (rule, message) {
+            this.messages[rule] = message;
+
+            return this;
+        },
+        addValidBefore: function(name, handler) {
+            if (name && typeof this.form[name] && handler && typeof handler === 'function') {
+                this.befores[name] = handler;
+            }
+        },
+        addValidAfter: function(name, handler) {
+            if (name && typeof this.form[name] && handler && typeof handler === 'function') {
+                this.afters[name] = handler;
+            }
+        },
+        run: function () {
+            if(!this._validateForm()){
+                this._showError();
+            }
+        },
+        _normalizeMessage: function(el, msg, params) {
+            return msg && msg.replace(/\[name\]/, function(v, s) {
+                    return getInputName(el);
+                }).replace(/\{([a-z0-9-]+)\}/g, function(v, s) {
+                    if(/[0-9]+/.test(s)){
+                        return params[s|0] || '';
+                    } else {
+                        return el.getAttribute('data-' + s) || params[s] || 'unknown';
+                    }
+                }).replace(/\[([a-z0-9-]+)\]/g, function(v, s) {
+                    return el.getAttribute(s) || '';
+                }) || 'unknown msg';
+        },
+        _showError: function() {
+            var error = this.errors[0],
+                el = error.el,
+                params = error.params;
+
+            alert(this._normalizeMessage(el, this.errors[0].msg || messages[this.errors[0].rule], params));
+            this.errors[0].el.focus();
+        },
+        _validateForm: function () {
+            var me = this,
+                elements = me.form.elements,
+                success = true,
+                fn;
+
+            me.errors = [];
+            if(!elements.length) { return true; }
+
+            for (var i = -1, element; element = elements[++i]; ) {
+                if ((fn = me.befores[element.name]) && !fn.call(me, element)) { success = false; break; }
+                if(success && me._validateField(element)) {
+                    if (fn = me.afters[element.name]) {
+                        if (!fn.call(me, element)) { success = false; break; }
+                    }
+                } else {
+                    success = false;
+                    break;
+                }
+            }
+
+            return success;
+        },
+        _parseRules: (function(){
+            var paramRegex = /^([a-z]+)(?:\((.+)\)$)*/;
+            return function(element){
+                var rules = (element.getAttribute('data-valid')||'').split('|'),
+                    matches, result = {};
+
+                if(element.hasAttribute('required')){
+                    result['required'] = true;
+                    element.removeAttribute('required');
+                }
+                for(var i = -1, rule; (rule = rules[++i]) && (matches = rule.match(paramRegex)); ) {
+                    result[matches[1]] = {
+                        params: matches[2] ? (matches[2]||'').split(/,\s*/g).map(function(val) {
+                            return typeof val == 'number' ? val|0 : val;
+                        }) : []
+                    }
+                }
+                return result;
+            };
+        })(),
+        _validateField: function (element) {
+            var me = this,
+                rules =  me._parseRules(element),
+                fn;
+
+            for(var name in rules) { if(!rules.hasOwnProperty(name)){ continue; }
+                if(!rules['required'] && !element.value.trim()){ continue; }
+                if(fn = FormValidator.rules[name]) {
+                    delete me['currentTarget'];
+                    if(!fn.apply(me, [element].concat(rules[name].params))){
+                        me.errors.push({
+                            rule: name,
+                            el: element,
+                            target: me.currentTarget,
+                            params: rules[name].params
+                        });
+                        return false;
+                    }
+                } else {
+                    throw new Error('[Validator] '+name+'는 지원하지 않는 규칙입니다.');
+                }
+            }
+
+            return true;
         }
     };
 
     window.FormValidator = FormValidator;
+    $.fn.validator = function(options){
+        return this.each(function() {
+            new FormValidator(this, options);
+        });
+    };
 })();

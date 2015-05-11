@@ -5,6 +5,7 @@
  * @license MIT License
  */
 window.LIB_NAME = 'common';
+window.LIB_DIV_DEBUG = false;
 /*
  *
  */
@@ -100,7 +101,7 @@ window.LIB_NAME = 'common';
         // 콘솔을 지원하지 않는 브라우저를 위해 출력요소를 생성
         window.console = {};
         if(window.LIB_DIV_DEBUG === true) {
-            window.$debugDiv = $('<div class="d-debug" style=""></div>');
+            window.$debugDiv = $('<div class="ui_debug" style=""></div>');
             $(function () {
                 window.$debugDiv.appendTo('body');
             });
@@ -124,7 +125,7 @@ window.LIB_NAME = 'common';
      */
 
     $.extend(jQuery.expr[':'], {
-        focusable: function(el, index, selector){
+        focusable: function(el){
             return $(el).is(':visible, a, button, input[type=text], input[type=file], input[type=checkbox], input[type=radio], select, textarea, [tabindex]');
         }
     });
@@ -161,7 +162,7 @@ window.LIB_NAME = 'common';
             val = ('placeholder' in tmpInput ? this.attr('placeholder') : '');
         }
         return val;
-    }
+    };
 
     /**
      * value값의 앞뒤 스페이스문자 또는 old ie인경우에 placeholder를 제거하여 실제 값만 반환
@@ -279,7 +280,7 @@ window.LIB_NAME = 'common';
             options.onShow.call($this[0]);
         });
     };
-    $.fn.showLayer.openClass = 'd-open';
+    $.fn.showLayer.openClass = 'ui_open';
     $.fn.showLayer.ON_BEFORESHOW = 'layerbeforeshow';
     $.fn.showLayer.ON_SHOWN = 'layershown';
 
@@ -389,7 +390,8 @@ window.LIB_NAME = 'common';
      * @description root namespace of hib site
      */
     var core = context[ LIB_NAME ] || (context[ LIB_NAME ] = {});
-    var arrayProto = Array.prototype,
+    var doc = document,
+        arrayProto = Array.prototype,
         objectProto = Object.prototype,
         toString = objectProto.toString,
         hasOwn = objectProto.hasOwnProperty,
@@ -587,7 +589,7 @@ window.LIB_NAME = 'common';
          *     alert('placeholder를 지원합니다.');
          * }
          */
-        tmpInput: document.createElement('input'),
+        tmpInput: doc.createElement('input'),
         /**
          * 특정 css스타일을 지원하는지 체크하기 위한 엘리먼트
          * @member
@@ -597,7 +599,7 @@ window.LIB_NAME = 'common';
          *     alert('transform를 지원합니다.');
          * }
          */
-        tmpNode: document.createElement('div'),
+        tmpNode: doc.createElement('div'),
 
         /**
          * 타입 체크
@@ -926,6 +928,48 @@ window.LIB_NAME = 'common';
             if (value < min) { return min; }
             else if (value > max) { return max; }
             return value;
+        },
+
+        /**
+         * 어떠한 경우에도 숫자로 변환(문자를 제거한 후 숫자만 추출)
+         * @param value
+         * @return {number}
+         */
+        parse: function(value) {
+            value = (value||'').replace(/[^-0-9\.]/gi, '');
+            return value|0;
+        },
+        /**
+         * 2진수로 변환
+         * @param d 숫자값
+         * @param bits 비트길이 (4 or 8)
+         * @return {string}
+         */
+        toBinary: function(d, bits)  {
+            var b  = [];
+            if(!bits) {
+                bits = 8;
+            }
+            while (d > 0) {
+                b.unshift(d % 2);
+                d >>= 1;
+            }
+            if (bits) {
+                while (b.length < bits) {
+                    b.unshift(0);
+                }
+            }
+            return b.join("");
+        },
+        fromBinary: function(b) {
+            var ba  = (b||'').split(""),
+                n = 1,
+                r = 0;
+            for (var i in ba) {
+                r += n * ba[i];
+                n *= 2;
+            }
+            return r;
         }
     });
     /**
@@ -1213,86 +1257,35 @@ window.LIB_NAME = 'common';
             },
 
             /**
-             * 형식문자열을 주어진 인자값으로 치환하여 반환
-             * @function
-             * @name common.string.sprintf
-             * @param {string} str 형식문자열(%d, %f, %s)
-             * @param {Object} ... 형식문자열에 지정된 형식에 대치되는 값
-             * @example
-             * var ret = common.string.sprintf('%2d %s', 2, 'abc'); // '02 abc'
+             * 문자열을 HTML ENTITIES로 변환
+             * @param value
+             * @return {string}
              */
-            sprintf: (function() {
-                var re = /%%|%(?:(\d+)[\$#])?([+-])?('.|0| )?(\d*)(?:\.(\d+))?([bcdfosuxXhH])/g;
-                var pad = function (value, size, ch) {
-                    var sign = value < 0 ? '-' : '',
-                        result = String(Math.abs(value));
+            toEntities: function(value) {
+                var buffer = [];
+                for (var i = 0, len = string.length; i < len; i++) {
+                    buffer.push("&#", value.charCodeAt(i).toString(), ";");
+                }
+                return buffer.join("");
+            },
 
-                    ch || (ch = "0");
-                    size || (size = 2);
-
-                    if(result.length >= size) {
-                        return sign + result.slice(-size);
-                    }
-
-                    while (result.length < size) {
-                        result = ch + result;
-                    }
-                    return sign + result;
-                };
-
-                // 형식문자열을 파싱
-                var s = function() {
-                    var args = [].slice.call(arguments, 1);
-                    var val = arguments[0];
-                    var index = 0;
-                    var x;
-                    var ins;
-
-                    return val.replace(re, function () {
-                        if (arguments[0] == "%%") {
-                            return "%";
-                        }
-
-                        x = [];
-                        for (var i = 0; i < arguments.length; i++) {
-                            x[i] = arguments[i] || '';
-                        }
-                        x[3] = x[3].slice(-1) || ' ';
-
-                        ins = args[+x[1] ? x[1] - 1 : index++];
-
-                        return s[x[6]](ins, x);
-                    });
-                };
-
-                // %d 처리
-                s.d = s.u = function(ins, x){
-                    return pad(Number(ins).toString(0x0A), x[2] + x[4], '0');
-                };
-
-                // %f 처리
-                s.f = function(ins, x) {
-                    var ins = Number(ins);
-
-                    if (x[5]) {
-                        ins = ins.toFixed(x[5]);
-                    } else if (x[4]) {
-                        ins = ins.toExponential(x[4]);
+            /**
+             * 랜덤문자열 생성
+             * @param {Number} 길이
+             * @returns {String} 랜덤문자열
+             */
+            random: function(len) {
+                var keystr = '', x;
+                for (var i = 0; i < len; i++) {
+                    x = Math.floor((Math.random() * 36));
+                    if (x<10) {
+                        keystr += String(x);
                     } else {
-                        ins = ins.toExponential();
+                        keystr += String.fromCharCode(x+87);
                     }
-
-                    x[2] = x[2] == "-" ? "+" : "-";
-                    return pad(ins, x[2] + x[4], x[3]);
-                };
-
-                // %s 처리
-                s.s = function(ins, x) {
-                    return ins;
-                };
-
-                return s;
-            })(),
+                }
+                return keystr;
+            },
 
             /**
              * 주어진 문자열에서 HTML를 제거
@@ -2514,7 +2507,6 @@ window.LIB_NAME = 'common';
         }
     });
     /////////////////////////////////////////////////////////////////////////////////////////////////
-    var doc = document;
 
     /**
      * css3관련 유틸함수들이 들어있는 객체이다.
@@ -2570,11 +2562,11 @@ window.LIB_NAME = 'common';
              * }
              */
             support3D: (function() {
-                var body = document.body,
-                    docEl = document.documentElement,
+                var body = doc.body,
+                    docEl = doc.documentElement,
                     docOverflow;
                 if (!body) {
-                    body = document.createElement('body');
+                    body = doc.createElement('body');
                     body.fake = true;
                     body.style.background = '';
                     body.style.overflow = 'hidden';
@@ -2584,8 +2576,8 @@ window.LIB_NAME = 'common';
                 docOverflow = docEl.style.overflow;
                 docEl.style.overflow = 'hidden';
 
-                var parent = document.createElement('div'),
-                    div = document.createElement('div'),
+                var parent = doc.createElement('div'),
+                    div = doc.createElement('div'),
                     cssTranslate3dSupported;
 
                 div.style.position = 'absolute';
@@ -2687,7 +2679,7 @@ window.LIB_NAME = 'common';
                 ((options.domain) ? "; domain=" + options.domain : '') +
                 ((options.secure) ? "; secure" : "");
 
-            document.cookie = curCookie;
+            doc.cookie = curCookie;
         },
 
         /**
@@ -2700,7 +2692,7 @@ window.LIB_NAME = 'common';
          */
         get: function (name) {
             var j, g, h, f;
-            j = ";" + document.cookie.replace(/ /g, "") + ";";
+            j = ";" + doc.cookie.replace(/ /g, "") + ";";
             g = ";" + name + "=";
             h = j.indexOf(g);
 
@@ -2723,7 +2715,7 @@ window.LIB_NAME = 'common';
          */
         remove: function (name) {
             if(core.is(name, 'string')) {
-                document.cookie = name + "=;expires=Fri, 31 Dec 1987 23:59:59 GMT;";
+                doc.cookie = name + "=;expires=Fri, 31 Dec 1987 23:59:59 GMT;";
             } else {
                 core.each(name, function(val, key) {
                     this.remove(key);
@@ -2788,7 +2780,7 @@ window.LIB_NAME = 'common';
          * alert(common.getHost());
          */
         getHost: function() {
-            var loc = document.location;
+            var loc = doc.location;
             return loc.protocol + '//' + loc.host;
         },
         /**
@@ -2796,7 +2788,7 @@ window.LIB_NAME = 'common';
          * @returns {string}
          */
         getPageUrl: function() {
-            var loc = document.location;
+            var loc = doc.location;
             return loc.protocol + '//' + loc.host + loc.pathname;
         },
 
@@ -2983,10 +2975,8 @@ window.LIB_NAME = 'common';
                 .replace(/\{\{(.*?)\}\}/g, function(a, b) { return '{{' + b.replace(/"/g, '\t') + '}}'; })
                 .replace(/"/g, '\\"')
                 .replace(/\{\{each ([a-z]+) in ([a-z]+)\}\}(.+)\{\{\/each\}\}/g, function(str, item, items, conts) {
-                    //console.log(arguments);
                     return '{{each(value["'+items+'"], function(item){ }}' + conts + ' {{ }); }}';
                 })
-                //.replace(/\{\{\/each\}\}/g, '{{} });}}')
                 .replace(/\{\{(.*?)\}\}/g, function(a, b) { return '{{' + b.replace(/\t/g, '"') + '}}'; })
 
                 .replace(/\{\{=(.+?)\}\}/g, '", $1, "')
@@ -3087,8 +3077,8 @@ window.LIB_NAME = 'common';
                     if (scriptName && !loadedjs[scriptName]) {
                         loadedjs[scriptName] = true;
 
-                        var body = document.getElementsByTagName('body')[0],
-                            script = document.createElement('script');
+                        var body = doc.getElementsByTagName('body')[0],
+                            script = doc.createElement('script');
 
                         script.type = 'text/javascript';
                         body.appendChild(script);
@@ -3127,7 +3117,7 @@ window.LIB_NAME = 'common';
             var $head = $('head');
             if($head.find('>link[href="' + href + '"]').size()) { return; }
 
-            var link = document.createElement('link');
+            var link = doc.createElement('link');
             core.extend(link, {
                 id: id || 'style_'+(new Data).getTime(),
                 rel: 'stylesheet',
@@ -3750,7 +3740,7 @@ window.LIB_NAME = 'common';
             options || (options = {});
 
             var me = this,
-                moduleName, superClass;
+                moduleName;
 
             if (!el) {
                 throw new Error('[ui.View] el객체가 없습니다.');
@@ -3781,14 +3771,13 @@ window.LIB_NAME = 'common';
                 me.$el.data('ui_' + moduleName, this);
             }
 
-            superClass = me.constructor.superclass;
             // TODO
             // View._instances.push(me);
             me.el = me.$el[0]; // 원래 엘리먼트도 변수에 설정
-            me.options = $.extend(true, {}, superClass.defaults, me.defaults, me.$el.data(), options); // 옵션 병합
+            me.options = $.extend(true, {}, me.constructor.superclass.defaults, me.defaults, me.$el.data(), options); // 옵션 병합
             me.cid = moduleName + '_' + core.nextSeq(); // 객체 고유 키
-            me.subViews = {}; // 하위 컨트롤를 관리하기 위함
             me.ui = {};
+            me.subViews = {}; // 하위 컨트롤를 관리하기 위함
             me.eventNamespace = '.' + me.cid;
 
             me.updateSelectors();
@@ -3960,7 +3949,7 @@ window.LIB_NAME = 'common';
          * $('...').tabs('option', 'startIndex'); // get // 2
          */
         option: function(name, value) {
-            if (typeof value === 'undefined') {
+            if (arguments.length === 1) {
                 return this.getOption(name);
             } else {
                 this.setOption(name, value);
@@ -4300,6 +4289,8 @@ window.LIB_NAME = 'common';
 (function($, core) {
     "use strict";
 
+    var doc = document;
+
     /**
      * @namespace
      * @name common.util
@@ -4323,7 +4314,7 @@ window.LIB_NAME = 'common';
                 } else {
                     $target = selector.find(' img');
                 }
-                var c = new Array();
+                var c = [];
                 $target.each(function(j) {
                     c[j] = new Image();
                     c[j].src = this.src;
@@ -4338,7 +4329,7 @@ window.LIB_NAME = 'common';
              */
             pngFix: function () {
                 var s, bg;
-                $('img[@src*=".png"]', document.body).each(function () {
+                $('img[@src*=".png"]', doc.body).each(function () {
                     this.css('filter', 'progid:DXImageTransform.Microsoft.AlphaImageLoader(src=\'' + this.src + '\', sizingMethod=\'\')');
                     this.src = '/resource/images/core/blank.gif';
                 });
@@ -4705,11 +4696,11 @@ window.LIB_NAME = 'common';
                 // 전체 선택
                 $con.on('click.globalui', ' input:checkbox:enabled', function (e) {
                     var $el = $(this),
-                        $checkes = $con.find('input:checkbox:enabled:not(.d-notcheck)'),
-                        $checkAll = $checkes.filter('.d-checkall'),
-                        $others = $checkes.not('.d-checkall');
+                        $checkes = $con.find('input:checkbox:enabled:not(.ui_notcheck)'),
+                        $checkAll = $checkes.filter('.ui_checkall'),
+                        $others = $checkes.not('.ui_checkall');
 
-                    if($el.hasClass('d-checkall')) {
+                    if($el.hasClass('ui_checkall')) {
                         $others.prop('checked', this.checked);
                     } else {
                         $checkAll.prop('checked', $others.not(':checked').size() === 0);

@@ -1,7 +1,7 @@
 /*!
  * @author lazyscroll.js
  * @email comahead@vi-nyl.com
- * @create 2013-01-19
+ * @create 2015-01-19
  * @license MIT License
  */
 (function ($, core, undefined) {

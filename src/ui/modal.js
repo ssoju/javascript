@@ -1,7 +1,7 @@
 /*!
  * @author common.ui.modal.js
  * @email comahead@vi-nyl.com
- * @create 2013-11-25
+ * @create 2014-11-25
  * @license MIT License
  */
 (function ($, core, undefined) {
@@ -10,7 +10,105 @@
         $win = $(window),
         browser = core.browser,
         ui = core.ui,
-        isTouch = browser.isTouch;
+        isTouch = browser.isTouch,
+        _zIndex = 9000;
+
+
+    var ModalManager = {
+        init: function(options) {
+            var me = this;
+
+            me.options = $.extend({}, options);
+            me.stack = [];
+            me.active = null;
+
+            me._bind();
+        },
+
+        _bind: function() {
+            var me = this;
+
+            $win.on('resizeend.modalmanager', function() {
+                for(var i = -1, modal; modal = me.stack[++i];){
+                    modal.isShown && modal.center();
+                }
+            });
+
+            $doc.on('modal:show.modalmanager', '.ui_modal_container', function(e) {
+                var $modal = $(e.currentTarget),
+                    modal = $modal.modal('instance'),
+                    zIndex = me.nextZIndex();
+
+                modal.$overlay && modal.$overlay.css('zIndex', zIndex++);
+                modal.$el && modal.$el.css('zIndex', zIndex++);
+
+                me.active = modal;
+                me.add(modal);
+
+            }).on('modal:hidden', '.ui_modal_container', function(e) {
+                var $modal = $(e.currentTarget),
+                    modal = $modal.modal('instance');
+
+                me.revertZIndex();
+                me.remove(modal);
+
+                if(me.stack.length){
+                    me.active = me.stack[me.stack.length - 1];
+                } else {
+                    me.active = null;
+                }
+            }).on('focusin.modalmanager', function(e) {
+                if (!me.active){ return; }
+                if (me.active.$el[0] !== e.target && !$.contains(me.active.$el[0], e.target)) {
+                    me.active.$el.find(':focusable').first().focus();
+                    e.stopPropagation();
+                }
+            }).on('click.modalmanager', '[data-control=modal]', function(e) {
+                e.preventDefault();
+
+                var $el = $(this),
+                    target = $el.attr('href') || $el.attr('data-target'),
+                    $modal;
+                if (target) {
+                    // ajax형 모달인 경우
+                    if (!/^#/.test(target)) {
+                        $.ajax({
+                            url: target
+                        }).done(function(html) {
+                            $modal = $('<div class="ui_modal ui_modal_ajax" style="display:none"></div>').html(html).appendTo('body');
+                            $modal.modal($.extend({
+                                removeOnClose: true
+                            }, $el.data())).on('modal:hidden', function(e){
+                                $el[0].focus();
+                                $modal.off('modal:hidden');
+                            });
+                        });
+                    } else {
+                        $(target).modal($el.data()).on('modal:hidden', function(e){
+                            $el[0].focus();
+                            $(this).off('modal:hidden');
+                        });
+                    }
+                }
+
+            });
+        },
+        add: function(modal) {
+            this.stack.push(modal);
+        },
+        remove: function(modal) {
+            this.stack = core.array.remove(this.stack, modal);
+        },
+        nextZIndex: function() {
+            var zi = _zIndex;
+            _zIndex += 2;
+            return zi;
+        },
+        revertZIndex: function() {
+            _zIndex -= 2;
+        }
+    };
+    ModalManager.init();
 
 
     // Modal ////////////////////////////////////////////////////////////////////////////
@@ -29,36 +127,8 @@
      * @name common.ui.Modal
      * @extends common.ui.View
      */
-    var Modal = ui('Modal', /** @lends emart.ui.Modal# */ {
+    var Modal = ui('Modal', /** @lends common.ui.Modal# */ {
         bindjQuery: 'modal',
-        $statics: /** @lends emart.ui.Modal */
-        {
-            /**
-             * 모달 생성시 발생되는 이벤트
-             * @static
-             */
-            ON_CREATED: 'modalcreated',
-            /**
-             * 모달 표시 전에 발생되는 이벤트
-             * @static
-             */
-            ON_SHOW: 'modalshow',
-            /**
-             * 모달 표시 후에 발생되는 이벤트
-             * @static
-             */
-            ON_SHOWN: 'modalshown', // 표시 후
-            /**
-             * 모달이 숨기기 전에 발생되는 이벤트
-             * @static
-             */
-            ON_HIDE: 'modalhide', // 숨기기 전
-            /**
-             * 모달이 숨겨진 후에 발생되는 이벤트
-             * @static
-             */
-            ON_HIDDEN: 'modalhidden' // 숨긴 후
-        },
         defaults: {
             overlay: true,
             clone: true,
@@ -68,8 +138,7 @@
             dragHandle: 'header h1',
             show: true,
             effect: 'fade', // slide | fade
-
-            cssTitle: '.d-modal-title'
+            cssTitle: '.ui_modal_title'
         },
 
         events: {
@@ -77,18 +146,18 @@
                 var me = this,
                     $btn = $(e.currentTarget),
                     role = ($btn.attr('data-role') || ''),
-                    e;
+                    ev;
 
                 if (role) {
-                    me.triggerHandler(e = $.Event(role), [me]);
-                    if (e.isDefaultPrevented()) {
+                    me.triggerHandler(ev = $.Event('modal:'+role), [me]);
+                    if (ev.isDefaultPrevented()) {
                         return;
                     }
                 }
 
                 this.hide();
             },
-            'click .d-close': function(e) {
+            'click .ui_modal_close': function(e) {
                 e.preventDefault();
                 e.stopPropagation();
 
@@ -116,6 +185,10 @@
 
             // 열릴때 body로 옮겼다가, 닫힐 때 다시 원복하기 위해 임시요소를 넣어놓는다.
             me._createHolder();
+            if (me.options.overlay !== false) {
+                me._overlay();    // 오버레이 생성
+            }
+            me.$el.addClass('ui_modal_container');
 
             me.isShown = false;
             me._originalDisplay = me.$el.css('display');
@@ -147,7 +220,7 @@
                 return;
             }
 
-            me.$holder = $('<span class="d-modal-area" style="display:none;"></span>').insertAfter(me.$el);
+            me.$holder = $('<span class="ui_modal_holder" style="display:none;"></span>').insertAfter(me.$el);
             me.$el.appendTo('body');
         },
         /**
@@ -176,27 +249,20 @@
          * 표시
          */
         show: function() {
-            if (this.isShown && Modal.active === this) {
+            if (this.isShown) {
                 return;
             }
 
-            Modal.active = this;
-
             var me = this,
                 opts = me.options,
-                e = $.Event(Modal.ON_SHOW);
+                e = $.Event('modal:show');
 
-            me.zIndex = nextZIndex();
-
-            me.trigger(e);
             if (me.isShown || e.isDefaultPrevented()) {
                 return;
             }
 
+            me.trigger(e);
             me.isShown = true;
-            if (opts.overlay !== false) {
-                me._overlay();    // 오버레이 생성
-            }
 
             if (opts.title) {
                 me.$(opts.cssTitle).html(opts.title || '알림');
@@ -217,31 +283,48 @@
             }
 
             defer.done(function () {
-                me.trigger(Modal.ON_SHOWN, {
+                me.trigger('modal:shown', {
                     module: me
                 });
 
-                $('body').attr('aria-hidden', 'true');    // body를 비활성화(aria)
+                //////$('body').attr('aria-hidden', 'true');    // body를 비활성화(aria)
+
                 me._bindAria(); // aria 셋팅
                 me._draggabled();    // 드래그 기능 빌드
                 me._escape();    // esc키이벤트 바인딩
-                me._enforceFocus();   // 탭키로 포커스를 이동시킬 때 포커스가 레이어팝업 안에서만 돌도록 빌드
+                ///////////me._enforceFocus();   // 탭키로 포커스를 이동시킬 때 포커스가 레이어팝업 안에서만 돌도록 빌드
 
                 me.on('mousewheel', function(e) {
                     e.stopPropagation();
                 });
 
-                $win.on('resize'+me.getEN(), me.proxy('center'));
+                var $focusEl = me.$el.find('[data-autofocus=true]');
+
+                // 레이어내에 data-autofocus를 가진 엘리먼트에 포커스를 준다.
+                if ($focusEl.size() > 0) {
+                    $focusEl.eq(0).focus();
+                } else {
+                    // 레이어에 포커싱
+                    me.$el.attr('tabindex', 0).focus();
+                }
+                ///// $win.on('resize'+me.getEN(), me.proxy('center'));
+
+                var $focusEl = me.$('[data-autofocus=true]');
+                if ($focusEl.size() > 0) {
+                    $focusEl.eq(0).focus();
+                } else {
+                    me.$el.attr('tabindex', 0).focus();
+                }
 
                 // 버튼
-                if (me.options.opener) {
+                /**************if (me.options.opener) {
                     var modalid;
                     if (!(modalid = me.$el.attr('id'))) {
                         modalid = 'modal_' + core.getUniqId(16);
                         me.$el.attr('id', modalid);
                     }
                     $(me.options.opener).attr('aria-controls', modalid);
-                }
+                }**********/
             });
 
         },
@@ -255,7 +338,7 @@
             }
 
             var me = this;
-            e = $.Event(Modal.ON_HIDE);
+            e = $.Event('modal:hide');
             me.trigger(e);
             if (!me.isShown || e.isDefaultPrevented()) {
                 return;
@@ -278,27 +361,24 @@
             }
 
             defer.done(function() {
-                shiftZIndex();
+                me.trigger('modal:hidden');
 
-                me.$el.removeClass('d-modal-container');    // dom에 추가된 것들 제거
+                me.$el.removeClass('ui_modal_container');    // dom에 추가된 것들 제거
                 me._escape();    // esc 키이벤트 제거
                 me._replaceHolder();    // body밑으로 뺀 el를 다시 원래 위치로 되돌린다.
 
                 if (me.options.removeOnClose) {
                     me.$el.remove();    // 닫힐 때 dom에서 삭제하도록 옵션이 지정돼있으면, dom에서 삭제한다.
                 }
-                if (me.options.opener) {
+                /*if (me.options.opener) {
                     $(me.options.opener).removeAttr('aria-controls').focus();    // 레이어팝업을 띄운 버튼에 포커스를 준다.
-                }
+                }*/
                 if (me.$overlay) {
                     me.$overlay.remove(), me.$overlay = null;    // 오버레이를 제거
                 }
-                $('body').removeAttr('aria-hidden');    // 비활성화를 푼다.
+               ////// $('body').removeAttr('aria-hidden');    // 비활성화를 푼다.
 
                 me.release();
-                Modal.active = null;
-
-                me.trigger(Modal.ON_HIDDEN);
             });
         },
 
@@ -322,7 +402,6 @@
             attr = {
                 display: '',
                 position: 'absolute',
-                zIndex: me.zIndex + 1,
                 backgroundColor: '#ffffff',
                 outline: 'none',
                 backgroundClip: 'padding-box',
@@ -331,7 +410,7 @@
                 marginLeft: Math.ceil(width / 2) * -1,
                 marginTop: isOver ? '' : Math.ceil(width / 2) * -1
             };
-            me.$el.stop().addClass('d-modal-container').css(attr);
+            me.$el.stop().css(attr);
         },
 
         /**
@@ -440,7 +519,7 @@
                 return false;
             } //140123_추가
 
-            me.$overlay = $('<div class="d-modal-overlay" />');
+            me.$overlay = $('<div class="ui_modal_overlay" />');
             me.$overlay.css({
                 'backgroundColor': '#ffffff',
                 'opacity': 0.6,
@@ -448,8 +527,7 @@
                 'top': 0,
                 'left': 0,
                 'right': 0,
-                'bottom': 0,
-                'zIndex': me.zIndex
+                'bottom': 0
             }).appendTo('body');
 
             me.$overlay.off('click.modal').on('click.modal', function(e) {
@@ -497,29 +575,7 @@
             $win.off(me.getEN());
         }
     });
-    /**
-     * 열려 있는 레이어팝업을 닫는 static 함수
-     * @name common.ui.Modal.close
-     */
-    Modal.close = function (e) {
-        if (!Modal.active) return;
-        if (e) e.preventDefault();
-        Modal.active.hide();
-        Modal.active = null;
-    };
 
-    /**
-     * 열려 있는 레이어팝업을 닫는 글로벌이벤트
-     * @example
-     * common.PubSub.trigger('hide:modal')
-     */
-    core.PubSub.on('hide:modal', function (e, force) {
-        if (force === false) {
-            if(Modal.active){
-                Modal.close();
-            }
-        }
-    });
 
     /**
      * 열려 있는 레이어팝업을 가운데에 위치시키는 글로벌이벤트
@@ -553,7 +609,7 @@
         return function(url, options) {
             // TODO
             setTimeout(function() {
-                var $modal = $('<div class="modal" style="display: none;">').appendTo('body');
+                var $modal = $('<div class="ui_modal" style="display: none;">').appendTo('body');
                 $modal.load(url, function () {
                     $modal.modal($.extend(options, {removeOnClose: true}));
                 });
@@ -577,7 +633,7 @@
                 options = msg;
                 msg = '';
             };
-            var el = $(core.ui.alert.tmpl).appendTo('body').find('div.d-content').html(msg).end();
+            var el = $(core.ui.alert.tmpl).appendTo('body').find('div.ui_modal_content').html(msg).end();
             var modal = new Modal(el, core.extend({removeOnClose: true}, options));
             modal.getElement().buildUIControls();
             modal.on('modalhidden', function(){
@@ -587,15 +643,15 @@
             return modal;
         };
     }();
-    core.ui.alert.tmpl = ['<div class="layer_popup small d-alert" role="alert" style="display:none">',
-        '<h1 class="title d-title">알림창</h1>',
+    core.ui.alert.tmpl = ['<div class="layer_popup small ui_alert" role="alert" style="display:none">',
+        '<h1 class="title ui_modal_title">알림창</h1>',
         '<div class="cntt">',
-        '<div class="d-content">&nbsp;</div>',
+        '<div class="ui_modal_content">&nbsp;</div>',
         '<div class="wrap_btn_c">',
         '<button type="button" class="btn_emphs_small" data-role="ok"><span><span>확인</span></span></button>',
         '</div>',
         '</div>',
-        '<button type="button" class="d-close"><span>닫기</span></button>',
+        '<button type="button" class="ui_modal_close"><span>닫기</span></button>',
         '<span class="shadow"></span>',
         '</div>'].join('');
     ///////////////////////////////////////////////////////////////////////////////////////
