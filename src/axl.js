@@ -1,10 +1,10 @@
 /*!
  * @author 김승일
- * @email comahead@vi-nyl.com
+ * @email comahead@gmail.com
  * @description 이마트 코어 라이브러리
  * @license MIT License
  */
-window.LIB_NAME = 'common';
+window.LIB_NAME = 'axl';
 window.LIB_DIV_DEBUG = false;
 /*
  *
@@ -38,11 +38,11 @@ window.LIB_DIV_DEBUG = false;
 
     /**
      * ui 네임스페이스
-     * 더불어, common.ui.View에서 상속받아 새로운 UI모듈을 생성해준다.
+     * 더불어, axl.ui.View에서 상속받아 새로운 UI모듈을 생성해준다.
      * @namespace
-     * @name common.ui
+     * @name axl.ui
      * @example
-     * var Tab = common.ui('Tab', {
+     * var Tab = axl.ui('Tab', {
      *    select: function(index) {
      *        //
      *    }
@@ -50,7 +50,7 @@ window.LIB_DIV_DEBUG = false;
      *
      * var tab = new Tab();
      * // or
-     * var tab = new common.ui.Tab();
+     * var tab = new axl.ui.Tab();
      *
      * tab.select(2);
      */
@@ -454,13 +454,13 @@ window.LIB_DIV_DEBUG = false;
         /**
          * 반복 함수
          * @function
-         * @name common.each
+         * @name axl.each
          * @param {Array|Object} obj 배열 및 json객체
          * @param {arrayCallback} iterater 콜백함수
          * @param {*} [ctx] 컨텍스트
          * @returns {*}
          * @example
-         * common.each({'a': '에이', 'b': '비', 'c': '씨'}, function(value, key) {
+         * axl.each({'a': '에이', 'b': '비', 'c': '씨'}, function(value, key) {
          *     alert('key:'+key+', value:'+value);
          *     if(key === 'b') {
          *         return false; // false 를 반환하면 순환을 멈춘다.
@@ -501,12 +501,12 @@ window.LIB_DIV_DEBUG = false;
         /**
          * 객체 확장 함수
          * @function
-         * @name common.extend
+         * @name axl.extend
          * @param {Object} obj...
          * @returns {*}
          * @example
          * var ori = {"a": 'A', "b": [1, 2, 3]};
-         * common.extend(ori, {
+         * axl.extend(ori, {
          *    "c": "C"
          * }); // {"a": 'A', "b": [1, 2, 3], "c": "C"}
          */
@@ -537,12 +537,12 @@ window.LIB_DIV_DEBUG = false;
         /**
          * 객체 복제 함수
          * @function
-         * @name common.clone
+         * @name axl.clone
          * @param {Object} obj 배열 및 json객체
          * @returns {*}
          * @example
          * var ori = {"a": 'A', "b": [1, 2, 3]};
-         * var clone = common.clone(ori); // {"a": 'A', "b": [1, 2, 3]};
+         * var clone = axl.clone(ori); // {"a": 'A', "b": [1, 2, 3]};
          * // ori 복제본, ori를 변경하여도 clone은 변하지 않는다.
          */
         clone = function(obj) {
@@ -583,9 +583,9 @@ window.LIB_DIV_DEBUG = false;
         /**
          * 특정속성을 지원하는지 체크하기 위한 엘리먼트
          * @member
-         * @name common.tmpInput
+         * @name axl.tmpInput
          * @example
-         * if('placeholder' in common.tmpInput) {
+         * if('placeholder' in axl.tmpInput) {
          *     alert('placeholder를 지원합니다.');
          * }
          */
@@ -593,9 +593,9 @@ window.LIB_DIV_DEBUG = false;
         /**
          * 특정 css스타일을 지원하는지 체크하기 위한 엘리먼트
          * @member
-         * @name common.tmpNode
+         * @name axl.tmpNode
          * @example
-         * if('transform' in common.tmpNode.style) {
+         * if('transform' in axl.tmpNode.style) {
          *     alert('transform를 지원합니다.');
          * }
          */
@@ -604,59 +604,59 @@ window.LIB_DIV_DEBUG = false;
         /**
          * 타입 체크
          * @function
-         * @name common.is
+         * @name axl.is
          * @param {Object} o 타입을 체크할 값
          * @param {string} typeName 타입명(null, number, string, element, nan, infinity, date, array)
          * @return {boolean}
          * @example
-         * common.is('aaaa', 'string'); // true
-         * common.is(new Date(), 'date'); // true
-         * common.is(1, 'number'); // true
-         * common.is(/[a-z]/, 'regexp'); // true
-         * common.is(document.getElementById('box'), 'element'); // true
-         * common.is({a:'a'}, 'object'); // true
-         * common.is([], 'array'); // true
-         * common.is(NaN, 'nan'); // true
-         * common.is(null, 'null'); // true
+         * axl.is('aaaa', 'string'); // true
+         * axl.is(new Date(), 'date'); // true
+         * axl.is(1, 'number'); // true
+         * axl.is(/[a-z]/, 'regexp'); // true
+         * axl.is(document.getElementById('box'), 'element'); // true
+         * axl.is({a:'a'}, 'object'); // true
+         * axl.is([], 'array'); // true
+         * axl.is(NaN, 'nan'); // true
+         * axl.is(null, 'null'); // true
          * // 파라미터를 하나만 넘기면 타입명을 반환받을 수 있다.
-         * common.is('') // "string"
-         * common.is(null) //"null"
-         * common.is(1) //"number"
-         * common.is({}) //"object"
-         * common.is([]) // "array"
-         * common.is(undefined) // "undefined"
-         * common.is(new Date()) // "date"
-         * common.is(/[a-z]/) // "regexp"
-         * common.is(document.body) //"element"
+         * axl.is('') // "string"
+         * axl.is(null) //"null"
+         * axl.is(1) //"number"
+         * axl.is({}) //"object"
+         * axl.is([]) // "array"
+         * axl.is(undefined) // "undefined"
+         * axl.is(new Date()) // "date"
+         * axl.is(/[a-z]/) // "regexp"
+         * axl.is(document.body) //"element"
          */
         is: isType,
         /**
-         * 타입 체크 common.is의 별칭
+         * 타입 체크 axl.is의 별칭
          * @function
-         * @name common.type
+         * @name axl.type
          * @param {Object} o 타입을 체크할 값
          * @param {string} typeName 타입명(null, number, string, element, nan, infinity, date, array)
          * @return {boolean}
          * @example
-         * common.type('aaaa', 'string'); // true
-         * common.type(new Date(), 'date'); // true
-         * common.type(1, 'number'); // true
-         * common.type(/[a-z]/, 'regexp'); // true
-         * common.type(document.getElementById('box'), 'element'); // true
-         * common.type({a:'a'}, 'object'); // true
-         * common.type([], 'array'); // true
-         * common.type(NaN, 'nan'); // true
-         * common.type(null, 'null'); // true
+         * axl.type('aaaa', 'string'); // true
+         * axl.type(new Date(), 'date'); // true
+         * axl.type(1, 'number'); // true
+         * axl.type(/[a-z]/, 'regexp'); // true
+         * axl.type(document.getElementById('box'), 'element'); // true
+         * axl.type({a:'a'}, 'object'); // true
+         * axl.type([], 'array'); // true
+         * axl.type(NaN, 'nan'); // true
+         * axl.type(null, 'null'); // true
          * // 파라미터를 하나만 넘기면 타입명을 반환받을 수 있다.
-         * common.type('') // "string"
-         * common.type(null) //"null"
-         * common.type(1) //"number"
-         * common.type({}) //"object"
-         * common.type([]) // "array"
-         * common.type(undefined) // "undefined"
-         * common.type(new Date()) // "date"
-         * common.type(/[a-z]/) // "regexp"
-         * common.type(document.body) //"element"
+         * axl.type('') // "string"
+         * axl.type(null) //"null"
+         * axl.type(1) //"number"
+         * axl.type({}) //"object"
+         * axl.type([]) // "array"
+         * axl.type(undefined) // "undefined"
+         * axl.type(new Date()) // "date"
+         * axl.type(/[a-z]/) // "regexp"
+         * axl.type(document.body) //"element"
          */
         type: isType,
 
@@ -667,13 +667,13 @@ window.LIB_DIV_DEBUG = false;
          * @param {boolean} [allowEmptyString = false] 빈문자를 허용할 것인지 여부
          * @return {boolean}
          * @example
-         * common.isEmpty(null); // true
-         * common.isEmpty(undefined); // true
-         * common.isEmpty(''); // true
-         * common.isEmpty(0); // true
-         * common.isEmpty(null); // true
-         * common.isEmpty([]); // true
-         * common.isEmpty({}); // true
+         * axl.isEmpty(null); // true
+         * axl.isEmpty(undefined); // true
+         * axl.isEmpty(''); // true
+         * axl.isEmpty(0); // true
+         * axl.isEmpty(null); // true
+         * axl.isEmpty([]); // true
+         * axl.isEmpty({}); // true
          */
         isEmpty: function (value, allowEmptyString) {
             return (value === null)
@@ -692,7 +692,7 @@ window.LIB_DIV_DEBUG = false;
          * @return {boolean} 키의 존재 여부
          * @example
          * var obj = {"a": "A"}
-         * if(common.hasOwn(obj, 'a')){
+         * if(axl.hasOwn(obj, 'a')){
          *     alert('obj객체에 a가 존재합니다.');
          * }
          */
@@ -704,14 +704,14 @@ window.LIB_DIV_DEBUG = false;
          * .를 구분자로 하여 하위 네임스페이스가 생성된다.
          *
          * @function
-         * @name common.namespace
+         * @name axl.namespace
          *
          * @param {string} name 네임스페이스명
          * @param {Object} [obj] 지정된 네임스페이스에 등록할 객체, 함수 등
          * @return {Object} 생성된 새로운 네임스페이스
          *
          * @example
-         * common.namesapce('common.widget.Tabcontrol', TabControl)
+         * axl.namesapce('axl.widget.Tabcontrol', TabControl)
          * // 를 native로 풀면,
          * var common = {
          *     widget: {
@@ -740,19 +740,19 @@ window.LIB_DIV_DEBUG = false;
          * common 하위에 name에 해당하는 네임스페이스를 생성하여 object를 설정해주는 함수
          *
          * @function
-         * @name common.addon
+         * @name axl.addon
          *
-         * @param {string} name .를 구분자로 해서 vinyl을 시작으로 하위 네임스페이스를 생성. name이 없으면 vinyl에 추가된다.
+         * @param {string} name .를 구분자로 해서 axl을 시작으로 하위 네임스페이스를 생성. name이 없으면 vinyl에 추가된다.
          * @param {Object|Function} obj
          *
          * @example
-         * common.addon('urls', {
+         * axl.addon('urls', {
          *    store: 'Store',
          *    company: 'Company'
          * });
          *
-         * alert(common.urls.store);
-         * alert(common.urls.company);
+         * alert(axl.urls.store);
+         * alert(axl.urls.company);
          */
         addon: function (name, object, isExecFn) {
             if (typeof name !== 'string') {
@@ -790,9 +790,9 @@ window.LIB_DIV_DEBUG = false;
          * @param {boolean} reset 리셋(초기화) 여부
          *
          * @example
-         * common.timeStart('animate');
+         * axl.timeStart('animate');
          * ...
-         * common.timeEnd('animate'); -> animate: 10203ms
+         * axl.timeEnd('animate'); -> animate: 10203ms
          */
         timeStart: function (name, reset) {
             if (!name) {
@@ -815,9 +815,9 @@ window.LIB_DIV_DEBUG = false;
          * @return {number} 걸린 시간
          *
          * @example
-         * common.timeStart('animate');
+         * axl.timeStart('animate');
          * ...
-         * common.timeEnd('animate'); -> animate: 10203ms
+         * axl.timeEnd('animate'); -> animate: 10203ms
          */
         timeEnd: function (name) {
             if (!this.timeCounters) {
@@ -845,9 +845,9 @@ window.LIB_DIV_DEBUG = false;
      * 숫자관련 유틸함수 모음
      *
      * @namespace
-     * @name common.number
+     * @name axl.number
      */
-    core.addon('number', /** @lends common.number */{
+    core.addon('number', /** @lends axl.number */{
         /**
          * 주어진 수를 자릿수만큼 앞자리에 0을 채워서 반환
          *
@@ -857,7 +857,7 @@ window.LIB_DIV_DEBUG = false;
          * @return {string}
          *
          * @example
-         * common.number.zeroPad(2, 3); // "002"
+         * axl.number.zeroPad(2, 3); // "002"
          */
         zeroPad: function (value, size, ch) {
             var sign = value < 0 ? '-' : '',
@@ -884,7 +884,7 @@ window.LIB_DIV_DEBUG = false;
          * @return {string}
          *
          * @example
-         * common.number.addComma(21342); // "21,342"
+         * axl.number.addComma(21342); // "21,342"
          */
         addComma: (function () {
             var regComma = /(\d+)(\d{3})/;
@@ -973,10 +973,10 @@ window.LIB_DIV_DEBUG = false;
         }
     });
     /**
-     * common.number.zeroPad의 별칭
+     * axl.number.zeroPad의 별칭
      * @function
      * @static
-     * @name common.number.pad
+     * @name axl.number.pad
      */
     core.number.pad = core.number.zeroPad;
     /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -985,7 +985,7 @@ window.LIB_DIV_DEBUG = false;
      * 문자열 관련 유틸 함수 모음
      *
      * @namespace
-     * @name common.string
+     * @name axl.string
      */
     core.addon('string', function () {
         var escapeChars = {
@@ -1007,13 +1007,13 @@ window.LIB_DIV_DEBUG = false;
             tagRegexp = /<\/?[^>]+>/gi,
             scriptRegexp = /<script[^>]*>([\\S\\s]*?)<\/script>/img;
 
-        return /** @lends common.string */{
+        return /** @lends axl.string */{
             /**
              * 앞뒤 빈문자열을 제거
              * @param {string} value
              * @returns {string}
              * @example
-             * common.string.trim(" abc "); // 'abc'
+             * axl.string.trim(" abc "); // 'abc'
              */
             trim: function(value) {
                 return value ? value.replace(/^\s+|\s+$/g, "") : value;
@@ -1027,7 +1027,7 @@ window.LIB_DIV_DEBUG = false;
              * @return {string} 대체된 결과 문자열
              *
              * @example
-             * common.string.replaceAll("a,b,c,d", ',', ''); // "abcd"
+             * axl.string.replaceAll("a,b,c,d", ',', ''); // "abcd"
              */
             replaceAll: function (value, find, rep) {
                 if (find.constructor === RegExp) {
@@ -1043,7 +1043,7 @@ window.LIB_DIV_DEBUG = false;
              * @return {number}
              *
              * @example
-             * common.string.byteLength("동해물과"); // 8
+             * axl.string.byteLength("동해물과"); // 8
              */
             byteLength: function (value) {
                 var l = 0;
@@ -1058,7 +1058,7 @@ window.LIB_DIV_DEBUG = false;
              * @param {string} fname path문자열
              * @return {string} 확장자
              * @example
-             * common.string.getFileExt('etc/bin/jslib.js'); // 'js'
+             * axl.string.getFileExt('etc/bin/jslib.js'); // 'js'
              */
             getFileExt: function(fname){
                 fname || (fname = '');
@@ -1070,7 +1070,7 @@ window.LIB_DIV_DEBUG = false;
              * @param {string} str path경로
              * @returns {string} 파일명
              * @example
-             * common.string.getFileName('etc/bin/jslib.js'); // 'jslib.js'
+             * axl.string.getFileName('etc/bin/jslib.js'); // 'jslib.js'
              */
             getFileName: function(str) {
                 var paths = str.split(/\/|\\/g);
@@ -1086,7 +1086,7 @@ window.LIB_DIV_DEBUG = false;
              * @return {string} 결과 문자열
              *
              * @example
-             * common.string.cutByByte("동해물과", 3, "..."); // "동..."
+             * axl.string.cutByByte("동해물과", 3, "..."); // "동..."
              */
             cutByByte: function (value, length, truncation) {
                 var str = value,
@@ -1106,7 +1106,7 @@ window.LIB_DIV_DEBUG = false;
              * @param {number} length 제한 문자수
              * @return {number} chars index
              * @example
-             * common.string.indexByByte("동해물과", 3); // 2
+             * axl.string.indexByByte("동해물과", 3); // 2
              */
             indexByByte: function (value, length) {
                 var str = value,
@@ -1125,7 +1125,7 @@ window.LIB_DIV_DEBUG = false;
              * @return {string} 결과 문자열
              *
              * @example
-             * common.string.capitalize("abCdEfg"); // "Abcdefg"
+             * axl.string.capitalize("abCdEfg"); // "Abcdefg"
              */
             capitalize: function (value) {
                 return value ? value.charAt(0).toUpperCase() + value.substring(1) : value;
@@ -1138,7 +1138,7 @@ window.LIB_DIV_DEBUG = false;
              * @return {string} 결과 문자열
              *
              * @example
-             * common.string.capitalize("ab-cd-efg"); // "abCdEfg"
+             * axl.string.capitalize("ab-cd-efg"); // "abCdEfg"
              */
             camelize: function (value) {
                 return value ? value.replace(/(\-|_|\s)+(.)?/g, function(a, b, c) {
@@ -1153,7 +1153,7 @@ window.LIB_DIV_DEBUG = false;
              * @return {string} 결과 문자열
              *
              * @example
-             * common.string.dasherize("abCdEfg"); // "ab-cd-efg"
+             * axl.string.dasherize("abCdEfg"); // "ab-cd-efg"
              */
             dasherize: function (value) {
                 return value ? value.replace(/[_\s]+/g, '-').replace(/([A-Z])/g, '-$1').replace(/-+/g, '-').toLowerCase() : value;
@@ -1164,7 +1164,7 @@ window.LIB_DIV_DEBUG = false;
              * @param {string} value 문자열
              * @returns {string} 결과 문자열
              * @example
-             * common.string.toFirstLower("Welcome"); // 'welcome'
+             * axl.string.toFirstLower("Welcome"); // 'welcome'
              */
             toFirstLower: function (value) {
                 return value ? value.replace(/^[A-Z]/, function(s) { return s.toLowerCase(); }) : value;
@@ -1178,7 +1178,7 @@ window.LIB_DIV_DEBUG = false;
              * @return {string} 결과 문자열
              *
              * @example
-             * common.string.repeat("ab", 4); // "abababab"
+             * axl.string.repeat("ab", 4); // "abababab"
              */
             repeat: function (value, cnt, sep) {
                 sep || (sep = '');
@@ -1197,7 +1197,7 @@ window.LIB_DIV_DEBUG = false;
              * @return {string} 결과 문자열
              *
              * @example
-             * common.string.escapeHTML('<div><a href="#">링크</a></div>'); // "&lt;div&gt;&lt;a href=&quot;#&quot;&gt;링크&lt;/a&gt;&lt;/div&gt;"
+             * axl.string.escapeHTML('<div><a href="#">링크</a></div>'); // "&lt;div&gt;&lt;a href=&quot;#&quot;&gt;링크&lt;/a&gt;&lt;/div&gt;"
              */
             escapeHTML: function (value) {
                 return value ? (value+"").replace(escapeRegexp, function (m) {
@@ -1212,7 +1212,7 @@ window.LIB_DIV_DEBUG = false;
              * @return {string} 결과 문자열
              *
              * @example
-             * common.string.unescapeHTML('&lt;div&gt;&lt;a href=&quot;#&quot;&gt;링크&lt;/a&gt;&lt;/div&gt;');  // '<div><a href="#">링크</a></div>'
+             * axl.string.unescapeHTML('&lt;div&gt;&lt;a href=&quot;#&quot;&gt;링크&lt;/a&gt;&lt;/div&gt;');  // '<div><a href="#">링크</a></div>'
              */
             unescapeHTML: function (value) {
                 return value ? (value+"").replace(unescapeRegexp, function (m) {
@@ -1230,8 +1230,8 @@ window.LIB_DIV_DEBUG = false;
              *
              * @example
              * // 정렬버튼에 이용
-             * common.string.toggle('ASC", "ASC", "DESC"); // "DESC"
-             * common.string.toggle('DESC", "ASC", "DESC"); // "ASC"
+             * axl.string.toggle('ASC", "ASC", "DESC"); // "DESC"
+             * axl.string.toggle('DESC", "ASC", "DESC"); // "ASC"
              */
             toggle: function (value, these, other) {
                 return these === value ? other : value;
@@ -1245,7 +1245,7 @@ window.LIB_DIV_DEBUG = false;
              * @return {string} 결과 문자열
              *
              * @example
-             * common.string.format("{0}:{1}:{2} {0}", "a", "b", "c");  // "a:b:c a"
+             * axl.string.format("{0}:{1}:{2} {0}", "a", "b", "c");  // "a:b:c a"
              */
             format: function (format, val) {
                 var args = core.toArray(arguments).slice(1),
@@ -1293,7 +1293,7 @@ window.LIB_DIV_DEBUG = false;
              * @param {string} value 문자열
              * @return {string} 태그가 제거된 문자열
              * @example
-             * common.string.stripTags('welcome to <b>the</b> jungle'); // 'welcome to the jungle'
+             * axl.string.stripTags('welcome to <b>the</b> jungle'); // 'welcome to the jungle'
              */
             stripTags: function (value) {
                 return value.replace(tagRegexp, '');
@@ -1305,7 +1305,7 @@ window.LIB_DIV_DEBUG = false;
              * @param {string} value 문자열
              * @return {string} 스크립트가 제거된 문자열
              * @example
-             * common.string.stripScripts('welcome <s'+'cript>alert('hello');</s'+'cript> to the jungle'); // 'welcome to the jungle'
+             * axl.string.stripScripts('welcome <s'+'cript>alert('hello');</s'+'cript> to the jungle'); // 'welcome to the jungle'
              */
             stripScripts: function (value) {
                 return value.replace(scriptRegexp, '');
@@ -1317,19 +1317,19 @@ window.LIB_DIV_DEBUG = false;
     /**
      * JSON객체 관련 유틸함수
      * @namespace
-     * @name common.object
+     * @name axl.object
      */
-    core.addon('object', /** @lends common.object */{
+    core.addon('object', /** @lends axl.object */{
 
         /**
          * 개체의 열거가능한 속성 및 메서드 이름을 배열로 반환
-         * @name common.object.keys
+         * @name axl.object.keys
          * @function
          * @param {Object} obj 리터럴 객체
          * @return {Array} 객체의 열거가능한 속성의 이름이 포함된 배열
          *
          * @example
-         * common.object.keys({"name": "Axl rose", "age": 50}); // ["name", "age"]
+         * axl.object.keys({"name": "Axl rose", "age": 50}); // ["name", "age"]
          */
         keys: Object.keys || function (obj) {
             var results = [];
@@ -1342,12 +1342,12 @@ window.LIB_DIV_DEBUG = false;
         /**
          * 개체의 열거가능한 속성의 값을 배열로 반환
          * @function
-         * @name common.object.values
+         * @name axl.object.values
          * @param {Object} obj 리터럴 객체
          * @return {Array} 객체의 열거가능한 속성의 값들이 포함된 배열
          *
          * @example
-         * common.object.values({"name": "Axl rose", "age": 50}); // ["Axl rose", 50]
+         * axl.object.values({"name": "Axl rose", "age": 50}); // ["Axl rose", 50]
          */
         values: Object.values || function (obj) {
             var results = [];
@@ -1365,7 +1365,7 @@ window.LIB_DIV_DEBUG = false;
          * @return {Object}
          *
          * @example
-         * common.object.map({1; 'one', 2: 'two', 3: 'three'}, function(item, key) {
+         * axl.object.map({1; 'one', 2: 'two', 3: 'three'}, function(item, key) {
 		 *		return item + '__';
 		 * });
          * // {1: 'one__', 2: 'two__', 3: 'three__'}
@@ -1387,8 +1387,8 @@ window.LIB_DIV_DEBUG = false;
          * @example
          * var obj1 = {};
          * var obj2 = {"a": "A"}
-         * common.object.hasItems(obj1); // false
-         * common.object.hasItems(obj2); // true
+         * axl.object.hasItems(obj1); // false
+         * axl.object.hasItems(obj2); // true
          */
         hasItems: function (obj) {
             if (!core.is(obj, 'object')) {
@@ -1411,7 +1411,7 @@ window.LIB_DIV_DEBUG = false;
          * @return {string} 결과 문자열
          *
          * @example
-         * common.object.toQueryString({"a":1, "b": 2, "c": {"d": 4}}); // "a=1&b=2&c[d]=4"
+         * axl.object.toQueryString({"a":1, "b": 2, "c": {"d": 4}}); // "a=1&b=2&c[d]=4"
          */
         toQueryString: function (params, isEncode) {
             if (typeof params === 'string') {
@@ -1447,7 +1447,7 @@ window.LIB_DIV_DEBUG = false;
          * @return {Object}
          *
          * @example
-         * common.object.travere({1:a, 2:b, 3:c, 4:d]);
+         * axl.object.travere({1:a, 2:b, 3:c, 4:d]);
 		 * // {a:1, b:2, c:3, d:4}
 		 */
         traverse: function (obj) {
@@ -1466,7 +1466,7 @@ window.LIB_DIV_DEBUG = false;
          * @return 지정한 요소가 삭제된 리터럴
          * @example
          * var obj = {"a": "A", "b": "B"}
-         * common.object.remove(obj, 'b'); // {"a":"A"} // delete obj.b;로 하는게 더 낫겠네..ㅎ
+         * axl.object.remove(obj, 'b'); // {"a":"A"} // delete obj.b;로 하는게 더 낫겠네..ㅎ
          */
         remove: function (value, key) {
             if (!core.is(value, 'object')) { return value; }
@@ -1477,7 +1477,7 @@ window.LIB_DIV_DEBUG = false;
 
         /**
          * json를 문자열로 변환(JSON을 지원하는 브라우저에서는 JSON.stringify를 사용한다.)
-         * @name common.object.stringfy
+         * @name axl.object.stringfy
          * @param {Object} val json 객체
          * @param {Object} [opts]
          * @param {boolean} [opts.singleQuotes = false] 문자열을 '로 감쌀것인가
@@ -1486,7 +1486,7 @@ window.LIB_DIV_DEBUG = false;
          * @param {string} [pad = ''] 기호와 문자간의 간격
          * @return {string}
          * @example
-         * common.object.stringify({"a": "A"
+         * axl.object.stringify({"a": "A"
          */
         stringify: window.JSON ? JSON.stringify : function (val, opts, pad) {
             var cache = [];
@@ -1568,16 +1568,16 @@ window.LIB_DIV_DEBUG = false;
     /**
      * 배열관련 유틸함수
      * @namespace
-     * @name common.array
+     * @name axl.array
      */
-    core.addon('array', /** @lends common.array# */{
+    core.addon('array', /** @lends axl.array# */{
         /**
          * 배열 병합
          * @param {Array} arr 원본 배열
          * @param {...Mixed} var_args 합칠 요소들
          * @returns {Array} 모두 합쳐진 배열
          * @exmaple
-         * var newArray = common.array.append([1,2,3], [4,5,6], [6, 7, 8]); // [1,2,3,4,5,6,7,8]
+         * var newArray = axl.array.append([1,2,3], [4,5,6], [6, 7, 8]); // [1,2,3,4,5,6,7,8]
          */
         append: function (arr) {
             var args = arraySlice.call(arguments);
@@ -1587,7 +1587,7 @@ window.LIB_DIV_DEBUG = false;
         /**
          * 콜백함수로 하여금 요소를 가공하는 함수
          *
-         * @name common.array.map
+         * @name axl.array.map
          * @function
          * @param {Array} obj 배열
          * @param {arrayCallback} cb 콜백함수
@@ -1595,7 +1595,7 @@ window.LIB_DIV_DEBUG = false;
          * @return {Array} 기공된 배열
          *
          * @example
-         * common.array.map([1, 2, 3], function(item, index) {
+         * axl.array.map([1, 2, 3], function(item, index) {
 		 *		return item * 10;
 		 * });
          * // [10, 20, 30]
@@ -1613,14 +1613,14 @@ window.LIB_DIV_DEBUG = false;
         /**
          * 반복자함수의 반환값이 true가 아닐 때까지 반복
          *
-         * @name common.array.every
+         * @name axl.array.every
          * @function
          * @param {Array} arr 배열
          * @param {arrayCallback} cb 함수
          * @return {boolean} 최종 결과
          * @example
          * var sum = 0;
-         * common.array.every([1, 3, 5, 7], function(val) {
+         * axl.array.every([1, 3, 5, 7], function(val) {
          *     return val > 5;
          * });
          * // 9
@@ -1639,14 +1639,14 @@ window.LIB_DIV_DEBUG = false;
         /**
          * 반복자함수의 반환값이 true일 때까지 반복
          *
-         * @name common.array.any
+         * @name axl.array.any
          * @function
          * @param {Array} arr 배열
          * @param {arrayCallback} cb 함수
          * @return {boolean} 최종 결과
          * @example
          * var sum = 0;
-         * common.array.any([1, 3, 5, 7], function(val) {
+         * axl.array.any([1, 3, 5, 7], function(val) {
          *     return val < 5;
          * });
          * // 4
@@ -1668,7 +1668,7 @@ window.LIB_DIV_DEBUG = false;
          * @param {Array} obj 배열
          * @return {Array} 순서가 섞인 새로운 배열
          * @example
-         * common.array.shuffle([1, 3, 4, 6, 7, 8]); // [6, 3, 8, 4, 1, 7]
+         * axl.array.shuffle([1, 3, 4, 6, 7, 8]); // [6, 3, 8, 4, 1, 7]
          */
         shuffle: function (obj) {
             var rand,
@@ -1686,14 +1686,14 @@ window.LIB_DIV_DEBUG = false;
         /**
          * 콜백함수로 하여금 요소를 걸려내는 함수
          * @function
-         * @name common.array.filter
+         * @name axl.array.filter
          * @param {Array} obj 배열
          * @param {Function} cb 콜백함수
          * @param {Object} (optional) 컨텍스트
          * @returns {Array}
          *
          * @example
-         * common.array.filter([1, '일', 2, '이', 3, '삼'], function(item, index) {
+         * axl.array.filter([1, '일', 2, '이', 3, '삼'], function(item, index) {
 		 *		return typeof item === 'string';
 		 * });
          * // ['일','이','삼']
@@ -1715,7 +1715,7 @@ window.LIB_DIV_DEBUG = false;
          * @return {boolean}
          *
          * @example
-         * common.array.include([1, '일', 2, '이', 3, '삼'], '삼');  // true
+         * axl.array.include([1, '일', 2, '이', 3, '삼'], '삼');  // true
          */
         include: function (arr, value, b) {
             if (!core.is(arr, 'array')) { return value; }
@@ -1733,13 +1733,13 @@ window.LIB_DIV_DEBUG = false;
         /**
          * 주어진 인덱스의 요소를 반환
          * @function
-         * @name common.array.indexOf
+         * @name axl.array.indexOf
          * @param {Array} obj 배열
          * @param {Function} cb 콜백함수
          * @return {number}
          *
          * @example
-         * common.array.indexOf([1, '일', 2, '이', 3, '삼'], '일');  // 1
+         * axl.array.indexOf([1, '일', 2, '이', 3, '삼'], '일');  // 1
          */
         indexOf: nativeCall(arrayProto.indexOf) || function (arr, value, b) {
             for (var i = 0, len = arr.length; i < len; i++) {
@@ -1755,7 +1755,7 @@ window.LIB_DIV_DEBUG = false;
          * @param {number} index 삭제할 인덱스 or 요소
          * @return {Array} 지정한 요소가 삭제된 배열
          * @example
-         * common.array.removeAt([1, 2, 3, 4], 1); // [1, 3, 4]
+         * axl.array.removeAt([1, 2, 3, 4], 1); // [1, 3, 4]
          */
         removeAt: function (value, index) {
             if (!core.is(value, 'array')) { return value; }
@@ -1771,9 +1771,9 @@ window.LIB_DIV_DEBUG = false;
          * @param {*} item 요소
          * @return {Array} 지정한 요소가 삭제된 배열
          * @example
-         * common.array.remove(['a', 'b', 'c'], 'b'); // ['a', 'c']
+         * axl.array.remove(['a', 'b', 'c'], 'b'); // ['a', 'c']
          *
-         * common.array.remove(['a', 'b', 'c'], function(value){
+         * axl.array.remove(['a', 'b', 'c'], function(value){
          *     return value === 'b';
          * }); // ['a', 'c']
          */
@@ -1799,7 +1799,7 @@ window.LIB_DIV_DEBUG = false;
          * @param {Array} array 배열
          * @return {number} 최대값
          * @example
-         * common.array.max([2, 1, 3, 5, 2, 8]); // 8
+         * axl.array.max([2, 1, 3, 5, 2, 8]); // 8
          */
         max: function( array ) {
             return Math.max.apply( Math, array );
@@ -1811,7 +1811,7 @@ window.LIB_DIV_DEBUG = false;
          * @param {Array} array 배열
          * @return {number} 최소값
          * @example
-         * common.array.min([2, 1, 3, 5, 2, 8]); // 1
+         * axl.array.min([2, 1, 3, 5, 2, 8]); // 1
          */
         min: function( array ) {
             return Math.min.apply( Math, array );
@@ -1824,7 +1824,7 @@ window.LIB_DIV_DEBUG = false;
          * @param {Array} array 배열
          * @return {Array} 역순으로 정렬된 새로운 배열
          * @example
-         * common.array.reverse([1, 2, 3]); // [3, 2, 1]
+         * axl.array.reverse([1, 2, 3]); // [3, 2, 1]
          */
         reverse: nativeCall(arrayProto.reverse) || function(array) {
             var tmp = null, first, last;
@@ -1845,7 +1845,7 @@ window.LIB_DIV_DEBUG = false;
          * @param {Array} arr2 배열2
          * @returns {Array} 차집합 배열
          * @example
-         * common.array.different([1, 2, 3, 4, 5], [3, 4, 5, 6, 7]); // [1, 2, 6, 7]
+         * axl.array.different([1, 2, 3, 4, 5], [3, 4, 5, 6, 7]); // [1, 2, 6, 7]
          */
         different: function(arr1, arr2) {
             var newArr = [];
@@ -1866,7 +1866,7 @@ window.LIB_DIV_DEBUG = false;
     /**
      * 날짜관련 유틸함수
      * @namespace
-     * @name common.date
+     * @name axl.date
      */
     core.addon('date', function () {
         var months = "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec".split(","),
@@ -1880,7 +1880,7 @@ window.LIB_DIV_DEBUG = false;
             return d1.getTime() > d2.getTime() ? -1 : (d1.getTime() === d2.getTime() ? 0 : 1);
         }
 
-        return /** @lends common.date */{
+        return /** @lends axl.date */{
             MONTHS_NAME: months,
             MONTHS_FULLNAME: fullMonths,
 
@@ -1892,7 +1892,7 @@ window.LIB_DIV_DEBUG = false;
              * @return {string} 변환된 문자열
              *
              * @example
-             * common.date.format(new Date(), "yy/MM/dd");
+             * axl.date.format(new Date(), "yy/MM/dd");
              * // '15/01/05'
              */
             format: function (formatDate, formatString) {
@@ -1929,8 +1929,8 @@ window.LIB_DIV_DEBUG = false;
              * @param {string} date 날짜 문자열
              * @returns {boolean} 유효한 날자인지 여부
              * @example
-             * common.date.isValid('2014-13-23'); // false
-             * common.date.isValid('2014-11-23'); // true
+             * axl.date.isValid('2014-13-23'); // false
+             * axl.date.isValid('2014-11-23'); // true
              */
             isValid: function(date) {
                 try {
@@ -1948,8 +1948,8 @@ window.LIB_DIV_DEBUG = false;
              * @param {Date} end 만료일시
              * @return {boolean} 두날짜 사이에 있는지 여부
              * @example
-             * common.date.between('2014-09-12', '2014-09-11', '2014=09-12'); // true
-             * common.date.between('2014-09-12', '2014-09-11', '2014=09-11') // false
+             * axl.date.between('2014-09-12', '2014-09-11', '2014=09-12'); // true
+             * axl.date.between('2014-09-12', '2014-09-11', '2014=09-11') // false
              */
             between: function (date, start, end) {
                 if(!date.getDate) { date = core.date.parse(date); }
@@ -1962,7 +1962,7 @@ window.LIB_DIV_DEBUG = false;
              * 날짜 비교
              *
              * @function
-             * @name common.date.compare
+             * @name axl.date.compare
              * @param {Date} date1 날짜1
              * @param {Date} date2 날짜2
              * @return {number} -1: date1가 이후, 0: 동일, 1:date2가 이후
@@ -1970,9 +1970,9 @@ window.LIB_DIV_DEBUG = false;
              * var d1 = new Date(2014, 11, 23);
              * var d2 = new Date(2014, 09, 23);
              *
-             * common.date.compare(d1, d2); // -1
-             * common.date.compare(d1, d1); // 0
-             * common.date.compare(d2, d1); // 1
+             * axl.date.compare(d1, d2); // -1
+             * axl.date.compare(d1, d1); // 0
+             * axl.date.compare(d2, d1); // 1
              */
             compare: compare,
 
@@ -1983,7 +1983,7 @@ window.LIB_DIV_DEBUG = false;
              * @param {Date|string} date2 날짜2
              * @return {boolean} 두 날짜의 년월일이 동일한지 여부
              * @example
-             * common.date.equalsYMH('2014-12-23 11:12:23', '2014-12-23 09:00:21'); // true
+             * axl.date.equalsYMH('2014-12-23 11:12:23', '2014-12-23 09:00:21'); // true
              */
             equalsYMH: function(a, b) {
                 var ret = true;
@@ -2004,7 +2004,7 @@ window.LIB_DIV_DEBUG = false;
              * @param {Date} date 체크할 날짜
              * @return {boolean} 주어진 날짜가 지정된 날짜의 이후인지 체크
              * @example
-             * common.date.isAfter('2014-12-23', '2013-12-23'); // false
+             * axl.date.isAfter('2014-12-23', '2013-12-23'); // false
              */
             isAfter: function (value, date) {
                 return compare(value, date || new Date()) === 1;
@@ -2017,7 +2017,7 @@ window.LIB_DIV_DEBUG = false;
              * @param {Date} date 체크할 날짜
              * @return {boolean} 주어진 날짜가 지정된 날짜의 이후인지 체크
              * @example
-             * common.date.isBefore('2014-12-23', '2013-12-23'); // true
+             * axl.date.isBefore('2014-12-23', '2013-12-23'); // true
              */
             isBefore: function (value, date) {
                 return compare(value, date || new Date()) === -1;
@@ -2030,10 +2030,10 @@ window.LIB_DIV_DEBUG = false;
              * @param {string} format 포맷
              * @returns {Date|string} format지정값에 따라 결과를 날짜형 또는 문자열로 변환해서 반환
              * @example
-             * common.date.calcDate('2014-12-23', '-3m'); // 2014-09-23(Date)
-             * common.date.calcDate('2014-12-23', '-3m', 'yyyy/MM/dd'); // '2014/09/23'(string)
+             * axl.date.calcDate('2014-12-23', '-3m'); // 2014-09-23(Date)
+             * axl.date.calcDate('2014-12-23', '-3m', 'yyyy/MM/dd'); // '2014/09/23'(string)
              *
-             * common.date.calcDate('2014-12-23', '-10d'); // 2014-12-13(Date)
+             * axl.date.calcDate('2014-12-23', '-10d'); // 2014-12-13(Date)
              */
             calcDate: function(date, type, format) {
                 date = this.parse(date);
@@ -2065,14 +2065,14 @@ window.LIB_DIV_DEBUG = false;
              * 주어진 날짜 형식의 문자열을 Date객체로 변환
              *
              * @function
-             * @name common.date.parse
+             * @name axl.date.parse
              * @param {string} dateStringInRange 날짜 형식의 문자열
              * @return {Date} 주어진 날짜문자열을 파싱한 값을 Date형으로 반환
              * @example
-             * common.date.parse('2014-11-12');
+             * axl.date.parse('2014-11-12');
              * // Wed Nov 12 2014 00:00:00 GMT+0900 (대한민국 표준시)
              *
-             * common.date.parse('20141112');
+             * axl.date.parse('20141112');
              * // Wed Nov 12 2014 00:00:00 GMT+0900 (대한민국 표준시)
              */
             parse: (function() {
@@ -2113,7 +2113,7 @@ window.LIB_DIV_DEBUG = false;
              * @param {Date} d1 날짜 1
              * @param {Date} d2 날짜 2
              * @return {number} 두날짜의 월차
-             * common.date.monthDiff('2011-02-12', '2014-11-23'); // 44
+             * axl.date.monthDiff('2011-02-12', '2014-11-23'); // 44
              */
             monthDiff: function(d1, d2) {
                 d1 = this.parse(d1);
@@ -2133,7 +2133,7 @@ window.LIB_DIV_DEBUG = false;
              * @param {number} month 월
              * @return {Date} 주어진 년월이 마지막 날짜
              * @example
-             * common.date.daysInMonth(2014, 2); // 28
+             * axl.date.daysInMonth(2014, 2); // 28
              */
             daysInMonth: function(year, month) {
                 var dd = new Date(year|0, month|0, 0);
@@ -2144,14 +2144,14 @@ window.LIB_DIV_DEBUG = false;
              * 주어진 시간이 현재부터 몇시간 이전인지 표현(예: -54000 -> 54초 이전)
              *
              * @function
-             * @name common.date.prettyDuration
+             * @name axl.date.prettyDuration
              * @param {Date|Interval} time 시간
              * @param {Date|Interval} [std] 기준시간
              * @param {string} [tailWord = '이전'] 기준시간
              * @return {Object}
              *
              * @example
-             * common.date.prettyDuration(new Date() - 51811); -> "52초 이전"
+             * axl.date.prettyDuration(new Date() - 51811); -> "52초 이전"
              */
             prettyDuration: (function() {
                 var ints = {
@@ -2197,7 +2197,7 @@ window.LIB_DIV_DEBUG = false;
              * @returns {number} dates.mins 분 수
              * @returns {number} dates.secs 초 수
              * @example
-             * common.date.msToTime(2134000);
+             * axl.date.msToTime(2134000);
              * // {days: 0, hours: 0, mins: 35, secs: 34}
              */
             msToTime: function(amount) {
@@ -2232,7 +2232,7 @@ window.LIB_DIV_DEBUG = false;
              * @returns {number} dates.diff
              *
              * @example
-             * common.date.diffTime(new Date, new Date(new Date() - 51811));
+             * axl.date.diffTime(new Date, new Date(new Date() - 51811));
              * // {ms: 811, secs: 51, mins: 0, hours: 0, days: 0, weeks: 0, diff: 51811}
              */
             diffTime: function(t1, t2) {
@@ -2277,7 +2277,7 @@ window.LIB_DIV_DEBUG = false;
              * @param {Date} date 날짜
              * @returns {number}
              * @example
-             * common.date.weekOfYear(new Date); // 2 // 2015-01-05를 기준으로 했을 때
+             * axl.date.weekOfYear(new Date); // 2 // 2015-01-05를 기준으로 했을 때
              */
             weekOfYear : (function() {
                 var ms1d = 1000 * 60 * 60 * 24,
@@ -2297,7 +2297,7 @@ window.LIB_DIV_DEBUG = false;
              * @param {number} y 년도
              * @returns {boolean}
              * @example
-             * common.date.isLeapYear(2014); // false
+             * axl.date.isLeapYear(2014); // false
              */
             isLeapYear: function ( y ) {
                 if ( toString.call( y ) === '[object Date]' ) { y = y.getUTCFullYear(); }
@@ -2312,7 +2312,7 @@ window.LIB_DIV_DEBUG = false;
              * @returns {Date} 가감된 날짜의 Date객체
              * @example
              * // 2014-06-10에서 y(년도)를 -4 한 값을 계산
-             * var d = common.date.add(new Date(2014, 5, 10), 'y', -4); // 2010-06-10
+             * var d = axl.date.add(new Date(2014, 5, 10), 'y', -4); // 2010-06-10
              */
             add: function(date, interval, value) {
                 var d = new Date(date.getTime());
@@ -2359,7 +2359,7 @@ window.LIB_DIV_DEBUG = false;
              * @returns {number} dates.sec 초
              * @returns {number} dates.ms 밀리초
              * @example
-             * common.date.normalize(0, 0, 120, 0) // {day:0, hour: 0, min: 2, sec: 0, ms: 0} // 즉, 120초가 2분으로 변환
+             * axl.date.normalize(0, 0, 120, 0) // {day:0, hour: 0, min: 2, sec: 0, ms: 0} // 즉, 120초가 2분으로 변환
              */
             normalize: function(h, M, s, ms) {
                 h = h || 0;
@@ -2403,9 +2403,9 @@ window.LIB_DIV_DEBUG = false;
     /////////////////////////////////////////////////////////////////////////////////////////////////
     /**
      * @namespace
-     * @name common.uri
+     * @name axl.uri
      */
-    core.addon('uri', /** @lends common.uri */{
+    core.addon('uri', /** @lends axl.uri */{
 
         /**
          * 주어진 url에 쿼리스츠링을 조합
@@ -2415,8 +2415,8 @@ window.LIB_DIV_DEBUG = false;
          * @return {string}
          *
          * @example
-         * common.uri.addParam("board.do", {"a":1, "b": 2, "c": {"d": 4}}); // "board.do?a=1&b=2&c[d]=4"
-         * common.uri.addParam("board.do?id=123", {"a":1, "b": 2, "c": {"d": 4}}); // "board.do?id=123&a=1&b=2&c[d]=4"
+         * axl.uri.addParam("board.do", {"a":1, "b": 2, "c": {"d": 4}}); // "board.do?a=1&b=2&c[d]=4"
+         * axl.uri.addParam("board.do?id=123", {"a":1, "b": 2, "c": {"d": 4}}); // "board.do?id=123&a=1&b=2&c[d]=4"
          */
         addParam: function (url, string) {
             if (core.is(string, 'object')) {
@@ -2436,7 +2436,7 @@ window.LIB_DIV_DEBUG = false;
          * @return {Object}
          *
          * @example
-         * common.uri.parseQuery("a=1&b=2"); // {"a": 1, "b": 2}
+         * axl.uri.parseQuery("a=1&b=2"); // {"a": 1, "b": 2}
          */
         parseQuery: function (query) {
             if (!query) {
@@ -2465,8 +2465,8 @@ window.LIB_DIV_DEBUG = false;
          * @return {Object}
          *
          * @example
-         * common.uri.parseUrl("http://www.common.com:8080/list.do?a=1&b=2#comment");
-         * // {scheme: "http", host: "www.common.com", port: "8080", path: "/list.do", query: "a=1&b=2"…}
+         * axl.uri.parseUrl("http://www.axl.com:8080/list.do?a=1&b=2#comment");
+         * // {scheme: "http", host: "www.axl.com", port: "8080", path: "/list.do", query: "a=1&b=2"…}
          */
         parseUrl: (function() {
             var o = {
@@ -2500,7 +2500,7 @@ window.LIB_DIV_DEBUG = false;
          * @return {string} 결과 문자열
          *
          * @example
-         * common.uri.removeHash("list.do#comment"); // "list.do"
+         * axl.uri.removeHash("list.do#comment"); // "list.do"
          */
         removeHash: function (url) {
             return url ? url.replace(/#.*$/, '') : url;
@@ -2511,7 +2511,7 @@ window.LIB_DIV_DEBUG = false;
     /**
      * css3관련 유틸함수들이 들어있는 객체이다.
      * @namespace
-     * @name common.css3
+     * @name axl.css3
      */
     core.addon('css3', function() {
 
@@ -2543,12 +2543,12 @@ window.LIB_DIV_DEBUG = false;
             return _vendor + string.capitalize(name);
         }
 
-        return /** @lends common.css3 */{
+        return /** @lends axl.css3 */{
             /**
              * css3 지원여부
              * @var {boolean}
              * @example
-             * if(common.css3.support) {
+             * if(axl.css3.support) {
              * // css3 지원
              * }
              */
@@ -2557,7 +2557,7 @@ window.LIB_DIV_DEBUG = false;
              * 3d style 지원여부
              * @var {boolean}
              * @example
-             * if(common.css3.support3D) {
+             * if(axl.css3.support3D) {
              * // 3d css3 지원
              * }
              */
@@ -2600,7 +2600,7 @@ window.LIB_DIV_DEBUG = false;
              * 현재 브라우저의 css prefix명 (webkit or Moz or ms or O)
              * @var {string}
              * @example
-             * $('div').css(common.css.vender+'Transform', 'translate(10px 0)');
+             * $('div').css(axl.css.vender+'Transform', 'translate(10px 0)');
              */
             vendor: _vendor,
             /**
@@ -2609,7 +2609,7 @@ window.LIB_DIV_DEBUG = false;
              * @param {string} cssName 체크하고자 하는 css명
              * @return {boolean} 지원여부
              * @example
-             * if(common.css3.has('transform')) { ...
+             * if(axl.css3.has('transform')) { ...
              */
             has: function (name) {
                 var a = _prefixes.length;
@@ -2630,7 +2630,7 @@ window.LIB_DIV_DEBUG = false;
              * @param {string} cssName css명
              * @return {string}
              * @example
-             * common.css3.prefix('transition'); // // webkitTransition
+             * axl.css3.prefix('transition'); // // webkitTransition
              */
             prefix: prefixStyle
         };
@@ -2638,9 +2638,9 @@ window.LIB_DIV_DEBUG = false;
     /////////////////////////////////////////////////////////////////////////////////////////////////
     /**
      * @namespace
-     * @name common.Cookie
+     * @name axl.Cookie
      */
-    core.addon('Cookie', /** @lends common.Cookie */ {
+    core.addon('Cookie', /** @lends axl.Cookie */ {
         defaults: {
             // domain: location.host,
             path: ''
@@ -2657,9 +2657,9 @@ window.LIB_DIV_DEBUG = false;
          * @param {string} [options.domain] 쿠키의 유효 도메인
          * @param {boolean} [options.secure] https에서만 쿠키 설정이 가능하도록 하는 속성
          * @example
-         * common.Cookie.set('userid', 'common');
+         * axl.Cookie.set('userid', 'common');
          * // or
-         * common.Cookie.set({
+         * axl.Cookie.set({
          *              'userid': 'common',
          *              'name': '바이널'
          *              });
@@ -2688,7 +2688,7 @@ window.LIB_DIV_DEBUG = false;
          * @param {string} name 쿠키명
          * @return  {string} 쿠키값
          * @example
-         * common.Cookie.get('userid'); // 'common'
+         * axl.Cookie.get('userid'); // 'common'
          */
         get: function (name) {
             var j, g, h, f;
@@ -2729,8 +2729,8 @@ window.LIB_DIV_DEBUG = false;
          * @param {string} val 값
          * @param {string} sep 구분자
          * @example
-         * common.Cookie.setItem('arr', 'a');
-         * common.Cookie.setItem('arr', 'b');  // arr:a|b
+         * axl.Cookie.setItem('arr', 'a');
+         * axl.Cookie.setItem('arr', 'b');  // arr:a|b
          */
         setItem: function(name, val, sep) {
             sep = sep || '|';
@@ -2752,9 +2752,9 @@ window.LIB_DIV_DEBUG = false;
          * @param {string} val 값
          * @param {string} sep
          * @example
-         * common.Cookie.setItem('arr', 'a');
-         * common.Cookie.setItem('arr', 'b');  // arr='a|b'
-         * common.Cookie.removeItem('arr', 'b'); // arr='a'
+         * axl.Cookie.setItem('arr', 'a');
+         * axl.Cookie.setItem('arr', 'b');  // arr='a|b'
+         * axl.Cookie.removeItem('arr', 'b'); // arr='a'
          */
         removeItem: function(name, val, sep) {
             sep = sep || '|';
@@ -2777,7 +2777,7 @@ window.LIB_DIV_DEBUG = false;
          * 현재 페이지의 호스트주소를 반환
          * @returns {string}
          * @example
-         * alert(common.getHost());
+         * alert(axl.getHost());
          */
         getHost: function() {
             var loc = doc.location;
@@ -2797,29 +2797,29 @@ window.LIB_DIV_DEBUG = false;
          * 브라우저의 Detect 정보: 되도록이면 Modernizr 라이브러리를 사용할 것을 권함
          *
          * @example
-         * common.browser.isTouch // 터치디바이스 여부
-         * common.browser.isRetina // 레티나 여부
-         * common.browser.isMobile // orientation 작동여부로 판단
-         * common.browser.isMac // 맥OS
-         * common.browser.isLinux // 리눅스
-         * common.browser.isWin // 윈도우즈
-         * common.browser.is64Bit // 64비트 플랫폼
+         * axl.browser.isTouch // 터치디바이스 여부
+         * axl.browser.isRetina // 레티나 여부
+         * axl.browser.isMobile // orientation 작동여부로 판단
+         * axl.browser.isMac // 맥OS
+         * axl.browser.isLinux // 리눅스
+         * axl.browser.isWin // 윈도우즈
+         * axl.browser.is64Bit // 64비트 플랫폼
          *
-         * common.browser.isIE // IE
-         * common.browser.ieVersion // IE의 버전
-         * common.browser.isOpera // 오페라
-         * common.browser.isChrome // 크롬
-         * common.browser.isSafari // 사파리
-         * common.browser.isWebKit // 웹킷
-         * common.browser.isGecko // 파이어폭스
-         * common.browser.isIETri4 // IE엔진
-         * common.browser.isAir // 어도비 에어
-         * common.browser.isIOS // 아이폰, 아이패드
-         * common.browser.isAndroid // 안드로이드
-         * common.browser.iosVersion // ios 버전 : [8, 1, 0] -> [major, minor, revision]
-         * common.browser.androidVersion // android 버전 : [4, 1, 0] -> [major, minor, revision]
+         * axl.browser.isIE // IE
+         * axl.browser.ieVersion // IE의 버전
+         * axl.browser.isOpera // 오페라
+         * axl.browser.isChrome // 크롬
+         * axl.browser.isSafari // 사파리
+         * axl.browser.isWebKit // 웹킷
+         * axl.browser.isGecko // 파이어폭스
+         * axl.browser.isIETri4 // IE엔진
+         * axl.browser.isAir // 어도비 에어
+         * axl.browser.isIOS // 아이폰, 아이패드
+         * axl.browser.isAndroid // 안드로이드
+         * axl.browser.iosVersion // ios 버전 : [8, 1, 0] -> [major, minor, revision]
+         * axl.browser.androidVersion // android 버전 : [4, 1, 0] -> [major, minor, revision]
          * @example
-         * if(common.browser.isIE && common.browser.isVersion < 9) {
+         * if(axl.browser.isIE && axl.browser.isVersion < 9) {
          *     alert('구버전을 사용하고 있습니다.');
          * }
          */
@@ -2886,7 +2886,7 @@ window.LIB_DIV_DEBUG = false;
          * @example
          * // 리사이징 중일 때는 #box의 크기를 변경하지 않다가,
          * // 리사이징이 끝나고 0.5초가 지난 후에 #box사이즈를 변경하고자 할 경우에 사용.
-         * $(window).on('resize', common.delayRun(function(){
+         * $(window).on('resize', axl.delayRun(function(){
 		 *		$('#box').css('width', $(window).width());
 		 *  }, 500));
          */
@@ -2913,8 +2913,8 @@ window.LIB_DIV_DEBUG = false;
          * @return {Array}
          *
          * @example
-         * common.toArray('abcd"); // ["a", "b", "c", "d"]
-         * common.toArray(arguments);  // arguments를 객체를 array로 변환하여 Array에서 지원하는 유틸함수(slice, reverse ...)를 쓸수 있다.
+         * axl.toArray('abcd"); // ["a", "b", "c", "d"]
+         * axl.toArray(arguments);  // arguments를 객체를 array로 변환하여 Array에서 지원하는 유틸함수(slice, reverse ...)를 쓸수 있다.
          */
         toArray: function (value) {
             try {
@@ -2963,7 +2963,7 @@ window.LIB_DIV_DEBUG = false;
          * @return {Function} tempalte 함수
          *
          * @example
-         * var tmpl = common.template('&lt;span>&lt;$=name$>&lt;/span>');
+         * var tmpl = axl.template('&lt;span>&lt;$=name$>&lt;/span>');
          * var html = tmpl({name: 'Axl rose'}); // &lt;span>Axl rose&lt;/span>
          * $('div').html(html);
          */
@@ -3000,17 +3000,17 @@ window.LIB_DIV_DEBUG = false;
          * @param {Function} callback 주어진 js파일들의 로딩이 모두 완료가 되었을 때 실행할 콜백함수
          * @return {Deferred} 지연객체
          * @example
-         * common.importJs([
+         * axl.importJs([
          *     '/ui/tab.js'
          * ]).done(function(){
-         *     new common.ui.Tab('#tab');
+         *     new axl.ui.Tab('#tab');
          * });
          *
          *
-         * common.importJs([
+         * axl.importJs([
          *     '/ui/tab.js'
          * ], function(){
-         *     new common.ui.Tab('#tab');
+         *     new axl.ui.Tab('#tab');
          * });
          */
         importJs: (function () {
@@ -3111,7 +3111,7 @@ window.LIB_DIV_DEBUG = false;
          * @param {string} href
          * @param {string} id
          * @example
-         * common.importCss('/css/tab.css');
+         * axl.importCss('/css/tab.css');
          */
         importCss: function (href, id) {
             var $head = $('head');
@@ -3130,11 +3130,11 @@ window.LIB_DIV_DEBUG = false;
 
 
     /**
-     * 루트클래스로서, common.Base나 common.Class를 이용해서 클래스를 구현할 경우 common.Base를 상속받게 된다.
+     * 루트클래스로서, axl.Base나 axl.Class를 이용해서 클래스를 구현할 경우 axl.Base를 상속받게 된다.
      * @class
-     * @name common.Base
+     * @name axl.Base
      * @example
-     * var Person = common.Base.extend({  // 또는 var Person = common.Class({ 으로 구현해도 동일하다.
+     * var Person = axl.Base.extend({  // 또는 var Person = axl.Class({ 으로 구현해도 동일하다.
 	*	$singleton: true, // 싱글톤 여부
 	*	$statics: { // 클래스 속성 및 함수
 	*		live: function() {} // Person.live(); 으로 호출
@@ -3262,11 +3262,11 @@ window.LIB_DIV_DEBUG = false;
             /**
              * 해당 클래스에서 상속된 새로운 자식클래스를 생성해주는 함수
              * @function
-             * @name common.Base.extend
+             * @name axl.Base.extend
              * @param {Object} memthods 메소드모음
-             * @return {common.Base} 새로운 클래스
+             * @return {axl.Base} 새로운 클래스
              * @example
-             * var Child = common.Base.extend({
+             * var Child = axl.Base.extend({
              *     show: function(){
              *         alert('hello');
              *     }
@@ -3278,11 +3278,11 @@ window.LIB_DIV_DEBUG = false;
             /**
              * 해당 클래스의 객체가 생성될 때 hook를 등록하는 클래스함수
              * @function
-             * @name common.Base.hooks
+             * @name axl.Base.hooks
              * @param {string} name 훅 이름('init' 는 처음에 한번만 실행, 'create' 는 객체가 생성될 때마다 실행)
              * @param {function} func 실행할 훅 함수
              * @example
-             * var Child = common.Base.extend({
+             * var Child = axl.Base.extend({
              *     show: function(){
              *         alert('hello');
              *     }
@@ -3314,10 +3314,10 @@ window.LIB_DIV_DEBUG = false;
                 /**
                  * 싱클톤 클래스의 객체를 반환
                  * @function
-                 * @name common.Base.getInstance
-                 * @return {common.Base}
+                 * @name axl.Base.getInstance
+                 * @return {axl.Base}
                  * @example
-                 * var Child = common.Base.extend({
+                 * var Child = axl.Base.extend({
                  *    $singleton: true,
                  *    show: function(){
                  *        alert('hello');
@@ -3344,10 +3344,10 @@ window.LIB_DIV_DEBUG = false;
             /**
              * 메소드내부에서 부모클레스의 함수를 호출하고자 할 때 사용
              * @function
-             * @name common.Base#suprMethod
+             * @name axl.Base#suprMethod
              * @return {*} 해당 부모함수의 반환값
              * @example
-             * var Parent = common.Base.extend({
+             * var Parent = axl.Base.extend({
              *     show: function(){
              *         alert('parent.show');
              *     }
@@ -3392,10 +3392,10 @@ window.LIB_DIV_DEBUG = false;
             /**
              * 이미 존재하는 클래스에 메소드 추가
              * @function
-             * @name common.Base.members
+             * @name axl.Base.members
              * @param {Object} methods 메소드 모음 객체
              * @example
-             * var Parent = common.Base.extend({});
+             * var Parent = axl.Base.extend({});
              * Parent.members({
              *     show: function(){
              *         alert('hello');
@@ -3411,10 +3411,10 @@ window.LIB_DIV_DEBUG = false;
             /**
              * 이미 존재하는 클래스에 정적메소드 추가
              * @function
-             * @name common.Base.members
+             * @name axl.Base.members
              * @param {Object} methods 메소드 모음 객체
              * @example
-             * var Parent = common.Base.extend({});
+             * var Parent = axl.Base.extend({});
              * Parent.statics({
              *     show: function(){
              *         alert('hello');
@@ -3452,16 +3452,16 @@ window.LIB_DIV_DEBUG = false;
         Base.extend = classExtend;
 
         /**
-         * 클래스를 생성해주는 함수(common.Base.extend 별칭)
+         * 클래스를 생성해주는 함수(axl.Base.extend 별칭)
          * @param {Object} attr 메소드 모음 객체
-         * @returns {common.Base} 새로운 객체
+         * @returns {axl.Base} 새로운 객체
          * @example
-         * var Parent = common.Class({
+         * var Parent = axl.Class({
          *     show: function(){
          *         alert('parent.show');
          *     }
          * });
-         * var Child = common.Class({
+         * var Child = axl.Class({
          *     $extend: Parent, // 부모클래스
          *     run: function(){
          *          alert('child.run');
@@ -3474,7 +3474,7 @@ window.LIB_DIV_DEBUG = false;
         return core.Base = Base;
     })();
 
-    core.addon('Env', /** @lends common.Env */{
+    core.addon('Env', /** @lends axl.Env */{
         configs: {},
 
         /**
@@ -3484,7 +3484,7 @@ window.LIB_DIV_DEBUG = false;
          * @param {*} [def] 설정된 값이 없을 경우 사용할 기본값
          * @return {*} 설정값
          * @example
-         * common.Env.get('siteTitle'); // '바이널'
+         * axl.Env.get('siteTitle'); // '바이널'
          */
         get: function (name, def) {
             var root = this.configs,
@@ -3506,7 +3506,7 @@ window.LIB_DIV_DEBUG = false;
          * @param {*} value 설정값
          * @return {*} 설정값
          * @example
-         * common.Env.set('siteTitle', '바이널');
+         * axl.Env.set('siteTitle', '바이널');
          */
         set: function (name, value) {
             var root = this.configs,
@@ -3527,22 +3527,22 @@ window.LIB_DIV_DEBUG = false;
         /**
          * 이벤트 리스너로서, 일반 객체에 이벤트 기능을 붙이고자 할경우에 사용
          * @class
-         * @name common.Listener
+         * @name axl.Listener
          * @example
          * var obj = {};
-         * common.Listener.build(obj);
+         * axl.Listener.build(obj);
          * obj.on('clickitem', function(){
          *   alert(0);
 		 * });
          * obj.trigger('clickitem');
          */
-        var Listener = /** @lends common.Listener# */ {
+        var Listener = /** @lends axl.Listener# */ {
             /**
              * obj에 이벤트 기능 적용하기
              * @param {Object} obj 이벤트를 적용하고자 하는 객체
              */
             build: function(obj){
-                common.extend(obj, common.Listener).init();
+                axl.extend(obj, axl.Listener).init();
             },
             /**
              * UI모듈이 작성될 때 내부적으로 호출되는 초기화 함수
@@ -3603,29 +3603,29 @@ window.LIB_DIV_DEBUG = false;
 
     /**
      * @namespace
-     * @name common.PubSub
+     * @name axl.PubSub
      * @description 발행/구독 객체: 상태변화를 관찰하는 옵저버(핸들러)를 등록하여, 상태변화가 있을 때마다 옵저버를 발행(실행)
      * 하도록 하는 객체이다..
      * @example
      * // 옵저버 등록
-     * common.PubSub.on('customevent', function() {
+     * axl.PubSub.on('customevent', function() {
 	 *	 alert('안녕하세요');
 	 * });
      *
      * // 등록된 옵저버 실행
-     * common.PubSub.trigger('customevent');
+     * axl.PubSub.trigger('customevent');
      */
     core.addon('PubSub', function () {
 
         var PubSub = $(window);
 
-        var tmp = /** @lends common.PubSub */{
+        var tmp = /** @lends axl.PubSub */{
             /**
              * 이벤트 바인딩
              * @function
              * @param {string} name 이벤트명
              * @param {eventCallback} handler 핸들러
-             * @return {common.PubSub}
+             * @return {axl.PubSub}
              */
             on: function(name, handler) {
                 return this;
@@ -3635,7 +3635,7 @@ window.LIB_DIV_DEBUG = false;
              * 이벤트 언바인딩
              * @param {string} name 이벤트명
              * @param {Function} [handler] 핸들러
-             * @return {common.PubSub}
+             * @return {axl.PubSub}
              */
             off: function (name, handler) {
                 return this;
@@ -3645,7 +3645,7 @@ window.LIB_DIV_DEBUG = false;
              * 이벤트 트리거
              * @param {string} name 이벤트명
              * @param {Object} [data] 핸들러
-             * @return {common.PubSub}
+             * @return {axl.PubSub}
              */
             trigger: function (name, data) {
                 return this;
@@ -3659,8 +3659,8 @@ window.LIB_DIV_DEBUG = false;
 })(jQuery);
 
 /*!
- * @author common.ui.js
- * @email comahead@vi-nyl.com
+ * @author axl.ui.js
+ * @email comahead@gmail.com
  * @create 2014-12-02
  * @license MIT License
  */
@@ -3668,7 +3668,7 @@ window.LIB_DIV_DEBUG = false;
     "use strict";
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    var arraySlice = Array.prototype.slice;		// common.ui.View
+    var arraySlice = Array.prototype.slice;		// axl.ui.View
 
     var ui = core.ui = function(name, supr, attr) {
         var bindName, Klass;
@@ -3724,9 +3724,9 @@ window.LIB_DIV_DEBUG = false;
     /**
      * 모든 UI요소 클래스의 최상위 클래스로써, UI클래스를 작성함에 있어서 편리한 기능을 제공해준다.
      * @class
-     * @name common.ui.View
+     * @name axl.ui.View
      */
-    var View = ui.View = core.Base.extend(/** @lends common.ui.View# */{
+    var View = ui.View = core.Base.extend(/** @lends axl.ui.View# */{
         $statics: {
             _instances: [] // 모든 인스턴스를 갖고 있는다..
         },
@@ -3827,9 +3827,9 @@ window.LIB_DIV_DEBUG = false;
 
         /**
          * this.selectors를 기반으로 엘리먼트를 조회해서 멤버변수에 셋팅
-         * @returns {common.ui.View}
+         * @returns {axl.ui.View}
          * @example
-         * var Tab = common.ui.View.extend({
+         * var Tab = axl.ui.View.extend({
          *     selectors: { // 객체가 생성될 때 주어진 요소를 검색해서 멤버변수로 셋팅해주는 옵션
          *        btns: '>li>a',
          *        contents: '>li>div'
@@ -3901,8 +3901,8 @@ window.LIB_DIV_DEBUG = false;
          *
          * @param {string} name 옵션명
          * @param {*} value 옵션값
-         * @returns {common.ui.View} chaining
-         * @fires common.ui.View#optionchange
+         * @returns {axl.ui.View} chaining
+         * @fires axl.ui.View#optionchange
          * @example
          * var tab = new Tab('#tab');
          * tab.on('optionchange', function(e, data){
@@ -3915,7 +3915,7 @@ window.LIB_DIV_DEBUG = false;
             this.options[name] = value;
             /**
              * 옵션이 변경됐을 때 발생
-             * @event common.ui.View#optionchange
+             * @event axl.ui.View#optionchange
              * @type {Object}
              * @property {string} name 옵션명
              * @property {*} value 옵션명
@@ -4019,7 +4019,7 @@ window.LIB_DIV_DEBUG = false;
          * @param {string} name 이벤트명
          * @param {string} [selector] 타겟
          * @param {eventCallback} handler 핸들러
-         * @returns {common.ui.View} chaining
+         * @returns {axl.ui.View} chaining
          * @example
          * var tab = new Tab('#tab');
          * tab.on('tabchanged', function(e, data){
@@ -4034,7 +4034,7 @@ window.LIB_DIV_DEBUG = false;
          * me.$el에 등록된 이벤트 핸들러를 언바인딩
          * @param {string} name 이벤트명
          * @param {eventCallback} [handler] 핸들러
-         * @returns {common.ui.View} chaining
+         * @returns {axl.ui.View} chaining
          * @example
          * var tab = new Tab('#tab');
          * tab.off('tabchanged');
@@ -4048,7 +4048,7 @@ window.LIB_DIV_DEBUG = false;
          * @param {string} name 이벤트명
          * @param {string} [selector] 타겟
          * @param {eventCallback} handler 핸들러
-         * @returns {common.ui.View} chaining
+         * @returns {axl.ui.View} chaining
          * @example
          * var tab = new Tab('#tab');
          * tab.one('tabchanged', function(e, data){
@@ -4063,7 +4063,7 @@ window.LIB_DIV_DEBUG = false;
          * me.$el에 등록된 이벤트를 실행
          * @param {string} name 이벤트명
          * @param {*} data 데이타
-         * @returns {common.ui.View} chaining
+         * @returns {axl.ui.View} chaining
          * @example
          * var tab = new Tab('#tab');
          * tab.trigger('tabchanged', {selectedIndex: 1});
@@ -4077,7 +4077,7 @@ window.LIB_DIV_DEBUG = false;
          *     this.customTrigger('expand'); // this.trigger('accordionexpand') 으로 변환
          * @param {string} name 이벤트명
          * @param {*} data 데이타
-         * @returns {common.ui.View} chaining
+         * @returns {axl.ui.View} chaining
          * @example
          * var tab = new Tab('#tab');
          * tab.customTrigger('changed', {selectedIndex: 1});
@@ -4092,7 +4092,7 @@ window.LIB_DIV_DEBUG = false;
          * me.$el에 등록된 이벤트 핸들러를 실행(실제 이벤트는 발생안하고 핸들러 함수만 실행)
          * @param {string} name 이벤트명
          * @param {*} data 데이타
-         * @returns {common.ui.View} chaining
+         * @returns {axl.ui.View} chaining
          * @example
          * var tab = new Tab('#tab');
          * tab.triggerHandler('tabchanged', {selectedIndex: 1});
@@ -4136,20 +4136,20 @@ window.LIB_DIV_DEBUG = false;
      * 작성된 UI모듈을 jQuery의 플러그인으로 사용할 수 있도록 바인딩시켜 주는 함수
      *
      * @function
-     * @name common.ui.bindjQuery
-     * @param {common.ui.View} Klass 클래스
+     * @name axl.ui.bindjQuery
+     * @param {axl.ui.View} Klass 클래스
      * @param {string} name 플러그인명
      *
      * @example
      * // 클래스 정의
-     * var Slider = common.ui.View({
+     * var Slider = axl.ui.View({
      *   initialize: function(el, options) { // 생성자의 형식을 반드시 지킬 것..(첫번째 인수: 대상 엘리먼트, 두번째
      *   인수: 옵션값들)
      *   ...
      *   },
      *   ...
      * });
-     * common.ui.bindjQuery(Slider, 'slider');
+     * axl.ui.bindjQuery(Slider, 'slider');
      * // 실제 사용시
      * $('#slider').slider({count: 10});
      *
@@ -4223,11 +4223,11 @@ window.LIB_DIV_DEBUG = false;
     /**
      * UI모듈의 기본옵션을 변경
      * @function
-     * @name common.ui.setDefaults
+     * @name axl.ui.setDefaults
      * @param {string} name ui모듈명(네임스페이스 제외)
      * @param {*} opts 옵션값들
      * @example
-     * common.ui.setDefaults('Tab', {
+     * axl.ui.setDefaults('Tab', {
      *     selectedIndex: 2
      * });
      */
@@ -4237,7 +4237,7 @@ window.LIB_DIV_DEBUG = false;
 
     /**
      * 키 이름
-     * @name common.keyCode
+     * @name axl.keyCode
      * @readonly
      * @enum {number}
      * @property {number} BACKSPACE 스페이스
@@ -4256,7 +4256,7 @@ window.LIB_DIV_DEBUG = false;
      * @property {number} UP 업
      * @example
      * $('#userid').on('keypress', function(e) {
-     *     if(e.which === common.keyCode.DOWN) {
+     *     if(e.which === axl.keyCode.DOWN) {
      *         alert('다운키 입력');
      *     }
      * });
@@ -4293,11 +4293,11 @@ window.LIB_DIV_DEBUG = false;
 
     /**
      * @namespace
-     * @name common.util
+     * @name axl.util
      */
     core.addon('util', function() {
 
-        return /** @lends common.util */{
+        return /** @lends axl.util */{
 
 
             /**
@@ -4305,7 +4305,7 @@ window.LIB_DIV_DEBUG = false;
              * png
              * @param {string} selector
              * @example
-             * common.util.png24('#thumbnail');
+             * axl.util.png24('#thumbnail');
              */
             png24: function ( selector ) {
                 var $target;
@@ -4378,13 +4378,13 @@ window.LIB_DIV_DEBUG = false;
             },
 
             /**
-             * 팝업을 띄우는 함수. (common.openPopup으로도 사용가능)
+             * 팝업을 띄우는 함수. (axl.openPopup으로도 사용가능)
              * @param {string} url 주소
              * @param {number=} width 너비.
              * @param {number=} height 높이.
              * @param {opts=} 팝업 창 모양 제어 옵션.
              * @example
-             * common.openPopup('http://google.com', 500, 400, {scrollbars: 'no'});
+             * axl.openPopup('http://google.com', 500, 400, {scrollbars: 'no'});
              */
             openPopup: function (url, width, height, opts) {
                 opts = extend({
@@ -4392,7 +4392,7 @@ window.LIB_DIV_DEBUG = false;
                 }, opts);
                 width = width || 600;
                 height = height || 400;
-                //var winCoords = common.util.popupCoords(width, height),
+                //var winCoords = axl.util.popupCoords(width, height),
                 var target = opts.target || '',
                     feature = 'app_, ',
                     tmp = [];
@@ -4437,7 +4437,7 @@ window.LIB_DIV_DEBUG = false;
              * @param { string } target 이미지 요소
              * @return { Deferred } deferred
              * @example
-             * common.util.loadImages('img[data-src]').done(function(){
+             * axl.util.loadImages('img[data-src]').done(function(){
              *     alert('모든 이미지 로딩 완료');
              * });
              */
@@ -4495,7 +4495,7 @@ window.LIB_DIV_DEBUG = false;
              * @param allowError 에러 허용여부(true이면 중간에 에러가 나도 다음 이미지를 대기)
              * @return {*}
              * @example
-             * common.util.waitImageLoad('img[data-src]').done(function(){
+             * axl.util.waitImageLoad('img[data-src]').done(function(){
              *     alert('모든 이미지 로딩 완료');
              * });
              */
@@ -4532,7 +4532,7 @@ window.LIB_DIV_DEBUG = false;
              * 도큐먼트의 높이를 반환
              * @return {number}
              * @example
-             * alert(common.util.getDocHeight());
+             * alert(axl.util.getDocHeight());
              */
             getDocHeight: function() {
                 var doc = document,
@@ -4550,7 +4550,7 @@ window.LIB_DIV_DEBUG = false;
              * 도큐먼트의 너비를 반환
              * @return {number}
              * @example
-             * alert(common.util.getDocWidth());
+             * alert(axl.util.getDocWidth());
              */
             getDocWidth: function() {
                 var doc = document,
@@ -4567,7 +4567,7 @@ window.LIB_DIV_DEBUG = false;
              * 창의 너비를 반환
              * @return {number}
              * @example
-             * alert(common.util.getWinHeight());
+             * alert(axl.util.getWinHeight());
              */
             getWinWidth : function() {
                 var w = 0;
@@ -4585,7 +4585,7 @@ window.LIB_DIV_DEBUG = false;
              * 창의 높이를 반환
              * @return {number}
              * @example
-             * alert(common.util.getWinHeight());
+             * alert(axl.util.getWinHeight());
              */
             getWinHeight : function() {
                 var w = 0;
@@ -4609,7 +4609,7 @@ window.LIB_DIV_DEBUG = false;
              * @param {Function} data.triggerCallback
              * @param {Function} data.completeCallback 완료 후 호출될 콜백함수
              * @example
-             * common.util.scrollTopAnimate(0, {
+             * axl.util.scrollTopAnimate(0, {
              *     complete: function() {
              *         alert('완료');
              *     },
@@ -4649,7 +4649,7 @@ window.LIB_DIV_DEBUG = false;
              * @returns {Object} {width: 너비, height: 높이, offset: { top: 탑위치, left: 레프트위치}}
              *
              * @example
-             * var dims = common.util.getDimensions('#box');
+             * var dims = axl.util.getDimensions('#box');
              * console.log(dims.left, dims.top, dims.width, dims.height);
              */
             getDimensions: function( elem ) {
@@ -4714,7 +4714,7 @@ window.LIB_DIV_DEBUG = false;
             /**
              * 컨텐츠 사이즈에 맞게 창사이즈를 조절
              * @example
-             * common.util.resizeToContent(); // 팝업에서만 사용
+             * axl.util.resizeToContent(); // 팝업에서만 사용
              */
             resizeToContent: function() {
                 var innerX, innerY,
@@ -4745,7 +4745,7 @@ window.LIB_DIV_DEBUG = false;
              * @param {Object} feature
              * @param {Function} callback
              * @example
-             * common.util.openPopupAndExec('http://google.com', '', function(){
+             * axl.util.openPopupAndExec('http://google.com', '', function(){
              *     alert('팝업이 정상적으로 띄워졌습니다.');
              * });
              */
@@ -4812,23 +4812,23 @@ window.LIB_DIV_DEBUG = false;
     /**
      * 모듈 생성 함수 및 네임스페이스
      * @namespace
-     * @name common.module
+     * @name axl.module
      * @example
-     * var Geolocation = common.Base.extend({...});
-     * common.module('Geolocation', Geolocation);
+     * var Geolocation = axl.Base.extend({...});
+     * axl.module('Geolocation', Geolocation);
      *
      * //or
-     * common.module('Geolocation', {
+     * axl.module('Geolocation', {
      *     initialize: function(){}
      * });
      *
-     * common.module.Geolocation().getInstance()...
+     * axl.module.Geolocation().getInstance()...
      */
-    common.module = function(name, obj) {
+    axl.module = function(name, obj) {
         if(!obj){ return; }
         if(!obj.superclass) {
             console.log(name);
-            obj = common.Base.extend(obj);
+            obj = axl.Base.extend(obj);
         }
         this.module[name] = obj;
     };

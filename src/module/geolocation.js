@@ -1,6 +1,6 @@
 /**
  * Authror: 김승일
- * Email: comahead@vi-nyl.com
+ * Email: comahead@gmail.com
  * Created date: 2014-04-30
  * Description: 지오로케이션 모듈
  */
@@ -10,10 +10,10 @@
     /**
      * 네이티브 지오로케이션를 좀더 사용하기 쉽도록 작성된 Wrapper 클래스
      * @class
-     * @name common.module.Geolocation
+     * @name axl.module.Geolocation
      *
      */
-    var Geolocation = core.Class(/**@lends common.module.Geolocation */{
+    var Geolocation = core.Class(/**@lends axl.module.Geolocation */{
         $singleton: true, // 싱글톤
         /**
          * 생성자

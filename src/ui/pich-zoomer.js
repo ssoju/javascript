@@ -1,6 +1,6 @@
 /*!
  * @author 김부윤, 김승일
- * @email booyoonkim@vi-nyl.com, comahead@vi-nyl.com
+ * @email booyoonkim@gmail.com, comahead@gmail.com
  * @description
  */
 (function($, core, ui, undefined) {
@@ -11,11 +11,11 @@
     /**
      * ...
      * @class
-     * @name common.ui.PinchZoomer
-     * @extends common.ui.View
+     * @name axl.ui.PinchZoomer
+     * @extends axl.ui.View
      */
-    ui('PinchZoomer', /**@lends common.ui.PinchZoomer# */{
-        $statics: /**@lends common.ui.PinchZoomer */{
+    ui('PinchZoomer', /**@lends axl.ui.PinchZoomer# */{
+        $statics: /**@lends axl.ui.PinchZoomer */{
 
         },
 
@@ -452,10 +452,10 @@
     /**
      * @class
      * @description 페이징 기능이 있는 모바일 이미지 뷰어
-     * @name common.ui.MultiPageImageViewer
+     * @name axl.ui.MultiPageImageViewer
      */
-    ui('MultiPageImageViewer', /**@lends common.ui.MultiPageImageViewer */{
-        $statics: /**@lends common.ui.MultiPageImageViewer */{},
+    ui('MultiPageImageViewer', /**@lends axl.ui.MultiPageImageViewer */{
+        $statics: /**@lends axl.ui.MultiPageImageViewer */{},
         defaults:{
             expandStep: 3,
             noneClass: "none",
@@ -624,12 +624,12 @@
                 if( me.$controlContain.hasClass(me.options.noneClass) ){
                     me.$controlContain.removeClass(me.options.noneClass);
                     if(window.isApp){
-                        common.app.cmd('hidden_gallery_toolbar', 'hidden=');
+                        axl.app.cmd('hidden_gallery_toolbar', 'hidden=');
                     }
                 }else{
                     me.$controlContain.addClass(me.options.noneClass);
                     if(window.isApp){
-                        common.app.cmd('hidden_gallery_toolbar', 'hidden=true');
+                        axl.app.cmd('hidden_gallery_toolbar', 'hidden=true');
                     }
                 }
             });

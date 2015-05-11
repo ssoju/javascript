@@ -1,6 +1,6 @@
 /*!
- * @author common.module.Sharer.js
- * @email comahead@vi-nyl.com
+ * @author axl.module.Sharer.js
+ * @email comahead@gmail.com
  * @create 2014-11-25
  * @license MIT License
  */
@@ -17,9 +17,9 @@
         APP: 4
     };
 
-    var Sharer = /** @lends common.module.Sharer */{
-        types: /** @lends common.module.Sharer.types */{ //['facebook', 'twitter', 'kakaotalk', 'kakaostory'/* , 'googleplus'*/],
-            'facebook': /** @lends common.module.Sharer.types.facebook */{
+    var Sharer = /** @lends axl.module.Sharer */{
+        types: /** @lends axl.module.Sharer.types */{ //['facebook', 'twitter', 'kakaotalk', 'kakaostory'/* , 'googleplus'*/],
+            'facebook': /** @lends axl.module.Sharer.types.facebook */{
                 name: '페이스북',
                 support: detect.PC | detect.MOBILE,
                 size: [500, 300],
@@ -31,7 +31,7 @@
                     return 'u=' + enc(data.url) + (data.title && '&t=' + enc(data.title));
                 }
             },
-            'twitter': /** @lends common.module.Sharer.types.twitter */{
+            'twitter': /** @lends axl.module.Sharer.types.twitter */{
                 name: '트위터',
                 support: detect.PC | detect.MOBILE,
                 size: [550, 300],
@@ -46,7 +46,7 @@
                     return 'text=' + enc(txt + ' ' + data.url);
                 }
             },
-            'kakaotalk': /** @lends common.module.Sharer.types.kakaotalk */{
+            'kakaotalk': /** @lends axl.module.Sharer.types.kakaotalk */{
                 name: '카카오톡',
                 support: detect.APP | detect.MOBILE,
                 makeParam: function(data) {
@@ -60,20 +60,20 @@
                     };
                 }
             },
-            'kakaostory': /** @lends common.module.Sharer.types.kakaostory */{
+            'kakaostory': /** @lends axl.module.Sharer.types.kakaostory */{
                 name: '카카오스토리',
                 support: detect.APP | detect.MOBILE,
                 makeParam: function(data) {
                     return {
                         post: data.title + "\n" + (data.desc||'')+"\n"+data.url,
-                        appid: "common.com",
+                        appid: "axl.com",
                         appver: "1.0",
                         apiver: "1.0",
                         appname: "이마트 스토어"
                     };
                 }
             },
-            'line': /** @lends common.module.Sharer.types.line */{
+            'line': /** @lends axl.module.Sharer.types.line */{
                 name: '라인',
                 support: detect.APP | detect.MOBILE,
                 baseUrl: 'line://msg/text/',
@@ -88,7 +88,7 @@
                     return '';
                 }
             },
-            'googleplus': /** @lends common.module.Sharer.types.googleplus */{
+            'googleplus': /** @lends axl.module.Sharer.types.googleplus */{
                 name: '구글플러스',
                 support: detect.PC | detect.MOBILE,
                 baseUrl: 'https://plus.google.com/share?',
@@ -96,7 +96,7 @@
                     return 'url=' + enc(data.title + ' ' + data.url);
                 }
             },
-            'pinterest': /** @lends common.module.Sharer.types.pinterest */
+            'pinterest': /** @lends axl.module.Sharer.types.pinterest */
             {
                 name: '핀터레스트',
                 detects: detect.PC | detect.MOBILE,

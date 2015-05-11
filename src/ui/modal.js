@@ -1,6 +1,6 @@
 /*!
- * @author common.ui.modal.js
- * @email comahead@vi-nyl.com
+ * @author axl.ui.modal.js
+ * @email comahead@gmail.com
  * @create 2014-11-25
  * @license MIT License
  */
@@ -124,10 +124,10 @@
      * options.show: true                   // 호출할 때 바로 표시할 것인가...
      *
      * @class
-     * @name common.ui.Modal
-     * @extends common.ui.View
+     * @name axl.ui.Modal
+     * @extends axl.ui.View
      */
-    var Modal = ui('Modal', /** @lends common.ui.Modal# */ {
+    var Modal = ui('Modal', /** @lends axl.ui.Modal# */ {
         bindjQuery: 'modal',
         defaults: {
             overlay: true,
@@ -580,7 +580,7 @@
     /**
      * 열려 있는 레이어팝업을 가운데에 위치시키는 글로벌이벤트
      * @example
-     * common.PubSub.trigger('resize:modal')
+     * axl.PubSub.trigger('resize:modal')
      */
     /*core.PubSub.on('resize:modal', function() {
         if(Modal.active){
@@ -601,9 +601,9 @@
 
     /**
      * @class
-     * @name common.ui.AjaxModal
+     * @name axl.ui.AjaxModal
      * @description ajax로 불러들인 컨텐츠를 모달로 띄워주는 모듈
-     * @extends common.ui.View
+     * @extends axl.ui.View
      */
     core.ui.ajaxModal = function () {
         return function(url, options) {
@@ -620,13 +620,13 @@
     core.ui.alert = function () {
         /**
          * 얼럿레이어
-         * @memberOf common.ui
+         * @memberOf axl.ui
          * @name alert
          * @function
          * @param {string} msg 얼럿 메세지
          * @param {Object} options 모달 옵션
          * @example
-         * common.ui.alert('안녕하세요');
+         * axl.ui.alert('안녕하세요');
          */
         return function (msg, options) {
             if(typeof msg !== 'string' && arguments.length === 0) {

@@ -7,10 +7,10 @@
 <body>
 현재 당신의 위치는...<div id="info"></div>
 <script src="../../../js/lib/jquery.js"></script>
-<script src="../../../js/release/common.js"></script>
+<script src="../../../js/release/axl.js"></script>
 <script src="../../../js/release/module/geolocation.js"></script>
 <script>
-    var geo = new common.module.Geolocation();
+    var geo = new axl.module.Geolocation();
     geo.getCurrentPosition({
         timeout: 20000
     }).done(function(position) {

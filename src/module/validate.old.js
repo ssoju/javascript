@@ -1,6 +1,6 @@
 /*!
  * @author validate
- * @email comahead@vi-nyl.com
+ * @email comahead@gmail.com
  * @create 2014-12-12
  * @license MIT License
  */

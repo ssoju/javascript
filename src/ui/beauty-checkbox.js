@@ -1,6 +1,6 @@
 /*!
  * @author beauty-checkbox
- * @email comahead@vi-nyl.com
+ * @email comahead@gmail.com
  * @create 2015-03-20
  * @license MIT License
  */

@@ -1,6 +1,6 @@
 /*!
- * @author common.ui.calendar.js
- * @email comahead@vi-nyl.com
+ * @author axl.ui.calendar.js
+ * @email comahead@gmail.com
  * @create 2014-11-25
  * @license MIT License
  */
@@ -18,11 +18,11 @@
     /**
      * @class
      * @description 달력 모듈
-     * @name common.ui.Calendar
-     * @extends common.ui.View
+     * @name axl.ui.Calendar
+     * @extends axl.ui.View
      */
     var daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-    var Calendar = ui('Calendar', /** @lends common.ui.Calendar# */{
+    var Calendar = ui('Calendar', /** @lends axl.ui.Calendar# */{
         bindjQuery: 'calendar',
         defaults: {
             weekNames: ['일', '월','화','수','목','금', '토'],

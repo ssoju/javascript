@@ -1,6 +1,6 @@
 /**
  * @authror: 김승일
- * @email: comahead@vi-nyl.com
+ * @email: comahead@gmail.com
  * @created: 2014-06-27
  * @description: framework
  */
@@ -14,14 +14,14 @@
     /**
      * 입력제한 기능을 담당하는 클래스
      * @class
-     * @name common.ui.TextCounter
-     * @extends common.ui.View
+     * @name axl.ui.TextCounter
+     * @extends axl.ui.View
      * @example
      * new TextCounter( $('input.d_textcounter'), {});
      * // 혹은 jquery 플러그인 방식으로도 호출 가능
      * $('input.d_textcounter').textCounter({});
      */
-    var TextCounter = ui('TextCounter', /** @lends common.ui.TextCounter# */{
+    var TextCounter = ui('TextCounter', /** @lends axl.ui.TextCounter# */{
         $statics: {
             ON_TEXTCOUNT_CHANGE: 'textcounterchange' // 글자수가 변경되었을 때 발생
         },
@@ -184,14 +184,14 @@
     /**
      * textarea, input에서 글자수 체크 및 자동리사이징 처리를 담당하는 클래스
      * @class
-     * @name common.ui.TextControl
-     * @extends common.ui.View
+     * @name axl.ui.TextControl
+     * @extends axl.ui.View
      * @example
      * new ui.TextControl( $('textarea'), {checkCount: true});
      * // or
      * $('textarea').textControl({checkCount: true});
      */
-    var TextControl = ui('TextControl', /** @lends common.ui.TextControl# */{
+    var TextControl = ui('TextControl', /** @lends axl.ui.TextControl# */{
         $extend: TextCounter,
         $statics: {
             ON_INIT: 'init',

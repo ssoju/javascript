@@ -1,6 +1,6 @@
 /*!
  * @authror: 김승일
- * @email: comahead@vi-nyl.com
+ * @email: comahead@gmail.com
  * @created: 2014-06-27
  * @description: framework
  */
@@ -12,9 +12,9 @@
     /**
      * 좌우 타임라인 모듈
      * @class
-     * @name common.ui.BothTimeline
+     * @name axl.ui.BothTimeline
      */
-    var BothTimeline = ui('BothTimeline', /** @lends common.ui.BothTimeline# */{
+    var BothTimeline = ui('BothTimeline', /** @lends axl.ui.BothTimeline# */{
         defaults: {
             arrowHeight: 28, // 화살표아이콘의 사이즈
             boxTopMargin: 24, // 박스간의 간격

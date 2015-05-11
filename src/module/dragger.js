@@ -1,5 +1,5 @@
 /**
- * @author 김승일(comahead@vi-nyl.com)
+ * @author 김승일(comahead@gmail.com)
  * @benchmark https://github.com/vives927/js-snippets/blob/master/js/lib/dragger.js
  */ (function(context, $, core, undefined) {
     "use strict";

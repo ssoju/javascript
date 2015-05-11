@@ -1,6 +1,6 @@
 /*!
  * @author 김승일
- * @email comahead@vi-nyl.com
+ * @email comahead@gmail.com
  * @description 네이버 지도 헬퍼
  */
 (function($, core, undefined) {
@@ -29,10 +29,10 @@
 
     /**
      * @class
-     * @name common.ui.NaverMap
-     * @extends common.ui.View
+     * @name axl.ui.NaverMap
+     * @extends axl.ui.View
      */
-    var NaverMap = core.ui('NaverMap', /** @lends common.ui.NaverMap */{
+    var NaverMap = core.ui('NaverMap', /** @lends axl.ui.NaverMap */{
         defaults: {
             icon: { // 지점아이콘
                 src: 'http://static.naver.com/maps2/icons/pin_spot2.png',

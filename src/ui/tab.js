@@ -1,6 +1,6 @@
 /*!
  * @author tab.js
- * @email comahead@vi-nyl.com
+ * @email comahead@gmail.com
  * @create 2014-12-08
  * @license MIT License
  */
@@ -10,13 +10,13 @@
     //Tab ////////////////////////////////////////////////////////////////////////////////
     /**
      * @class
-     * @name common.ui.Tab
+     * @name axl.ui.Tab
      * @description 페이징모듈
-     * @extends common.ui.View
+     * @extends axl.ui.View
      */
-    var Tab = core.ui('Tab', /** @lends common.ui.Tab# */{
+    var Tab = core.ui('Tab', /** @lends axl.ui.Tab# */{
         bindjQuery: 'tab',
-        $statics: /** @lends common.ui.Tab */{
+        $statics: /** @lends axl.ui.Tab */{
             ON_TAB_CHANGED: 'tabchange'
         },
         defaults: {
@@ -118,8 +118,8 @@
         /**
          * index에 해당하는 탭을 활성화
          * @param {number} index 탭버튼 인덱스
-         * @fires common.ui.Tab#tabchange
-         * @fires common.ui.Tab#tabchanged
+         * @fires axl.ui.Tab#tabchange
+         * @fires axl.ui.Tab#tabchanged
          * @example
          * $('#tab').tab('select', 1);
          * // or
@@ -132,7 +132,7 @@
             }
             /**
              * 탭이 바뀌기 직전에 발생. e.preventDefault()를 호출함으로써 탭변환을 취소할 수 있다.
-             * @event common.ui.Tab#tabchange
+             * @event axl.ui.Tab#tabchange
              * @type {Object}
              * @property {number} selectedIndex 선택된 탭버튼의 인덱스
              */
@@ -148,7 +148,7 @@
             }
             /**
              * 탭이 바뀌기 직전에 발생. e.preventDefault()를 호출함으로써 탭변환을 취소할 수 있다.
-             * @event common.ui.Tab#tabchanged
+             * @event axl.ui.Tab#tabchanged
              * @type {Object}
              * @property {number} selectedIndex 선택된 탭버튼의 인덱스
              */

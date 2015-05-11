@@ -1,6 +1,6 @@
 /*!
- * @author common.ui.selectbox.js
- * @email comahead@vi-nyl.com
+ * @author axl.ui.selectbox.js
+ * @email comahead@gmail.com
  * @create 2014-11-25
  * @license MIT License
  */
@@ -18,10 +18,10 @@
      * 커스텀 셀렉트박스<br />
      *
      * @class
-     * @name common.ui.Selectbox
-     * @extends common.ui.View
+     * @name axl.ui.Selectbox
+     * @extends axl.ui.View
      */
-    var Selectbox = ui('Selectbox', /** @lends common.ui.Selectbox# */{
+    var Selectbox = ui('Selectbox', /** @lends axl.ui.Selectbox# */{
         bindjQuery: 'selectbox',
         $statics: {
             ON_CHANGED: 'selectboxchanged'
@@ -226,7 +226,7 @@
 
         /**
          * 리스트 표시
-         * @fires common.ui.Selectbox#selectboxopen
+         * @fires axl.ui.Selectbox#selectboxopen
          */
         open: function() {
             var me = this,
@@ -247,7 +247,7 @@
             me.$list.css('visibility', '');
             /**
              * 셀렉트박스가 열릴 때 발생
-             * @event common.ui.Selectbox#selectboxopen
+             * @event axl.ui.Selectbox#selectboxopen
              */
             me.$selectbox.triggerHandler('selectboxopen');
             Selectbox.active = me;
@@ -265,13 +265,13 @@
 
         /**
          * 리스트 닫기
-         * @fires common.ui.Selectbox#selectboxclose
+         * @fires axl.ui.Selectbox#selectboxclose
          */
         close: function() {
             var me = this;
             /**
              * 셀렉트박스가 닫힐 때 발생
-             * @event common.ui.Selectbox#selectboxclose
+             * @event axl.ui.Selectbox#selectboxclose
              */
             me.$list.hide(), me.$selectbox.triggerHandler('selectboxclose');
             me.$list.attr({

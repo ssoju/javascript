@@ -1,13 +1,13 @@
 /*!
  * @author appcmd.js
- * @email comahead@vi-nyl.com
+ * @email comahead@gmail.com
  * @create 2015-01-16
  * @license MIT License
  */
 (function ($, core, undefined) {
     "use strict";
 
-    core.define('app', /** @lends common.app */{
+    core.define('app', /** @lends axl.app */{
         scheme: 'app-scheme://', // 스키마
         init: function() {
             if(this.inited){ return; }
@@ -33,7 +33,7 @@
                 // d-login-require클래스가 있으면 로그인 체크를 한다.
                 if($el.hasClass('d-login-require') && !window.isLogin){
                     if(confirm("로그인이 필요합니다.\n로그인 화면으로 이동하시겠습니까?")) {
-                        common.PubSub.trigger('gotoLogin');
+                        axl.PubSub.trigger('gotoLogin');
                     }
                     return;
                 }
@@ -41,7 +41,7 @@
                 if(href){
                     // 앱에서 페이지를 불려들일 경우 앞에 host를 붙여주어야 한다.
                     if(href[0] === '/'){
-                        href = common.getHost() + href;
+                        href = axl.getHost() + href;
                     }
                     param = 'link=' + href;
                 }

@@ -1,6 +1,6 @@
 /*!
  * @author carousel.js
- * @email comahead@vi-nyl.com
+ * @email comahead@gmail.com
  * @create 2015-03-06
  * @license MIT License
  */

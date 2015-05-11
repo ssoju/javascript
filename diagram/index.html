@@ -69,7 +69,7 @@
         },
         {
             x: 240, y: 20, width: 160,
-            classname: 'common.string',
+            classname: 'axl.string',
             methods: [
                 'trim: function',
                 'replaceAll: function',
@@ -94,7 +94,7 @@
         },
         {
             x: 440, y: 20, width: 160,
-            classname: 'common.number',
+            classname: 'axl.number',
             methods: [
                 'zeroPad: function',
                 'addComma: function',
@@ -105,7 +105,7 @@
         },
         {
             x: 640, y: 20, width: 160,
-            classname: 'common.date',
+            classname: 'axl.date',
             attributes: [
                 'MONTHS_NAME:array',
                 'MONTHS_FULLNAME:array'
@@ -133,7 +133,7 @@
         },
         {
             x: 840, y: 20, width: 160,
-            classname: 'common.object',
+            classname: 'axl.object',
             methods: [
                 'keys: function',
                 'values: function',
@@ -148,7 +148,7 @@
         },
         {
             x: 240, y: 420, width:160,
-            classname: 'common.css3',
+            classname: 'axl.css3',
             attributes:[
                 'support: boolean',
                 'support3D:boolean',
@@ -161,7 +161,7 @@
         },
         {
             x: 440, y: 420, width:160,
-            classname: 'common.Cookie',
+            classname: 'axl.Cookie',
             attributes:[
                 'defaults: object'
             ],
@@ -175,7 +175,7 @@
         },
         {
             x: 640, y: 420, width:160,
-            classname: 'common.uri',
+            classname: 'axl.uri',
             methods:[
                 'addParam: function',
                 'parseQuery: function',
@@ -185,7 +185,7 @@
         },
         {
             x: 840, y: 420, width:160,
-            classname: 'common.array',
+            classname: 'axl.array',
             methods:[
                 'append: function',
                 'map: function',
@@ -205,7 +205,7 @@
         },
         {
             x: 40, y: 600, width:160,
-            classname: 'common.keyCode',
+            classname: 'axl.keyCode',
             attributes:[
                 'ESCAPE: number',
                 'TAB: number',
@@ -225,7 +225,7 @@
         },
         {
             x: 240, y: 600, width:160,
-            classname: 'common.Env',
+            classname: 'axl.Env',
             attributes:[
                 'configs: object'
             ],
@@ -236,7 +236,7 @@
         },
         {
             x: 440, y: 600, width:160,
-            classname: 'common.PubSub',
+            classname: 'axl.PubSub',
             methods: [
                 'on: function',
                 'one: function',
@@ -247,7 +247,7 @@
         },
         {
             x: 640, y: 600, width:160,
-            classname: 'common.browser',
+            classname: 'axl.browser',
             attributes: [
                 'isMobile: boolean',
                 'isRetina: boolean',
@@ -274,7 +274,7 @@
         },
         {
             x: 40, y: 1260, width: 160,
-            classname: 'common.Base',
+            classname: 'axl.Base',
             attributes: [
             ],
             methods: [
@@ -284,7 +284,7 @@
         },
         {
             x: 240, y: 1260, width: 160,
-            classname: 'common.ui.View',
+            classname: 'axl.ui.View',
             attributes: [
                 '$el: jQuery',
                 'options: object',
@@ -310,7 +310,7 @@
         },
         {
             x: 440, y: 1260, width: 160,
-            classname: 'common.ui.Tab',
+            classname: 'axl.ui.Tab',
             attributes: [
                 '$tabs: jQuery',
                 '$contents: jQuery'
@@ -321,7 +321,7 @@
         },
         {
             x: 440, y: 1400, width: 160,
-            classname: 'common.ui.Selectbox',
+            classname: 'axl.ui.Selectbox',
             attributes: [
                 '$label: jQuery',
                 '$list: jQuery'
@@ -332,7 +332,7 @@
         },
         {
             x: 440, y: 1540, width: 160,
-            classname: 'common.ui.Placeholder',
+            classname: 'axl.ui.Placeholder',
             attributes: [
                 '$el: jQuery',
             ],
@@ -342,7 +342,7 @@
         },
         {
             x: 440, y: 1660, width: 160,
-            classname: 'common.ui.Modal',
+            classname: 'axl.ui.Modal',
             attributes: [
             ],
             methods: [
@@ -357,32 +357,32 @@
     svg.selectAll('text').attr('font-family', '고딕체');
     var connectors = [{
         points: [
-            {x: boxes.get('common.Base').rightX(), y: boxes.get('common.Base').y + 50},
-            {x: boxes.get('common.ui.View').x, y: boxes.get('common.ui.View').y + 50}
+            {x: boxes.get('axl.Base').rightX(), y: boxes.get('axl.Base').y + 50},
+            {x: boxes.get('axl.ui.View').x, y: boxes.get('axl.ui.View').y + 50}
         ],
         markerEnd: 'filledDiamond'
     },{
         points: [
-            {x: boxes.get('common.ui.View').rightX(), y: boxes.get('common.ui.View').y + 50},
-            {x: boxes.get('common.ui.Tab').x, y: boxes.get('common.ui.Tab').y + 50}
+            {x: boxes.get('axl.ui.View').rightX(), y: boxes.get('axl.ui.View').y + 50},
+            {x: boxes.get('axl.ui.Tab').x, y: boxes.get('axl.ui.Tab').y + 50}
         ],
         markerEnd: 'filledDiamond'
     },{
         points: [
-            {x: boxes.get('common.ui.View').rightX(), y: boxes.get('common.ui.View').y + 50},
-            {x: boxes.get('common.ui.Selectbox').x, y: boxes.get('common.ui.Selectbox').y + 50}
+            {x: boxes.get('axl.ui.View').rightX(), y: boxes.get('axl.ui.View').y + 50},
+            {x: boxes.get('axl.ui.Selectbox').x, y: boxes.get('axl.ui.Selectbox').y + 50}
         ],
         markerEnd: 'filledDiamond'
     },{
         points: [
-            {x: boxes.get('common.ui.View').rightX(), y: boxes.get('common.ui.View').y + 50},
-            {x: boxes.get('common.ui.Placeholder').x, y: boxes.get('common.ui.Placeholder').y + 50}
+            {x: boxes.get('axl.ui.View').rightX(), y: boxes.get('axl.ui.View').y + 50},
+            {x: boxes.get('axl.ui.Placeholder').x, y: boxes.get('axl.ui.Placeholder').y + 50}
         ],
         markerEnd: 'filledDiamond'
     },{
         points: [
-            {x: boxes.get('common.ui.View').rightX(), y: boxes.get('common.ui.View').y + 50},
-            {x: boxes.get('common.ui.Modal').x, y: boxes.get('common.ui.Modal').y + 50}
+            {x: boxes.get('axl.ui.View').rightX(), y: boxes.get('axl.ui.View').y + 50},
+            {x: boxes.get('axl.ui.Modal').x, y: boxes.get('axl.ui.Modal').y + 50}
         ],
         markerEnd: 'filledDiamond'
     }];

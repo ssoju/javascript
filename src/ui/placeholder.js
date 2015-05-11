@@ -1,6 +1,6 @@
 /*!
- * @author common.ui.placeholder.js
- * @email comahead@vi-nyl.com
+ * @author axl.ui.placeholder.js
+ * @email comahead@gmail.com
  * @create 2014-11-25
  * @license MIT License
  */
@@ -17,14 +17,14 @@
     /**
      * placeholder를 지원하지 않는 IE7~8상에서 placeholder효과를 처리하는 클래스
      * @class
-     * @name common.ui.Placeholder
-     * @extends common.ui.View
+     * @name axl.ui.Placeholder
+     * @extends axl.ui.View
      * @example
-     * new common.ui.Placeholder('input[placeholder]', {});
+     * new axl.ui.Placeholder('input[placeholder]', {});
      * // 혹은 jquery 플러그인 방식으로도 호출 가능
      * $('input[placeholder]').placeholder({});
      */
-    var Placeholder = ui('Placeholder', /** @lends common.ui.Placeholder# */{
+    var Placeholder = ui('Placeholder', /** @lends axl.ui.Placeholder# */{
         bindjQuery: 'placeholder',
         defaults: {
             foreColor: '',

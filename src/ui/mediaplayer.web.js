@@ -1,6 +1,6 @@
 /*!
  * @author: 김승일
- * @email: comahead@vi-nyl.com
+ * @email: comahead@gmail.com
  * @require: MediaElement(MIT License, http://mediaelementjs.com)
  */!(function($, core, ui, undefined) {
     "use strict";

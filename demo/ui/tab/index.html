@@ -79,12 +79,12 @@
     </div>
 </div>
 <script src="../../../js/lib/jquery.js"></script>
-<script src="../../../js/release/common.js"></script>
+<script src="../../../js/release/axl.js"></script>
 <script src="../../../js/release/ui/tab.js"></script>
 <script>
 
 $(function () {
-    var tab = new common.ui.Tab('#tab1 .tab>ul');
+    var tab = new axl.ui.Tab('#tab1 .tab>ul');
     tab.on('tabchanged', function (e, data) {
         alert(data.selectedIndex + '번째 탭이 선택되었습니다');
     });

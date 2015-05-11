@@ -1,6 +1,6 @@
 /*!
  * @author lazyscroll.js
- * @email comahead@vi-nyl.com
+ * @email comahead@gmail.com
  * @create 2015-01-19
  * @license MIT License
  */

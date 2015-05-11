@@ -11,25 +11,25 @@
 <pre class="prettyprint linenums lang-html">
 &lt;script>
     // 지도 모듈 불러오기
-    common.importJs([
+    axl.importJs([
         'ui/naver-map',
         'module/geolocation'
     ]).done(function() {
         var map;
-        map = new common.ui.NaverMap('#naver_map');
+        map = new axl.ui.NaverMap('#naver_map');
 
         // resizeend 이벤트가 발생시 지도사이즈를 재조절
         $(window).on('resizeend', function() {
 
             map.setSize({
-                width: common.util.getWinWidth() - 20,
+                width: axl.util.getWinWidth() - 20,
                 height: 600
             });
 
         }).triggerHandler('resizeend');
 
         // 내위치 가져오기
-        var geo = new common.module.Geolocation();
+        var geo = new axl.module.Geolocation();
         geo.getCurrentPosition({
             timeout: 20000 // 제한시간
         }).done(function(position) {
@@ -51,7 +51,7 @@
 
 <script type="text/javascript" src="http://openapi.map.naver.com/openapi/naverMap.naver?ver=2.0&key=a5325cf66e8f86658ca1bfcf7a055771"></script>
 <script type="text/javascript" src="../../../js/lib/jquery.js"></script>
-<script type="text/javascript" src="../../../js/release/common.js"></script>
+<script type="text/javascript" src="../../../js/release/axl.js"></script>
 <script type="text/javascript" src="../../../js/release/ui/naver-map.js"></script>
 <script type="text/javascript" src="../../../js/release/module/geolocation.js"></script>
 <script type="text/javascript" src="../../../src/pretty/pretty.js"></script>
@@ -61,7 +61,7 @@
 $(function() {
 
     var map;
-    map = new common.ui.NaverMap($('#naver_map'), {
+    map = new axl.ui.NaverMap($('#naver_map'), {
         map: {
             enableDragPan: true
         }
@@ -70,13 +70,13 @@ $(function() {
     // resizeend 이벤트가 발생시 지도사이즈를 재조절
     $(window).on('resizeend', function() {
         map.setSize({
-            width: common.util.getWinWidth() - 20,
+            width: axl.util.getWinWidth() - 20,
             height: 600
         });
     }).triggerHandler('resizeend');
 
     // 내위치 가져오기
-    var geo = new common.module.Geolocation();
+    var geo = new axl.module.Geolocation();
     geo.getCurrentPosition({
         timeout: 20000
     }).done(function(position) {

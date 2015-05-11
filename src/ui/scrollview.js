@@ -1,6 +1,6 @@
 /*!
  * @author scrollview
- * @email comahead@vi-nyl.com
+ * @email comahead@gmail.com
  * @create 2014-12-11
  * @license MIT License
  */

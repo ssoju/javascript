@@ -1,14 +1,14 @@
 /*!
  * @author: 김승일
- * @email: comahead@vi-nyl.com
+ * @email: comahead@gmail.com
  */
 (function($, core, ui, undefined) {
     "use strict";
 
     /**
      * @class
-     * @name common.ui.FileAttacher
-     * @extends common.ui.View
+     * @name axl.ui.FileAttacher
+     * @extends axl.ui.View
      * @description
      *   안드로이드 4.3이상 부터는 form를 이용한 파일업로드가 지원되지 않기 때문에,<br>
      *   앱에서 서버로 직접 파일을 올린 다음, 그 올려진 파일 path를 넘겨받아서 hidden에 담아주는 역할을 담당한다.<br><br>
@@ -26,7 +26,7 @@
      *   3) 파일이 선택된 파일폼은 숨기고, 새로운 파일폼을 생성하여 기존파일폼 위치에 배치
      *
      */
-    ui('FileAttacher', /** @lends common.ui.FileAttacher# */{
+    ui('FileAttacher', /** @lends axl.ui.FileAttacher# */{
         bindjQuery: 'fileAttacher',
         defaults: {
             target: ''
@@ -145,7 +145,7 @@
 
                 // 앱에다 파일업로드 요청
                 // id: 업로드 후 파일path를 설정할 히든폼의 id
-                common.app.cmd('upload_image_file', 'key='+id+'&upload_dir='+upload_dir);
+                axl.app.cmd('upload_image_file', 'key='+id+'&upload_dir='+upload_dir);
             });
 
         },
