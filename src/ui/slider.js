@@ -9,10 +9,10 @@
     /**
      * 진행바 컨트롤 클래스
      * @class
-     * @name emart.ui.Slidebar
-     * @extends emart.ui.View
+     * @name axl.ui.Slidebar
+     * @extends axl.ui.View
      */
-    ui.View.extend( /**@lends emart.ui.Slidebar# */ {
+    ui.View.extend( /**@lends axl.ui.Slidebar# */ {
         name: 'Slidebar',
         defaults: {
             interval: 100,

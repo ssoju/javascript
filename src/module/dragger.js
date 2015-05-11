@@ -256,4 +256,4 @@
     });
 
     return Dragger;
-})(window, jQuery, window.emart);
+})(window, jQuery, window.axl);

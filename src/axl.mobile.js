@@ -15,10 +15,10 @@
 
     /**
      * @namespace
-     * @name emart.mobile
+     * @name axl.mobile
      */
-    core.define('mobile', /** @lends emart.mobile */ {
-        appScheme: 'emart-today',
+    core.define('mobile', /** @lends axl.mobile */ {
+        appScheme: 'axl-today',
 
         init: function() {
             this.getCmdFrame();
@@ -55,7 +55,7 @@
             var d = $.extend({
                 install: 'market://details?id={uid}',
                 command: this.appScheme + '://launch_app/',
-                uid: 'com.emart.today'
+                uid: 'com.axl.today'
             }, data);
 
             var iframe;
@@ -129,9 +129,9 @@
             var menus = ['menuMain', 'pointcard', 'date_holiday', 'menuFavorite', 'emartMall', 'couponList'];
             var m = (href || '').match(/^\/menu\/([a-z]+)/i);
             if (m && m.length > 1) {
-                var index = emart.array.indexOf(menus, m[1]);
-                if (index >= 0 && index < menus.length && emart.pageLayout) {
-                    emart.pageLayout.openRightMenu(index);
+                var index = axl.array.indexOf(menus, m[1]);
+                if (index >= 0 && index < menus.length && axl.pageLayout) {
+                    axl.pageLayout.openRightMenu(index);
                 }
             }
         }
@@ -139,7 +139,7 @@
 
     /**
      * 더보기 유틸함수
-     * @memberOf emart.ui
+     * @memberOf axl.ui
      * @function
      * @name buildMoreList
      * @param {String} options.list 리스트 타겟(ul의 부모요소)의 셀렉터
@@ -214,9 +214,9 @@
             if (xhr.status === 401) {
                 if (confirm("로그인이 필요합니다.\n로그인 화면으로 이동하시겠습니까?")) {
                     if (window.isApp) {
-                        emart.app.cmd('open_main_webpage', 'link=' + emart.Env.get('loginUrl'));
+                        axl.app.cmd('open_main_webpage', 'link=' + axl.Env.get('loginUrl'));
                     } else {
-                        location.href = emart.Env.get('loginUrl');
+                        location.href = axl.Env.get('loginUrl');
                     }
                 }
             }
@@ -271,7 +271,7 @@
     // 탑버튼 표시 /////////////////////////////////////////////////
     // 컨텐츠 크기가 윈도우 크기보다 클 경우에만 탑버튼 표시
     // (더보기 기능땜에 동적으로 페이지사이즈가 달라질 수 있기 때문에 1초마다 사이즈를 체크하도록 함)
-    emart.mobile.moveTop = {
+    axl.mobile.moveTop = {
         $topBtn: null,
         isShow: false,
         // 시작
@@ -294,19 +294,19 @@
             });
 
             // 뭔가 액션이 일어났을 때 컨텐츠가 변경됐을 수도 있기 때문에 체크
-            emart.$doc.on('click.movetop', 'a, button, input, select', function(e) {
+            axl.$doc.on('click.movetop', 'a, button, input, select', function(e) {
                 me.toggle();
             });
 
-            emart.$win.on('resize.movetop', function() {
-                me.winHeight = emart.util.getWinHeight();
+            axl.$win.on('resize.movetop', function() {
+                me.winHeight = axl.util.getWinHeight();
                 me.toggle();
             }).triggerHandler('resize.movetop');
         },
         // 토글
         toggle: function() {
             var me = this,
-                docHeight = me.$topBtn.css('display', 'block').offset().top; //emart.util.getDocHeight();
+                docHeight = me.$topBtn.css('display', 'block').offset().top; //axl.util.getDocHeight();
 
             me.hide();
             if (docHeight > me.winHeight) {
@@ -325,17 +325,17 @@
         }
     };
 
-})(jQuery, emart, emart.ui);
+})(jQuery, axl, axl.ui);
 
 $(function() {
 
     // 모바일 초기작업 실행
-    emart.mobile.init();
+    axl.mobile.init();
 
     if (!window.isApp) {
         // 버튼에 d-login-require클래스가 있는 경우, 
         // 로그인체크 후 로그인이 안되어 있으면 로그인페이지로 보낸다.
-        emart.$doc.on('click.mobile', '.d-login-require', function(e) {
+        axl.$doc.on('click.mobile', '.d-login-require', function(e) {
 
             // 로그인필요 페이지 체크
             if (!window.isLogin) {
@@ -343,23 +343,23 @@ $(function() {
                 e.stopPropagation();
 
                 if (confirm("로그인이 필요합니다.\n로그인 화면으로 이동하시겠습니까?")) {
-                    location.href = emart.Env.get('loginUrl');
+                    location.href = axl.Env.get('loginUrl');
                 }
             }
         });
 
         // 오른쪽 메뉴를 열어야 하는 링크인 경우
-        emart.$doc.on('click.mobile', 'a[data-cmd=open_menu_webpage]', function(e) {
+        axl.$doc.on('click.mobile', 'a[data-cmd=open_menu_webpage]', function(e) {
             if (this.href) {
                 e.preventDefault();
-                emart.mobile.openRightMenu(this.href);
+                axl.mobile.openRightMenu(this.href);
             }
         });
     }
 
     // ** 앱실행용 링크 바인딩
-    emart.$doc.on('click.mobile', 'a.d-openapp', function(e) {
-        if (!emart.browser.isMobile) {
+    axl.$doc.on('click.mobile', 'a.d-openapp', function(e) {
+        if (!axl.browser.isMobile) {
             return;
         }
 
@@ -377,12 +377,12 @@ $(function() {
                 return;
             } // 앱인 경우 data-cmd에 지정되어 있는 커맨드로 실행되도록 그냥 빠져나간다.
 
-            emart.mobile.openApp({
+            axl.mobile.openApp({
                 ios: {
-                    command: 'emart-today://' + $el.attr('data-cmd')
+                    command: 'axl-today://' + $el.attr('data-cmd')
                 },
                 android: {
-                    command: 'emart-today://' + $el.attr('data-cmd')
+                    command: 'axl-today://' + $el.attr('data-cmd')
                 }
             });
         } else {
@@ -390,10 +390,10 @@ $(function() {
 
 
                 var d = window.isIOS ? ios : android;
-                emart.app.cmd('open_app', 'scheme=' + (d.command || '') + '&install_param=' + (d.uid || ''));
+                axl.app.cmd('open_app', 'scheme=' + (d.command || '') + '&install_param=' + (d.uid || ''));
             } else {
 
-                emart.mobile.openApp({
+                axl.mobile.openApp({
                     ios: ios,
                     android: android
                 });
@@ -408,35 +408,35 @@ $(function() {
     });
 
     // 카카오 모듈 로딩
-    emart.require(['/js/common/kakao.min.js']);
-    emart.require(['/js/common/kakao.js']);
-    emart.require(['/js/common/kakao_init.js']);
+    axl.require(['/js/common/kakao.min.js']);
+    axl.require(['/js/common/kakao.js']);
+    axl.require(['/js/common/kakao_init.js']);
 
 
     // 푸터부분의 이마트 앱 다운로드
     $('#footer .d-download-app').on('click', function(e) {
         e.preventDefault();
 
-        emart.mobile.openApp({
+        axl.mobile.openApp({
             ios: {
                 uid: 'id397728319'
             },
             android: {
-                uid: 'com.emart.today'
+                uid: 'com.axl.today'
             }
         });
     });
 
 
     // 탑버튼 표시 /////////////////////////////////////////////////
-    emart.mobile.moveTop.start();
+    axl.mobile.moveTop.start();
     /////////////////////////////////////////////////////////////////
 
     // 디폴트로 포커스 라인을 안보이게 해놓고 pc에서만 포커스가 보이도록
-    emart.$doc.on('keyup.outline', function(e) {
+    axl.$doc.on('keyup.outline', function(e) {
         if (e.which === 9) {
             $('body').addClass('outline');
-            emart.$doc.off('keyup.outline');
+            axl.$doc.off('keyup.outline');
         }
     });
 });
@@ -447,7 +447,7 @@ function logout(returnUrl) {
         var url = returnUrl || '/main/main.do';
 
         if (window.isApp && url[0] === '/') {
-            url = emart.getHost() + url;
+            url = axl.getHost() + url;
         }
 
         $.ajax({
@@ -457,9 +457,9 @@ function logout(returnUrl) {
             success: function(data, status, xhr) {
                 if ("00" == data.result) {
                     if (window.isApp) {
-                        emart.app.cmd("logout_success");
+                        axl.app.cmd("logout_success");
                         setTimeout(function() {
-                            emart.app.cmd('open_main_webpage', 'link=' + url);
+                            axl.app.cmd('open_main_webpage', 'link=' + url);
                         }, 500);
                     } else {
                         window.location.href = url;

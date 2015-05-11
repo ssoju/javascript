@@ -48,7 +48,7 @@
     /**
      * 뮤직에 관련한 공통기능 모음
      */
-    emart.music = {
+    axl.music = {
         init: function() {
             this.bindGlobalEvents();
         },
@@ -204,10 +204,10 @@
     /**
      * 배열을 좀더 쉽게 관리하기 위한 배열래퍼
      * @class
-     * @name emart.ArrayList
-     * @extends emart.Base
+     * @name axl.ArrayList
+     * @extends axl.Base
      */
-    var ArrayList = core.Base.extend( /**@lends emart.ArrayList# */ {
+    var ArrayList = core.Base.extend( /**@lends axl.ArrayList# */ {
         $mixins: [core.Listener], // 해당 클래스에서 이벤트를 사용할 수 있도록 지정,
         $statics: {
             ON_ADDED: 'added',
@@ -503,10 +503,10 @@
     /**
      * 진행바 컨트롤 클래스
      * @class
-     * @name emart.ui.UISlideBar
-     * @extends emart.ui.View
+     * @name axl.ui.UISlideBar
+     * @extends axl.ui.View
      */
-    var UISlideBar = ui.View.extend( /**@lends emart.ui.UISlideBar# */ {
+    var UISlideBar = ui.View.extend( /**@lends axl.ui.UISlideBar# */ {
         name: 'SlideBar',
         defaults: {
             interval: 100,
@@ -738,10 +738,10 @@
     /**
      * 메인의 곡리스트를 담당하는 클래스
      * @class
-     * @name emart.ui.UITrackList
-     * @extends emart.ui.View
+     * @name axl.ui.UITrackList
+     * @extends axl.ui.View
      */
-    var UITrackList = ui.View.extend( /** @lends emart.ui.UITrackList */ {
+    var UITrackList = ui.View.extend( /** @lends axl.ui.UITrackList */ {
         name: 'TrackList',
         selectors: {
             trackTab: '.d-track-tab' // 탭버튼 클래스
@@ -830,7 +830,7 @@
             }
 
             return $.ajax({
-                url: emart.Env.get('emartMusicListList') + '?' + params + '&next_id=' + me._getCurrentLastNum(),
+                url: axl.Env.get('emartMusicListList') + '?' + params + '&next_id=' + me._getCurrentLastNum(),
                 cache: false,
                 timeout: 15000
             }).done(function(html) {
@@ -878,10 +878,10 @@
     /**
      * 플레이리스트 클래스
      * @class
-     * @name emart.ui.UIPlayList
-     * @extends emart.ui.View
+     * @name axl.ui.UIPlayList
+     * @extends axl.ui.View
      */
-    var UIPlayList = ui.View.extend( /** @lends emart.ui.UIPlayList */ {
+    var UIPlayList = ui.View.extend( /** @lends axl.ui.UIPlayList */ {
         name: 'PlayList',
         selectors: {
             list: '>ul'
@@ -1067,10 +1067,10 @@
     /**
      * 오디오 플레이어 클래스
      * @class
-     * @name emart.ui.AudioPlayer
-     * @extends emart.ui.View
+     * @name axl.ui.AudioPlayer
+     * @extends axl.ui.View
      */
-    var AudioPlayer = ui.View.extend( /** @lends emart.ui.AudioPlayer */ {
+    var AudioPlayer = ui.View.extend( /** @lends axl.ui.AudioPlayer */ {
         name: 'AudioPlayer',
         defaults: {
             mediaType: 'audio/mp3', // 기본 미디어 타입
@@ -1269,7 +1269,7 @@
 
             // ios의 미디어센터에서 다음, 이전을 클릭할 때,
             // 이를 전달받아 적절히 처리해준다.
-            emart.PubSub.on('notifyEmartMusicPrev', function() {
+            axl.PubSub.on('notifyEmartMusicPrev', function() {
                 if (me.playList.size() > 0) {
                     me.prev();
                 }
@@ -1504,7 +1504,7 @@
             me.$shareLink.each(function() {
                 if (track.seq) {
                     if ($(this).hasClass('d-facebook')) {
-                        this.href = emart.getHost() + '/music/main.do?play_seq=' + track.seq;
+                        this.href = axl.getHost() + '/music/main.do?play_seq=' + track.seq;
                     } else {
                         this.href = track.music_file_url || 'javascript:;';
                     }
@@ -1627,7 +1627,7 @@
             me._togglePlayButton(false);
             clearTimeout(me.playTimer);
             me.playTimer = setTimeout(function() {
-                emart.music.showToast('시간초과로 재생이 취소되었습니다.');
+                axl.music.showToast('시간초과로 재생이 취소되었습니다.');
                 me.initPlayer();
                 me.stop();
             }, 60000);
@@ -2177,10 +2177,10 @@
     /**
      * 플레이어 모듈
      * @class
-     * @name emart.ui.MobileAudioPlayer
-     * @extend emart.ui.View
+     * @name axl.ui.MobileAudioPlayer
+     * @extend axl.ui.View
      */
-    ui.MobileAudioPlayer = ui.View.extend( /** @lends emart.ui.MobileAudioPlayer */ {
+    ui.MobileAudioPlayer = ui.View.extend( /** @lends axl.ui.MobileAudioPlayer */ {
         name: 'MobileAudioPlayer',
         selectors: {
             btnToggle: '.d-btn-toggle', // 플레이리스트, 트랙리스트 토글 버튼
@@ -2257,7 +2257,7 @@
                             data.complete && data.complete();
                         });
                     } else {
-                        emart.music.showToast('선택한 곡이 재생목록에 추가 되었습니다.');
+                        axl.music.showToast('선택한 곡이 재생목록에 추가 되었습니다.');
                         data.complete && data.complete();
                     }
                 });
@@ -2496,7 +2496,7 @@
                 me.audioPlayer.addTracks(tracks);
             }).fail(function() {
 
-                emart.music.showToast('죄송합니다.<br>알 수 없는 이유로 중단되었습니다.');
+                axl.music.showToast('죄송합니다.<br>알 수 없는 이유로 중단되었습니다.');
 
             });
         }
@@ -2512,13 +2512,13 @@
         }
     });
 
-})(jQuery, window.emart, window.emart.ui);
+})(jQuery, window.axl, window.axl.ui);
 
 $('html, body').scrollTop(0);
 $(function() {
 
     setTimeout(function() {
-        emart.music.init();
+        axl.music.init();
     });
 
     if (window.isApp && window.isAndroid) {
@@ -2536,13 +2536,13 @@ $(function() {
     }
 
     // 플레이어를 실행 /////////////////////////////////////////////////////////////////////////////
-    var player = new emart.ui.MobileAudioPlayer($('#d-player-wrap'), {
-        'url': emart.Env.get('emartMusicInfoUrl'), // 트랙정보 페이지의 url
+    var player = new axl.ui.MobileAudioPlayer($('#d-player-wrap'), {
+        'url': axl.Env.get('emartMusicInfoUrl'), // 트랙정보 페이지의 url
         'success': function(e, data) {
             // 파라미터 & 쿠키에 있는 시퀀스를 조합해서 서버로부터 리스트를 조회
             var me = this,
                 params = {},
-                ckTracks = emart.Cookie.get('musictracks') || '';
+                ckTracks = axl.Cookie.get('musictracks') || '';
 
             if (ckTracks) {
                 // 쿠키에 있는 값을 조회
@@ -2559,18 +2559,18 @@ $(function() {
     //////////////////////////////////////////////////////////////////////////////////////////////////
 
     // 페이지를 빠져나갈 때 확인창을 띄워준다. //////////////////////////////////////////////////
-    emart.$win.on('beforeunload', function() {
+    axl.$win.on('beforeunload', function() {
         if (player.audioPlayer.isPlaying()) {
             return "이마트 뮤직화면을 벗어나면 재생 음악이 정지됩니다.";
         }
     }).on('load', function() {
         setInterval(function() {
-            emart.music.syncReviewCount();
+            axl.music.syncReviewCount();
         }, 60000); // 60초마다 리뷰갯수를 가져와서 ui에 반영
     });
     //////////////////////////////////////////////////////////////////////////////////////////////////
 
     // 전역에서 사용할 수 있도록 window에 세팅해준다.
-    window.player = emart.player = player;
+    window.player = axl.player = player;
 
 });

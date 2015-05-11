@@ -8,15 +8,15 @@
     }
 
     // 앱 코어 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    core.define('app', /** @lends emart.app */ {
-        scheme: 'emart-today://', // 스키마
+    core.define('app', /** @lends axl.app */ {
+        scheme: 'axl-today://', // 스키마
         init: function() {
             if (this.inited) {
                 return;
             }
             this.inited = true;
 
-            this.ifrmCMD = emart.mobile.getCmdFrame();
+            this.ifrmCMD = axl.mobile.getCmdFrame();
             this._bindEvents();
         },
 
@@ -45,7 +45,7 @@
                 // d-login-require클래스가 있으면 로그인 체크를 한다.
                 if ($el.hasClass('d-login-require') && !window.isLogin) {
                     if (confirm("로그인이 필요합니다.\n로그인 화면으로 이동하시겠습니까?")) {
-                        emart.app.cmd('open_main_webpage', 'link=' + emart.Env.get('loginUrl'));
+                        axl.app.cmd('open_main_webpage', 'link=' + axl.Env.get('loginUrl'));
                     }
                     return;
                 }
@@ -56,7 +56,7 @@
 
                     // 앱에서 페이지를 불려들일 경우 앞에 host를 붙여주어야 한다.
                     if (href[0] === '/') {
-                        href = emart.getHost() + href;
+                        href = axl.getHost() + href;
                     }
                     param = 'link=' + href;
                 }
@@ -81,7 +81,7 @@
 
 
     // 앱호출 함수 모음 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    core.extend(core.app, /** @lends emart.app */ {
+    core.extend(core.app, /** @lends axl.app */ {
 
 
 
@@ -94,7 +94,7 @@
 
 
     // 앱에서 호출하는 함수 모음 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    core.extend(core.app, /** @lends emart.app */ {
+    core.extend(core.app, /** @lends axl.app */ {
 
 
         // 앱에서 함수를 호출할 때 해당함수명으로 글로벌 이벤트를 날려준다.
@@ -151,10 +151,10 @@ $(function() {
     "use strict";
 
     // 초기 작업
-    emart.app.init();
+    axl.app.init();
 
     // 대문자 	
-    emart.$doc.on('focusin', 'input, textarea', function() {
+    axl.$doc.on('focusin', 'input, textarea', function() {
         if (window.isIOS) {
             // 인풋에 포커싱됐을 때 키패드가 대문자로 안바뀌도록..
             this.setAttribute('autocapitalize', 'off');

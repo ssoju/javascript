@@ -24,10 +24,10 @@
     /**
      * 배열을 좀더 쉽게 관리하기 위한 배열래퍼
      * @class
-     * @name emart.ArrayList
-     * @extends emart.Base
+     * @name axl.ArrayList
+     * @extends axl.Base
      */
-    var ArrayList = core.Base.extend( /**@lends emart.ArrayList# */ {
+    var ArrayList = core.Base.extend( /**@lends axl.ArrayList# */ {
         $mixins: [core.Listener], // 해당 클래스에서 이벤트를 사용할 수 있도록 지정,
         $statics: {
             ON_ADDED: 'added',
@@ -326,10 +326,10 @@
     /**
      * 진행바 컨트롤 클래스
      * @class
-     * @name emart.ui.SlideBar
-     * @extends emart.ui.View
+     * @name axl.ui.SlideBar
+     * @extends axl.ui.View
      */
-    var SlideBar = ui.View.extend( /**@lends emart.ui.SlideBar# */ {
+    var SlideBar = ui.View.extend( /**@lends axl.ui.SlideBar# */ {
         name: 'SlideBar',
         defaults: {
             interval: 100,
@@ -571,10 +571,10 @@
     /**
      * 플레이리스트 UI모듈
      * @class
-     * @name emart.ui.PlayList
-     * @extends emart.ui.View
+     * @name axl.ui.PlayList
+     * @extends axl.ui.View
      */
-    var PlayList = ui.View.extend( /** @lends emart.ui.PlayList# */ {
+    var PlayList = ui.View.extend( /** @lends axl.ui.PlayList# */ {
         name: 'PlayList',
         selectors: {
             list: '.d-tracklist'
@@ -719,10 +719,10 @@
     /**
      * 오디오 플레이어 클래스
      * @class
-     * @name emart.ui.EmartAudioPlayer
-     * @extends emart.ui.View
+     * @name axl.ui.EmartAudioPlayer
+     * @extends axl.ui.View
      */
-    var AudioPlayer = ui('EmartAudioPlayer', /**@lends emart.ui.EmartAudioPlayer*/ {
+    var AudioPlayer = ui('EmartAudioPlayer', /**@lends axl.ui.EmartAudioPlayer*/ {
         bindjQuery: 'emartAudioPlayer',
         defaults: {
             mediaType: 'audio/mp3', // 기본 미디어 타입
