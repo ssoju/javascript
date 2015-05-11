@@ -25,5 +25,15 @@
 		}
 	});
 
+	var inputs = document.getElementsByTagName('input');
+	setInterval(function(){
+		for(var i = 0, item; item = inputs[i++]; ){
+			if((item.type === 'checkbox' || item.type === 'radio') && !item.getAttribute('data-chr-bind')) {
+				$(item).parent().toggleClass('checked', item.checked);
+				item.setAttribute('data-chr-bind', 'true');
+			}
+		}
+	}, 300);
+
 
 })(window, jQuery, window[LIB_NAME]);
