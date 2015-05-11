@@ -1,5 +1,6 @@
 /**
  * Created by comahead on 2013-05-05.
+ * @author 김승일(comahead@gmail.com)
  */
 (function($, core, undefined) {
     "use strict";

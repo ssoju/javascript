@@ -1,5 +1,6 @@
 /**
  * Created by comahead on 2013-04-21.
+ * copyright: ?????
  */
 (function ($, core) {
     "use strict";
@@ -82,91 +83,6 @@
     };
 
     var Selection = {
-        xxget: function (el) {
-            if (el.selectionStart) {
-                return {
-                    begin: el.selectionStart,
-                    end: el.selectionEnd
-                };
-            }
-
-            // for ie
-            var range = document.selection.createRange();
-            if (range && range.parentElement() === el) {
-                var inputRange = el.createTextRange(),
-                    endRange = el.createTextRange(),
-                    length = el.value.length;
-
-                // Create a working TextRange for the input selection
-                inputRange.moveToBookmark(range.getBookmark());
-
-                // Move endRange begin pos to end pos (hence endRange)
-                endRange.collapse(false);
-
-                // If we are at the very end of the input, begin and end
-                // must both be the length of the el.value
-                if (inputRange.compareEndPoints('StartToEnd', endRange) > -1) {
-                    return {begin: length, end: length};
-                }
-
-                // Note: moveStart usually returns the units moved, which
-                // one may think is -length, however, it will stop when it
-                // gets to the begin of the range, thus giving us the
-                // negative value of the pos.
-                return {
-                    begin: -inputRange.moveStart('character', -length),
-                    end: -inputRange.moveEnd('character', -length)
-                };
-            }
-            return {begin: 0, end: 0};
-        },
-
-        xget: function (el) {
-            var start = 0, end = 0, normalizedValue, range,
-                textInputRange, len, endRange;
-
-            if (typeof el.selectionStart == "number" && typeof el.selectionEnd == "number") {
-                start = el.selectionStart;
-                end = el.selectionEnd;
-            } else {
-                range = document.selection.createRange();
-
-                if (range && range.parentElement() == el) {
-                    len = el.value.length;
-                    normalizedValue = el.value.replace(/\r\n/g, "\n");
-
-                    // Create a working TextRange that lives only in the input
-                    textInputRange = el.createTextRange();
-                    textInputRange.moveToBookmark(range.getBookmark());
-
-                    // Check if the start and end of the selection are at the very end
-                    // of the input, since moveStart/moveEnd doesn't return what we want
-                    // in those cases
-                    endRange = el.createTextRange();
-                    endRange.collapse(false);
-
-                    if (textInputRange.compareEndPoints("StartToEnd", endRange) > -1) {
-                        start = end = len;
-                    } else {
-                        start = -textInputRange.moveStart("character", -len);
-                        start += normalizedValue.slice(0, start).split("\n").length - 1;
-
-                        if (textInputRange.compareEndPoints("EndToEnd", endRange) > -1) {
-                            end = len;
-                        } else {
-                            end = -textInputRange.moveEnd("character", -len);
-                            end += normalizedValue.slice(0, end).split("\n").length - 1;
-                        }
-                    }
-                }
-            }
-
-            return {
-                start: start,
-                end: end
-            };
-        },
-
         get: function (el) {
             var s = {start: 0, end: 0};
             if (typeof el.selectionStart == "number"

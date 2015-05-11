@@ -71,44 +71,6 @@
                 };
             })());
 
-            /*
-            me.$scrollBar.on('mousedown touchstart', function(e) {
-                e.preventDefault();
-                if (isTouch) {
-                    e.stopPropagation();
-                }
-
-                me.isMouseDown = true;
-                me.currY = parseInt($(this).css('top'), 10);
-                me.downY = me._getY(e);
-
-                $doc.on(['mouseup',' touchend',' mousemove',' touchmove', ' touchcancel', ''].join('.'+me.cid+'scrollbar'), function(e) {
-                    if (!me.isMouseDown) {
-                        return;
-                    }
-
-                    switch (e.type) {
-                        case 'mouseup':
-                        case 'touchend':
-                        case 'touchcancel':
-                            me.isMouseDown = false;
-                            me.moveY = 0;
-
-                            $doc.off('.'+me.cid+'scrollbar');
-                            break;
-                        case 'mousemove':
-                        case 'touchmove':
-                            me.moveY = me._getY(e);
-                            me._move(me.currY - (me.downY - me.moveY));
-
-                            e.preventDefault();
-                            break
-                    }
-                });
-                return false;
-            });
-            */
-
             me.$scrollArea.on('scroll', function() {
                 if (!me.isMouseDown) {
                     me._updateScrollBar();

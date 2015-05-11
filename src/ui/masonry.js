@@ -23,33 +23,11 @@
                     me.update();
                 });
             },
-            // 기본작업 140127_수정
             init: function() {
                 var me = this,
                     timer = null,
                     timer2 = null,
                     getDocHeight = core.util.getDocHeight;
-                var listIndex = 1;
-
-                var ajaxDone = false;
-                me.$el.bind('ajaxDone', function() {
-                    ajaxDone = true;
-                })
-
-                //더보기 클릭시 레이아웃 재정렬 140127_추가
-                $('#conts > button.more').bind('click.tiles', function() {
-                    //nextId = $("#scrollArtists").find('div>ul>li').last().attr('data-nextId');
-                    var start = me.$el.find(me.options.itemSelector).length;
-                    clearInterval(timer2);
-                    timer2 = setInterval(function() {
-                        if (ajaxDone) {
-                            me.update(start);
-                            listIndex++;
-                            ajaxDone = false;
-                            clearInterval(timer2);
-                        }
-                    }, 100);
-                })
 
                 // 스크롤을 내릴때 새로 추가된 노드에 대해서 재배치
                 me.options.scrollLoad && $(window).on('scroll.masonry', function() {

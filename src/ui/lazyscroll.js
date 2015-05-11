@@ -72,9 +72,9 @@
                 me.largestPosition = scrollValue;
             }
 
-            me.triggerHandler('lazyscroll:scroll');
+            me.triggerHandler('lazyscrollscroll');
             if(!me.$items.length){
-                me.triggerHandler('lazyscroll:complete');
+                me.triggerHandler('lazyscrollcomplete');
                 me.$con.off(me.eventNamespace);
             }
         },
