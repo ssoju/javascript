@@ -7,7 +7,6 @@
         required: "'[name]'항목은 필수입력 항목입니다.",
         matches: "'[name]'항목은 {0}항목과 동일해야 합니다.",
         email: "'[name]'항목이 이메일 형식에 맞지 않습니다.",
-        //emails: "The %s field must contain all valid email addresses.",
         minlength: "'[name]'항목의 최소길이는 {0}입니다.",
         maxlength: "'[name]'항목의 최대길이는 {0}입니다",
         exactlength: "'[name]'항목은 {0}길이여야 합니다.",
