@@ -757,8 +757,6 @@
 
 /*!
  * @module coma.ui.Selectbox
- * @author odyseek
- * @email odyseek@vi-nyl.com
  * @create 2015-03-17
  * @license MIT License
  *
@@ -1079,7 +1077,7 @@
         _createLabel: function () {
             var me = this;
 
-            me.$label = $('<div class="item_view"><a href="#0" class="ui_select_button" title="">' + me._itemHTML(me.el.options[0], 'label') + '</a></div>');
+            me.$label = $('<div class="item_view"><a href="#0" class="ui_select_button" title="">' + me.el.options[0].text + '</a></div>');
 
             me.$label.attr({
                 'id': me.cid + '_button'
@@ -1311,54 +1309,6 @@
             me._hideScroll();
 
             $doc.off('.selectbox' + me.cid);
-        },
-
-        _itemHTML: function (option, type) {
-            if (!option) { return; }
-            var me       = this,
-                opts     = me.options,
-                $o       = $(option),
-                dataList = {}, cname,
-                html     = '';
-
-            if (cname = $o.attr('data-sup')) { dataList['sup'] = cname; }
-            if (cname = $o.attr('data-cnum')) { dataList['cnum'] = cname; }
-            if (cname = $o.attr('data-cname')) { dataList['cname'] = cname; }
-            if (cname = $o.attr('data-cname-mobile')) { dataList['cnameMobile'] = cname; }
-
-            // option에 data속성이 있으면
-            if (core.json.hasItems(dataList)) {
-                var isW768 = $('body').hasClass('w768');
-                core.each(opts.classSort, function (val) {
-                    if (dataList[val]) {
-                        if (val !== 'cname') {
-                            html += '<span class="' + val + '">' + dataList[val] + '</span>';
-                        } else if (val === 'cname' && type === 'label') {
-                            if (me.cname && !isW768) {
-                                html += '<span class="' + val + '">' + option.text + '</span>';
-                            } else {
-                                if( dataList['cnameMobile'] && isW768) {
-                                    html += '<span class="' + val + '">' + dataList['cnameMobile'] + '</span>';
-                                } else {
-                                    html += '<span class="' + val + '">' + dataList[val] + '</span>';
-                                }
-                            }
-                        } else {
-                            html += '<span class="' + val + '">' + option.text + '</span>';
-                        }
-                    }
-                });
-                if (type === 'label') {
-                    html = html + '<span class="hide">선택됨</span><span class="ico"></span>';
-                }
-                return html;
-            } else {
-                if (type === 'label') {
-                    return '<span class="ui_select_text">' + option.text + '</span><span class="hide">선택됨</span><span class="ico"></span>';
-                } else {
-                    return option.text;
-                }
-            }
         },
 
         /**
@@ -2532,137 +2482,6 @@
         });
     }
 
-})(jQuery, window[LIB_NAME]);
-
-/*!
- * @module coma.ui.Tooltip
- * @author odyseek
- * @email odyseek@vi-nyl.com
- * @create 2015-03-17
- * @license MIT License
- */
-(function ($, core, undefined) {
-    "use strict";
-    if (core.ui.Tooltip) { return; }
-
-    var $doc    = $(document),
-        $win    = $(window),
-        isTouch = core.browser.isTouch;
-
-    /**
-     * 툴팁 레이어
-     * @class
-     * @name coma.ui.Tooltip
-     * @extends coma.ui.View
-     */
-    var Tooltip = core.ui('Tooltip', /** @lends coma.ui.Tooltip# */{
-        bindjQuery: 'tooltip',
-        defaults: {
-            interval: 300
-        },
-
-        /**
-         * 생성자
-         * @param {jQuery|Node|String} el 대상 엘리먼트
-         * @param {JSON} options {Optional} 옵션
-         */
-        initialize: function (el, options) {
-            var me = this;
-
-            if (me.supr(el, options) === false) {
-                return;
-            }
-
-            me.$tooltip = (me.$el.attr('data-tooltip-target') ? $(me.$el.attr('data-tooltip-target')) : me.$el.next('div'));
-            me.isShown = false;
-            me.timer = null;
-
-            me.on('click.tooltip', function (e) {
-                e.preventDefault();
-                e.stopPropagation();
-
-                if (me.isShown) {
-                    me.close();
-                } else {
-                    me.open();
-                }
-            });
-
-            // 마우스가 버튼위에서 .5초이상 머물었을 때만 툴팁이 표시되며,
-            // 마우스가 버튼과 툴팁박스를 완전히 벗어나서 .5초가 지났을 때만 툴팁이 사라지도록 처리
-            // 마우스가 닿을 때마다 보였다안보였다하는 건 너무 난잡해 보여서...
-            me.on('mouseenter', me.open.bind(me)).on('mouseleave', me.close.bind(me));
-            me.$tooltip.on('focusin.tooltip mouseenter.tooltip', function () {
-                if (me.$tooltip.data('timer')) {
-                    clearTimeout(me.$tooltip.data('timer')), me.$tooltip.removeData('timer');
-                }
-            }).on('mouseleave.tooltip', function () {
-                me.isShown && me.$tooltip.data('timer', setTimeout(function () {
-                    me.isShown = false, me.$tooltip.hide();
-                    if (me.$tooltip.data('timer')) {
-                        clearTimeout(me.$tooltip.data('timer')), me.$tooltip.removeData('timer');
-                    }
-                }, me.options.interval));
-            }).on('click', function (){
-                clearTimeout(me.$tooltip.data('timer')), me.$tooltip.removeData('timer');
-            }).on('click.tooltip focusout.tooltip', '.ui_tooltip_close', function (e) {
-                e.preventDefault();
-                me.close();
-                if (e.type === 'click') me.$el.focus();
-            });
-
-            me.open();
-        },
-        /**
-         * 표시
-         */
-        open: function () {
-            var me     = this,
-                offset = me.$el.offset();
-
-            offset.top += me.$el.height();
-            me.timer = setTimeout(function () {
-                me.$tooltip/*.css(offset)*/.fadeIn('fast');
-                me.isShown = true;
-            }, me.options.interval);
-        },
-        /**
-         * 숨김
-         */
-        close: function () {
-            var me = this;
-
-            clearTimeout(me.timer), me.timer = null;
-            if (me.isShown) {
-                me.$tooltip.data('timer', setTimeout(function () {
-                    me.isShown = false;
-                    me.$tooltip.hide();
-                }, me.options.interval));
-            }
-        },
-        /**
-         * 소멸자
-         */
-        destroy: function () {
-            var me = this;
-
-            me.supr();
-            me.$tooltip.off('.tooltip').removeData('timer');
-        }
-    });
-
-    $doc.on('mouseenter.tooltip focusin.tooltip click.tooltip', '[data-control=tooltip]', function () {
-        var $btn = $(this);
-        //if ($btn.data('ui_tooltip')){ return; }
-
-        $btn.scTooltip();
-    });
-
-    if (typeof define === "function" && define.amd) {
-        define('modules/tooltip', [], function () {
-            return Tooltip;
-        });
-    }
 })(jQuery, window[LIB_NAME]);
 
 /*!
