@@ -1,0 +1,29 @@
+
+	<h1 class="tit"><%-title||"즐겨찾기 추가"%></h1>
+
+	<div class="cntt">
+		<div class="bookmark_add">
+			<div class="list">
+				<div class="scroll">
+					<!-- 최상위 북마크 -->
+					<div class="wrap_roof">
+						<a href="#" class="marker <%-exists_root?'disabled':''%>" data-id="0">최상단</a>
+						<button type="button" class="btn_ico add" data-bm-id=""><span class="hide">새폴더</span></button>
+						<button type="button" class="btn_ico del disabled" disabled="disabled"><span class="hide">삭제</span></button>
+					</div>
+					<!-- //최상위 북마크 -->
+					<div class="wrap_marker">
+					<%_.each(items, function(item){%>
+						<div class="wrap">
+							<a href="#" class="marker <%-item.cnt>0?'disabled':''%>" data-bm-id="<%-item.bm_id%>" style="padding-left:<%-(12*item.depth)+16%>px;"><%-item.name%></a><!-- padding-left:((12*n) + 8)px; 단, depth01은 padding-left:8px; -->
+							<button type="button" class="btn_ico add" data-bm-id="<%-item.bm_id%>"><span class="hide">새폴더</span></button>
+							<button type="button" class="btn_ico del" data-bm-id="<%-item.bm_id%>"><span class="hide">삭제</span></button>
+						</div>
+					<%});%>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<button type="button" class="btn_ico close"><span class="hide">닫기</span></button>

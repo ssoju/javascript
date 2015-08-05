@@ -1,0 +1,59 @@
+<div class="contents bookmarks">
+	<article class="list_bookmark">
+		<div class="bookmark_tree">
+			<div class="scroll" style="right:0;padding-right:0;padding-left:0;margin-right: 0;"><!-- 하위 .wrap엘리먼트로 넓이 구하면 될 듯 합니다. -->
+					<span class="wrap" style="display: inline-block;text-align:center;">
+						<%_.each(depths, function(depth, i){%>
+						<%-(i > 0?" > ":"")%><a href="/bookmarks?bm_id=<%-depth.bm_id%>"><%-depth.name%></a>
+						<%});%>
+					</span>
+			</div>
+		</div>
+		<%if(items.length){%>
+		<ul class="list">
+			<%_.each(items, function(item){%>
+			<li class="item" data-type="<%-item.type%>" data-bm-id="<%-item.bm_id%>" data-id="<%-item.id%>">
+				<%if(item.type === 'folder'){%>
+				<div class="bookmark_folder">
+					<div class="wrap">
+						<span class="name"><%-item.name%></span>
+					</div>
+				</div>
+				<%} else if(item.type === 'member'){%>
+				<div class="contacts_summary">
+					<div class="identity">
+							<span class="img" style="background-image:url('<%-(item.member.picture ? '/image?size=thumb&img='+encodeURIComponent(item.member.picture) : '/images/noimg_120x80.png')%>');"></span>
+							<span class="txt">
+								<span class="name"><%-item.member.name%></span>
+								<span class="position"><%-item.member.rank_name%></span>
+							</span>
+					</div>
+					<div class="wrap_btn">
+						<a href="tel:<%-item.member.mobile%>" class="btn_ico phone"><span class="hide">전화</span></a>
+						<a href="sms:<%-item.member.mobile%>" class="btn_ico sms"><span class="hide">문자</span></a>
+						<a href="mailto:<%-item.member.email%>" class="btn_ico email"><span class="hide">이메일</span></a>
+						<a href="#" class="btn_ico bookmark" data-id="<%-item.member.mem_id%>" data-type="member"><span class="hide">즐겨찾기</span></a>
+					</div>
+				</div>
+				<%} else if(item.type === 'project'){%>
+				<div class="project">
+					<div class="project_info">
+						<a href="/projects?prj_id=<%-item.project.prj_id%>" class="name">
+							<span class="txt"><%-item.project.name%></span>
+						</a>
+					</div>
+				</div>
+				<%}%>
+				<button type="button" class="btn_ico menu"><span class="hide">편집메뉴</span></button>
+			</li>
+			<%});%>
+		</ul>
+		<%} else {%>
+		<div class="contents">
+			<div class="noSearch">
+				<p>즐겨찾기 항목이 없습니다.</p>
+			</div>
+		</div>
+		<%}%>
+	</article>
+</div>

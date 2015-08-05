@@ -1,0 +1,27 @@
+<div class="contents manager">
+    <ul class="form-control">
+        <li>
+            <h3>※ 권한이 있는 분만 작업해 주세요.</h3>
+        </li>
+        <li>
+            <dl>
+                <dt>연락망 엑셀파일 반영<span style="font-size: 12px;">(암호해제 필요)</span></dt>
+                <dd>
+                    <form class="excel" action="/api/manager/excel_import" method="post" enctype="multipart/form-data">
+                        <span>엑셀 파일</span> <input type="file" name="excel"> <button>등록</button>
+                    </form>
+                </dd>
+            </dl>
+        </li>
+        <li>
+            <dl>
+                <dt>VOM DB와 싱크맞추기</dt>
+                <dd>
+                    <form class="vomdb" action="/api/manager/sync_vom" method="post">
+                        <span>DB 암호</span> <input type="password" name="passwd"> <button>실행</button>
+                    </form>
+                </dd>
+            </dl>
+        </li>
+    </ul>
+</div>
