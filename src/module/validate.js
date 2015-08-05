@@ -1,5 +1,5 @@
 /*!
- * @author 김동욱(comahead@gmail.com)
+ * @author 김승일(comahead@gmail.com)
 */
 (function (undefined) {
 
