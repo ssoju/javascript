@@ -7,6 +7,15 @@
  *
  * @author 김승일
  * @version 1.0(2013. 03. 11) 최초 생성
+ * @example
+ * new ParallaxScroller({
+ *     data: {
+ *         [{
+ *          target: '#item01',
+ *          frames: '0 {left:0px;top:0px} 100 {left:200px;top:100px} 200 {left:0px;top:0}'  // 스크롤이 0에서 100으로 내려갈 때 동남쪽으로 움직였다가 100에서 200으로 스크롤될 때 다시 원위치로 복귀
+ *         }]
+ *     }
+ * })
  */
 (function ($) {
 
