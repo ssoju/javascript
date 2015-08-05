@@ -234,7 +234,7 @@
         this.scrollTop = 1;
         this.beforeScrollTop = -1;
         this.smoothSrollTop = 1;
-        this.data = [];
+        this.data = opts.data || [];
 
         // 실행 준비
         this._cacheData();
