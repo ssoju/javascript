@@ -1,5 +1,5 @@
 /**
- * Created by comahead on 2015-05-12.
+ * Created by comahead on 2011-05-12.
  */
 (function($, core) {
     "use strict";
@@ -30,7 +30,7 @@
                 me.mobileItem = $(me.options.mobileTmpl + '.item').html();
             }
 
-            // ÃÊ±â ·»´õ¸µ ¸ğµå ¼³Á¤
+            // ì´ˆê¸° ë Œë”ë§ ëª¨ë“œ ì„¤ì •
             me.mediaMode = core.isMobileSize() ? 'mobile' : 'pc';
 
             me._render();
@@ -38,7 +38,7 @@
         },
 
         /**
-         * ÀÌº¥Æ® ¹ÙÀÎµù
+         * ì´ë²¤íŠ¸ ë°”ì¸ë”©
          */
         _bindEvents: function() {
             var me = this;
@@ -51,7 +51,7 @@
                 });
             }
 
-            // ¸ğµå°¡ ÀüÈ¯µÉ ¶§¸¸ »õ·Î ·»´õ¸µ
+            // ëª¨ë“œê°€ ì „í™˜ë  ë•Œë§Œ ìƒˆë¡œ ë Œë”ë§
             $(window).on('changemediasize', function () {
                 var m = core.isMobileSize() ? 'mobile' : 'pc';
                 if (me.mediaMode != m) {
@@ -62,7 +62,7 @@
         },
 
         /**
-         * ·»´õ¸µ
+         * ë Œë”ë§
          * @private
          */
         _render: function () {
@@ -75,14 +75,14 @@
             } else {
                 layout = me.pcLayout;
             }
-            // layout ·»´õ¸µ
+            // layout ë Œë”ë§
             $.tmpl(layout, me.data).appendTo(me.$el);
 
-            // ¸®½ºÆ®
+            // ë¦¬ìŠ¤íŠ¸
             if ( me.options.hasMoreList ) {
                 if (!me.data.list || me.data.list.length === 0) {
                     if (!me.options.url) {
-                        throw new Error('´õº¸±â°¡ ÀÖ´Â °æ¿ì url ¿É¼ÇÀ» ¼³Á¤ÇØÁÖ¼¼¿ä.');
+                        throw new Error('ë”ë³´ê¸°ê°€ ìˆëŠ” ê²½ìš° url ì˜µì…˜ì„ ì„¤ì •í•´ì£¼ì„¸ìš”.');
                     }
                     me._renderAjax();
                 }
@@ -92,7 +92,7 @@
         },
 
         /**
-         * ´õº¸±â Á¶È¸
+         * ë”ë³´ê¸° ì¡°íšŒ
          * @private
          */
         _renderAjax: function () {
@@ -111,7 +111,7 @@
         },
 
         /**
-         * ´õº¸±â ·»´õ¸µ
+         * ë”ë³´ê¸° ë Œë”ë§
          * @param list
          * @private
          */
@@ -128,7 +128,7 @@
         },
 
         /**
-         * ´õº¸±â ¹öÆ°¿¡ Ä«¿îÆ® Ç¥½Ã
+         * ë”ë³´ê¸° ë²„íŠ¼ì— ì¹´ìš´íŠ¸ í‘œì‹œ
          * @private
          */
         _toggleMoreButton: function () {
@@ -136,7 +136,7 @@
 
             if (me.data.current < me.data.total){
                 me.$('.btn_more_wrap').show()
-                    .find('.txt').html('´õº¸±â <span class="num">(<span class="hide">ÇöÀçÆäÀÌÁö</span>'+me.data.current+'/<span class="hide">ÀüÃ¼ÆäÀÌÁö</span>'+me.data.total+')</span>');
+                    .find('.txt').html('ë”ë³´ê¸° <span class="num">(<span class="hide">í˜„ì¬í˜ì´ì§€</span>'+me.data.current+'/<span class="hide">ì „ì²´í˜ì´ì§€</span>'+me.data.total+')</span>');
             } else {
                 me.$('.btn_more_wrap').hide();
             }
