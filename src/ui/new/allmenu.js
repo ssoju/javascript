@@ -1,4 +1,4 @@
-/** * Created by �??�일책임(comahead@vi-nyl.com<mailto:comahead@vi-nyl.com>) on 2015-05-22. */ (function ($, core) {
+/** * Created by ê¹??¹ì¼ì±…ìž„(comahead@vi-nyl.com<mailto:comahead@vi-nyl.com>) on 2015-02-22. */ (function ($, core) {
     "use strict";
     var _elementStyle = document.createElement('div').style;
     var _vendor = (function () {
@@ -250,11 +250,11 @@
                 e.preventDefault();
                 if (!me.menuOpended) {
                     me.getMenu().open();
-                    $(this).html('?�체메뉴 ?�기');
+                    $(this).html('?„ì²´ë©”ë‰´ ?«ê¸°');
                 } else {
                     me.pcMenu && me.pcMenu.close();
                     me.mobileMenu && me.mobileMenu.close();
-                    $(this).html('?�체메뉴 ?�기');
+                    $(this).html('?„ì²´ë©”ë‰´ ?´ê¸°');
                 }
             });
         },

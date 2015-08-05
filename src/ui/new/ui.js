@@ -1,11 +1,8 @@
 /*!
  * @module coma.ui.Accordion
- * @author orodyseek
- * @email odyseek@vi-nyl.com
- * @create 2015-01-29
  * @license MIT License
  *
- * @modifier (±è½ÂÀÏÃ¥ÀÓ)comahead@vi-nyl.com
+ * @modifier (ê¹€ìŠ¹ì¼ì±…ì„)comahead@vi-nyl.com
  */
 (function ($, core, undefined) {
     "use strict";
@@ -16,33 +13,33 @@
         disabledAccordion = $('body').hasClass('ui_disabled_accordion');
 
     /**
-     * ¾ÆÄÚµğ¾ğ ¸ğµâ
+     * ì•„ì½”ë””ì–¸ ëª¨ë“ˆ
      * @class
      * @name coma.ui.Accordion
-     * @author °­ÅÂÁø
-     * @modifier ±è½ÂÀÏ
+     * @author ê°•íƒœì§„
+     * @modifier ê¹€ìŠ¹ì¼
      */
     var Accordion = ui('Accordion', /**@lends coma.ui.Accordion */{
         bindjQuery: 'accordion',
         defaults: {
-            singleOpen: true,               // ´ÜÀÏ¿­¸² / ´ÙÁß¿­¸² ¿©ºÎ
-            toggleButtonType: '',           // Åä±Û¹öÆ° À¯Çü.(ÇöÀç ¹Ì»ç¿ë)
-            duration: 300,                   // ÆîÃÄÁö°Å³ª ´İÇôÁö°Å³ª ÇÒ ¶§ ¾Ö´Ï¸ŞÀÌ¼Ç ¼Óµµ
+            singleOpen: true,               // ë‹¨ì¼ì—´ë¦¼ / ë‹¤ì¤‘ì—´ë¦¼ ì—¬ë¶€
+            toggleButtonType: '',           // í† ê¸€ë²„íŠ¼ ìœ í˜•.(í˜„ì¬ ë¯¸ì‚¬ìš©)
+            duration: 300,                   // í¼ì³ì§€ê±°ë‚˜ ë‹«í˜€ì§€ê±°ë‚˜ í•  ë•Œ ì• ë‹ˆë©”ì´ì…˜ ì†ë„
 
-            activeClass: "active",        // È°¼ºÈ­µÆÀ» ¶§ Ãß°¡ÇÒ css Å¬·¡½º¸í
-            selectedClass: 'on',        // ¹öÆ°ÀÌ Åä±ÛµÉ ¶§ Ãß°¡ÇÒ css Å¬·¡½º¸í
+            activeClass: "active",        // í™œì„±í™”ëì„ ë•Œ ì¶”ê°€í•  css í´ë˜ìŠ¤ëª…
+            selectedClass: 'on',        // ë²„íŠ¼ì´ í† ê¸€ë  ë•Œ ì¶”ê°€í•  css í´ë˜ìŠ¤ëª…
             toggleClass: "ui_accord_toggle",
             contentClass: "ui_accord_content",
             itemClosest: 'li',
             itemSelector: '>ul>li',
-            toggleSelector: ">.head>.ui_accord_toggle",  // Åä±Û¹öÆ°
-            contentSelector: ">.ui_accord_content"       // ÄÁÅÙÃ÷
+            toggleSelector: ">.head>.ui_accord_toggle",  // í† ê¸€ë²„íŠ¼
+            contentSelector: ">.ui_accord_content"       // ì»¨í…ì¸ 
         },
 
         /**
-         * »ı¼ºÀÚ
-         * @param el ¸ğµâ ¿ä¼Ò
-         * @param options ¿É¼Ç(±âº»°ª: defaults ¼Ó¼º ÂüÁ¶)
+         * ìƒì„±ì
+         * @param el ëª¨ë“ˆ ìš”ì†Œ
+         * @param options ì˜µì…˜(ê¸°ë³¸ê°’: defaults ì†ì„± ì°¸ì¡°)
          */
         initialize: function (el, options) {
             var me = this;
@@ -54,14 +51,14 @@
             me._setOptionsByAccordType();
             me._bindEvent();
 
-            // option¿¡ ±âº»ÀûÀ¸·Î ¿ÀÇÂ½ÃÅ³ ÀÎµ¦½º °ªÀÌ ÀÖÀ¸¸é ¿ÀÇÂ½ÃÅ²´Ù.
+            // optionì— ê¸°ë³¸ì ìœ¼ë¡œ ì˜¤í”ˆì‹œí‚¬ ì¸ë±ìŠ¤ ê°’ì´ ìˆìœ¼ë©´ ì˜¤í”ˆì‹œí‚¨ë‹¤.
             var openIndex = me.$el.data('openIndex');
             if (openIndex !== undefined) {
                 if(openIndex === 'all') {
-                    // ÀüÃ¼ ¿ÀÇÂ
+                    // ì „ì²´ ì˜¤í”ˆ
                     me.expandAll();
                 } else {
-                    // openIndex¿¡ ÇØ´çÇÏ´Â ÄÁÅÙÃ÷¸¦ ¿ÀÇÂ
+                    // openIndexì— í•´ë‹¹í•˜ëŠ” ì»¨í…ì¸ ë¥¼ ì˜¤í”ˆ
                     me.expand(openIndex, false);
                 }
             }
@@ -79,13 +76,13 @@
         },
 
         /**
-         * ÀÌº¥Æ® ¹ÙÀÎµù
+         * ì´ë²¤íŠ¸ ë°”ì¸ë”©
          */
         _bindEvent: function () {
             var me = this,
                 o;
 
-            // Åä±Û¹öÆ° Å¬¸¯µÆÀ» ¶§
+            // í† ê¸€ë²„íŠ¼ í´ë¦­ëì„ ë•Œ
             me.on("click dblclick", me.options.itemSelector + me.options.toggleSelector, function (e) {
                 e.preventDefault();
 
@@ -93,20 +90,20 @@
                 var $item = $(this).closest(me.options.itemClosest),
                     index = me.$items.index($item);
 
-                // ¿­·ÁÀÖÀ¸¸é ´İ°í
+                // ì—´ë ¤ìˆìœ¼ë©´ ë‹«ê³ 
                 if ($item.hasClass(me.options.selectedClass)) {
                     me.collapse(index, true, function(){
                         $item.addClass(me.options.activeClass);
                     });
                 } else {
-                    // ¾Æ´Ï¸é ¿­°í
+                    // ì•„ë‹ˆë©´ ì—´ê³ 
                     me.expand(index, true);
                 }
             });
 
             if (o = me.options.accordGroup) {
-                // ¾ÆÄÚµğ¾ğ ¿ä¼Ò°¡ µû·Î ¶³¾îÁ® ÀÖ´Â °ÍÀ» data-accord-group¼Ó¼ºÀ» ¹­°í,
-                // ÇÏ³ª°¡ ¿­¸®¸é ±×·ìÀ¸·Î ¹­¿©Áø ´Ù¸¥ ¾ÆÄÚµğ¾ğ¿¡ ¿­·ÁÁø°Ô ÀÖÀ¸¸é ´İ¾ÆÁØ´Ù.
+                // ì•„ì½”ë””ì–¸ ìš”ì†Œê°€ ë”°ë¡œ ë–¨ì–´ì ¸ ìˆëŠ” ê²ƒì„ data-accord-groupì†ì„±ì„ ë¬¶ê³ ,
+                // í•˜ë‚˜ê°€ ì—´ë¦¬ë©´ ê·¸ë£¹ìœ¼ë¡œ ë¬¶ì—¬ì§„ ë‹¤ë¥¸ ì•„ì½”ë””ì–¸ì— ì—´ë ¤ì§„ê²Œ ìˆìœ¼ë©´ ë‹«ì•„ì¤€ë‹¤.
                 me.on('accordionbeforeexpand', function (e) {
                     $('.ui_accordion[data-accord-group=' + o + '], .ui_accordion_list[data-accord-group=' + o + ']')
                         .not(me.$el).scAccordion('collapse').find(me.options.itemSelector).removeClass(me.options.selectedClass);
@@ -118,7 +115,7 @@
             return this.$items.filter('.'+me.options.selectedClass);
         },
 
-        // ÀçÁ¤ÀÇ
+        // ì¬ì •ì˜
         updateSelectors: function() {
             var me = this;
 
@@ -141,10 +138,10 @@
         collapse: function (index, isAni, cb) {
             var me = this,
                 opts = me.options,
-                data = {};           // ¾Ö´Ï¸ŞÀÌ¼Ç ½Ã°£
+                data = {};           // ì• ë‹ˆë©”ì´ì…˜ ì‹œê°„
 
             if (arguments.length === 0 || index === null) {
-                // index°¡ ¾È³Ñ¾îº¸¸é ÇöÀç È°¼ºÈ­µÈ ÆĞ³ÎÀÇ index¸¦ °®°í ¿Â´Ù.
+                // indexê°€ ì•ˆë„˜ì–´ë³´ë©´ í˜„ì¬ í™œì„±í™”ëœ íŒ¨ë„ì˜ indexë¥¼ ê°–ê³  ì˜¨ë‹¤.
                 index = me.$items.filter('.' + opts.selectedClass).index();
             }
 
@@ -154,23 +151,23 @@
             data.header = me.$items.eq(index);
             data.content = data.header.find(opts.contentSelector);
 
-            // ¿­¸®±â Àü¿¡ ÀÌº¥Æ® ¹ß»ı
+            // ì—´ë¦¬ê¸° ì „ì— ì´ë²¤íŠ¸ ë°œìƒ
             if (me.triggerHandler('accordionbeforecollapse', data) === false){ return; }
             if(isAni !== false) {
-                // ¾Ö´Ï¸ŞÀÌ¼Ç ¸ğµå
+                // ì• ë‹ˆë©”ì´ì…˜ ëª¨ë“œ
                 //if(this.isAnimate) { return; }
                 data.header.removeClass(opts.selectedClass);
                 data.content.slideUp(opts.duration, function () {
-                    // ¿­·ÁÁø ÈÄ¿¡ ÀÌº¥Æ® ¹ß»ı
+                    // ì—´ë ¤ì§„ í›„ì— ì´ë²¤íŠ¸ ë°œìƒ
                     me.trigger('accordioncollapse', data);
                     me._updateButton(index, false);
                     cb && cb();
                 });
             } else {
-                // ÀÏ¹İ ¸ğµå
+                // ì¼ë°˜ ëª¨ë“œ
                 data.header.removeClass(opts.selectedClass);
                 data.content.hide();
-                // ¿­·ÁÁø ÈÄ¿¡ ÀÌº¥Æ® ¹ß»ı
+                // ì—´ë ¤ì§„ í›„ì— ì´ë²¤íŠ¸ ë°œìƒ
                 me.trigger('accordioncollapse', data);
                 me._updateButton(index, false);
                 cb && cb();
@@ -208,10 +205,10 @@
 
             if (me.triggerHandler('accordionbeforeexpand', data) === false) { return; }
             if(isAni !== false) {
-                // ¾Ö´Ï¸ŞÀÌ¼Ç »ç¿ë
+                // ì• ë‹ˆë©”ì´ì…˜ ì‚¬ìš©
                 me.isAnimate = true;
                 if (opts.singleOpen && data.oldHeader) {
-                    // ÇÏ³ª¸¸ ¿­¸®´Â ¸ğµå
+                    // í•˜ë‚˜ë§Œ ì—´ë¦¬ëŠ” ëª¨ë“œ
                     data.oldHeader.removeClass(opts.selectedClass);
                     data.oldContent.slideUp(opts.duration, function () {
                         me._updateButton(data.oldIndex, false);
@@ -226,9 +223,9 @@
                     cb && cb();
                 });
             } else {
-                // ¿¡´Ï¸ŞÀÌ¼Ç ¹Ì»ç¿ë
+                // ì—ë‹ˆë©”ì´ì…˜ ë¯¸ì‚¬ìš©
                 if (opts.singleOpen) {
-                    // ÇÏ³ª¸¸ ¿­¸®´Â ¸ğµå
+                    // í•˜ë‚˜ë§Œ ì—´ë¦¬ëŠ” ëª¨ë“œ
                     data.oldHeader.removeClass(opts.selectedClass);
                     data.oldContent.hide();
                 }
@@ -405,10 +402,10 @@
                 });
 
                 if (me.options.watch === true) {
-                    // »çÀÌÁî º¯È­ °¨½Ã
+                    // ì‚¬ì´ì¦ˆ ë³€í™” ê°ì‹œ
                     var totalTime = 0, dur = me.options.watchInterval;
                     me.updateTimer = setInterval(function () {
-                        // 40ÃÊ¿¡ ÇÑ¹ø¾¿ dom¿¡¼­ Á¦°Å µÆ°ÇÁö Ã¼Å©ÇØ¼­ Å¸ÀÌ¸Ó¸¦ ¸ØÃá´Ù.
+                        // 40ì´ˆì— í•œë²ˆì”© domì—ì„œ ì œê±° ëê±´ì§€ ì²´í¬í•´ì„œ íƒ€ì´ë¨¸ë¥¼ ë©ˆì¶˜ë‹¤.
                         if (totalTime > 40000) {
                             totalTime = 0;
                             if (!$.contains(document, me.$el[0])) {
@@ -437,7 +434,7 @@
 
         },
         /**
-         * ÅÍÄ¡±â¹İ µğ¹ÙÀÌ½º¿¡¼­ ÅÍÄ¡·Î ÄÁÅÙÃ÷¸¦ ½ºÅ©·ÑÇÒ ¼ö ÀÖµµ·Ï ¹ÙÀÎµù
+         * í„°ì¹˜ê¸°ë°˜ ë””ë°”ì´ìŠ¤ì—ì„œ í„°ì¹˜ë¡œ ì»¨í…ì¸ ë¥¼ ìŠ¤í¬ë¡¤í•  ìˆ˜ ìˆë„ë¡ ë°”ì¸ë”©
          * @private
          */
         _bindContentScroll: function () {
@@ -522,7 +519,7 @@
         },
 
         /**
-         * pc¿¡¼­ »óÇÏÅ°·Î ½ºÅ©·ÑÇÒ ¼ö ÀÖµµ·Ï ¹ÙÀÎµù
+         * pcì—ì„œ ìƒí•˜í‚¤ë¡œ ìŠ¤í¬ë¡¤í•  ìˆ˜ ìˆë„ë¡ ë°”ì¸ë”©
          * @private
          */
         _bindKeys: function () {
@@ -566,7 +563,7 @@
         },
 
         /**
-         * pc¿¡¼­ ½ºÅ©·Ñ¹Ù·Î ÄÁÅÙÃ÷¸¦ ½ºÅ©·ÑÇÒ ¼ö ÀÖµµ·Ï ¹ÙÀÎµù
+         * pcì—ì„œ ìŠ¤í¬ë¡¤ë°”ë¡œ ì»¨í…ì¸ ë¥¼ ìŠ¤í¬ë¡¤í•  ìˆ˜ ìˆë„ë¡ ë°”ì¸ë”©
          * @private
          */
         _bindScrollbar: function () {
@@ -629,7 +626,7 @@
         },
 
         /**
-         * pc¿¡¼­ ¸¶¿ì½º·Î ½ºÅ©·ÑÇÒ ¼ö ÀÖµµ·Ï ¹ÙÀÎµù
+         * pcì—ì„œ ë§ˆìš°ìŠ¤ë¡œ ìŠ¤í¬ë¡¤í•  ìˆ˜ ìˆë„ë¡ ë°”ì¸ë”©
          * @private
          */
         _bindWheel: function () {
@@ -648,7 +645,7 @@
         },
 
         /**
-         * ½ºÅ©·Ñ¹ÙÀÇ À§Ä¡¸¦ ¹İÈ¯
+         * ìŠ¤í¬ë¡¤ë°”ì˜ ìœ„ì¹˜ë¥¼ ë°˜í™˜
          * @returns {{x: *, y: *}}
          */
         getPosition: function () {
@@ -668,7 +665,7 @@
         },
 
         /**
-         * ½ºÅ©·Ñ¹Ù¸¦ ¿òÁ÷¿©ÁÖ´Â ÇÔ¼ö
+         * ìŠ¤í¬ë¡¤ë°”ë¥¼ ì›€ì§ì—¬ì£¼ëŠ” í•¨ìˆ˜
          * @param top
          * @param height
          * @private
@@ -700,7 +697,7 @@
         },
 
         /**
-         * »çÀÌÁî º¯È­¿¡ µû¸¥ UI °»½Å
+         * ì‚¬ì´ì¦ˆ ë³€í™”ì— ë”°ë¥¸ UI ê°±ì‹ 
          */
         update: function (){
             var me = this,
@@ -728,7 +725,7 @@
         },
 
         /**
-         * scrollTop ¼³Á¤
+         * scrollTop ì„¤ì •
          * @param top
          * @returns {*}
          */
@@ -760,12 +757,10 @@
 
 /*!
  * @module coma.ui.Selectbox
- * @author odyseek
- * @email odyseek@vi-nyl.com
  * @create 2015-03-17
  * @license MIT License
  *
- * @modifier (±è½ÂÀÏÃ¥ÀÓ)comahead@vi-nyl.com
+ * @modifier (ê¹€ìŠ¹ì¼ì±…ì„)comahead@vi-nyl.com
  */
 (function ($, core, undefined) {
     "use strict";
@@ -777,7 +772,7 @@
 
     //Selectbox////////////////////////////////////////////////////////////////////////////
     /**
-     * Ä¿½ºÅÒ ¼¿·ºÆ®¹Ú½º<br />
+     * ì»¤ìŠ¤í…€ ì…€ë ‰íŠ¸ë°•ìŠ¤<br />
      *
      * @class
      * @name coma.ui.Selectbox
@@ -799,11 +794,11 @@
 
         tmpl: '',
         /**
-         * »ı¼ºÀÚ
-         * @param {string|Element|jQuery} el ÇØ´ç ¿¤¸®¸ÕÆ®(³ëµå, id, jQuery ¾î¶² Çü½ÄÀÌµç »ó°ü¾ø´Ù)
-         * @param {Object} [options] ¿É¼Ç°ª
-         * @param {string} [options.wrapClasses = ''] wrap Å¬·¡½º¸í
-         * @param {string} [options.disabledClass = 'disabled'] disabled Å¬·¡½º¸í
+         * ìƒì„±ì
+         * @param {string|Element|jQuery} el í•´ë‹¹ ì—˜ë¦¬ë¨¼íŠ¸(ë…¸ë“œ, id, jQuery ì–´ë–¤ í˜•ì‹ì´ë“  ìƒê´€ì—†ë‹¤)
+         * @param {Object} [options] ì˜µì…˜ê°’
+         * @param {string} [options.wrapClasses = ''] wrap í´ë˜ìŠ¤ëª…
+         * @param {string} [options.disabledClass = 'disabled'] disabled í´ë˜ìŠ¤ëª…
          */
         initialize: function (el, options) {
             var me = this;
@@ -818,7 +813,7 @@
         },
 
         /**
-         * select ÄÁÆ®·ÑÀ» ±â¹İÀ¸·Î UI DOM »ı¼º
+         * select ì»¨íŠ¸ë¡¤ì„ ê¸°ë°˜ìœ¼ë¡œ UI DOM ìƒì„±
          * @private
          */
         _create: function () {
@@ -828,14 +823,14 @@
             me.width = parseInt(me.$el.css('width'), 10) + 22;
             me.widthClass = (me.$el.attr('data-width-class') === undefined) ? '' : me.$el.attr('data-width-class');
             me.split = (me.$el.attr('data-split') === undefined) ? '' : me.$el.attr('data-split');
-            me.title = (me.$el.attr('data-title') || me.$el.attr('title') || '¼¿·ºÆ®¹Ú½º');
+            me.title = (me.$el.attr('data-title') || me.$el.attr('title') || 'ì…€ë ‰íŠ¸ë°•ìŠ¤');
             me.id = (me.$el.attr('data-id') === undefined) ? '' : ' id="' + me.$el.attr('data-id') + '"';
             me.hideClass = (me.$el.data('hideClass') === undefined) ? '' : '.' + me.$el.data('hideClass');
             me.cname = (me.$el.data('cnameOption') === undefined) ? false : me.$el.data('cnameOption');
             me.isReadonly = me.$el.prop('readonly') || !!~cls.indexOf('read');
             me.isDisabled = me.$el.prop('disabled') || !!~cls.indexOf('disabled');
 
-            // ¼¿·ºÆ®¹Ú½º
+            // ì…€ë ‰íŠ¸ë°•ìŠ¤
             me.$selectbox = $('<div class="ui_select_dom ' + cls + '" ' + me.id + '></div>').addClass(me.options.wrapClasses);
             if (me.widthClass === '') {
                 me.$selectbox.css('width', me.width);
@@ -851,7 +846,7 @@
         },
 
         /**
-         * ½ºÅ©·Ñ¹Ù »ı¼º
+         * ìŠ¤í¬ë¡¤ë°” ìƒì„±
          * @private
          */
         _refreshScroll: function () {
@@ -881,7 +876,7 @@
         },
 
         /**
-         * ½ºÅ©·Ñ¹Ù »èÁ¦
+         * ìŠ¤í¬ë¡¤ë°” ì‚­ì œ
          * @private
          */
         _hideScroll: function () {
@@ -918,7 +913,7 @@
         },
 
         /**
-         * ÀÌº¥Æ® ¹ÙÀÎµù
+         * ì´ë²¤íŠ¸ ë°”ì¸ë”©
          * @private
          */
         _bindEvents: function () {
@@ -947,10 +942,10 @@
                 }
             });
 
-            // ºñÅÍÄ¡ ±â¹İÀÏ ¶§¿¡ ´ëÇÑ ÀÌº¥Æ® Ã³¸®
+            // ë¹„í„°ì¹˜ ê¸°ë°˜ì¼ ë•Œì— ëŒ€í•œ ì´ë²¤íŠ¸ ì²˜ë¦¬
             if (!isTouch) {
                 var timer;
-                // ¼¿·ºÆ®¹Ú½º¿¡¼­ Æ÷Ä¿½º°¡ ¹ş¾î³¯ °æ¿ì ÀÚµ¿À¸·Î ´İÈ÷°Ô
+                // ì…€ë ‰íŠ¸ë°•ìŠ¤ì—ì„œ í¬ì»¤ìŠ¤ê°€ ë²—ì–´ë‚  ê²½ìš° ìë™ìœ¼ë¡œ ë‹«íˆê²Œ
                 me.$selectbox.on('mouseenter.selectbox mouseleave.selectbox focusin.selectbox focusout.selectbox', function (e) {
                     clearTimeout(timer), timer = null;
                     if (me.$el.prop('disabled')) { return; }
@@ -1076,13 +1071,13 @@
         },
 
         /**
-         * ·¹ÀÌºí »ı¼º
+         * ë ˆì´ë¸” ìƒì„±
          * @private
          */
         _createLabel: function () {
             var me = this;
 
-            me.$label = $('<div class="item_view"><a href="#0" class="ui_select_button" title="">' + me._itemHTML(me.el.options[0], 'label') + '</a></div>');
+            me.$label = $('<div class="item_view"><a href="#0" class="ui_select_button" title="">' + me.el.options[0].text + '</a></div>');
 
             me.$label.attr({
                 'id': me.cid + '_button'
@@ -1093,7 +1088,7 @@
                     return;
                 }
 
-                // ÇöÀç ¼¿·ºÆ®¹Ú½º°¡ ¿­·ÁÀÖÀ¸¸é ´İ°í, ´İÇôÀÖÀ¸¸é ¿­¾îÁØ´Ù.
+                // í˜„ì¬ ì…€ë ‰íŠ¸ë°•ìŠ¤ê°€ ì—´ë ¤ìˆìœ¼ë©´ ë‹«ê³ , ë‹«í˜€ìˆìœ¼ë©´ ì—´ì–´ì¤€ë‹¤.
                 if (me.$selectbox.hasClass('on')) {
                     me.close();
                 } else {
@@ -1128,7 +1123,7 @@
         },
 
         /**
-         * ¸®½ºÆ® »ı¼º
+         * ë¦¬ìŠ¤íŠ¸ ìƒì„±
          * @private
          */
         _createList: function () {
@@ -1138,7 +1133,7 @@
             me.$list.on('click', function (e) {
                 me.$list.focus();
             }).on('click', 'li>a', function (e) {
-                // ¾ÆÀÌÅÛÀ» Å¬¸¯ÇßÀ» ¶§
+                // ì•„ì´í…œì„ í´ë¦­í–ˆì„ ë•Œ
                 e.preventDefault();
                 e.stopPropagation();
 
@@ -1153,7 +1148,7 @@
             });
 
             !isTouch && me.$list.on('keydown', 'a', function (e) {
-                // Å°º¸µåÀÇ À§/¾Æ·¡ Å°·Î ÀÌµ¿
+                // í‚¤ë³´ë“œì˜ ìœ„/ì•„ë˜ í‚¤ë¡œ ì´ë™
                 var $links = me.$selectbox.find('a'),
                     index = $links.index(this),
                     count = $links.length;
@@ -1179,7 +1174,7 @@
         },
 
         /**
-         * ½ºÅ©·Ñ¹Ú½º¸¦ ¹öÆ° À§¿¡ ³õÀ»Áö ¾Æ·¡¿¡ ³õÀ»Áö °áÁ¤
+         * ìŠ¤í¬ë¡¤ë°•ìŠ¤ë¥¼ ë²„íŠ¼ ìœ„ì— ë†“ì„ì§€ ì•„ë˜ì— ë†“ì„ì§€ ê²°ì •
          * @private
          */
         _reposition: function(){
@@ -1209,7 +1204,7 @@
         },
 
         /**
-         * È°¼ºÈ­µÈ ¾ÆÀÌÅÛÀ» °¡½Ã¿µ¿ª¿¡ º¸ÀÌµµ·Ï °­Á¦ ½ºÅ©·Ñ
+         * í™œì„±í™”ëœ ì•„ì´í…œì„ ê°€ì‹œì˜ì—­ì— ë³´ì´ë„ë¡ ê°•ì œ ìŠ¤í¬ë¡¤
          * @private
          */
         _scrollToItem: function () {
@@ -1233,7 +1228,7 @@
         },
 
         /**
-         * ¸®½ºÆ® Ç¥½Ã
+         * ë¦¬ìŠ¤íŠ¸ í‘œì‹œ
          * @fires coma.ui.Selectbox#selectboxopen
          */
         open: function () {
@@ -1244,7 +1239,7 @@
             me._reposition();
 
             /**
-             * ¼¿·ºÆ®¹Ú½º°¡ ¿­¸± ¶§ ¹ß»ı
+             * ì…€ë ‰íŠ¸ë°•ìŠ¤ê°€ ì—´ë¦´ ë•Œ ë°œìƒ
              * @event coma.ui.Selectbox#selectboxopen
              *///me.$selectbox.triggerHandler('selectboxopen');
             me.isShown = true;
@@ -1271,12 +1266,12 @@
                 });
             }
 
-            me.$label.find('.ui_select_button').attr('title', me.title + ' ´İ±â');
+            me.$label.find('.ui_select_button').attr('title', me.title + ' ë‹«ê¸°');
             me._refreshScroll();
         },
         /**
-         * url¿¡ ÇØ´çÇÏ´Â ÆäÀÌÁö¸¦ È£ÃâÇÏ¿© ¹ŞÀº °ªÀ» ¹ÙÅÁÀ¸·Î option list °»½Å
-         * @param {String} data.url url ÁÖ¼Ò
+         * urlì— í•´ë‹¹í•˜ëŠ” í˜ì´ì§€ë¥¼ í˜¸ì¶œí•˜ì—¬ ë°›ì€ ê°’ì„ ë°”íƒ•ìœ¼ë¡œ option list ê°±ì‹ 
+         * @param {String} data.url url ì£¼ì†Œ
          */
         remote: function () {
             var me = this;
@@ -1287,7 +1282,7 @@
         },
 
         /**
-         * ¸®½ºÆ® ´İ±â
+         * ë¦¬ìŠ¤íŠ¸ ë‹«ê¸°
          * @fires coma.ui.Selectbox#selectboxclose
          */
         close: function () {
@@ -1295,12 +1290,12 @@
 
             Selectbox.active = null;
             /**
-             * ¼¿·ºÆ®¹Ú½º°¡ ´İÈú ¶§ ¹ß»ı
+             * ì…€ë ‰íŠ¸ë°•ìŠ¤ê°€ ë‹«í ë•Œ ë°œìƒ
              * @event coma.ui.Selectbox#selectboxclose
              */
             me.isShown = false;
             me.triggerHandler('selectboxclose');
-            me.$label.find('.ui_select_button').attr('title', me.title + ' ¿­±â');
+            me.$label.find('.ui_select_button').attr('title', me.title + ' ì—´ê¸°');
 
             if (me.options.where === 'body') {
                 me.$label.after(me.$list.css({
@@ -1316,59 +1311,11 @@
             $doc.off('.selectbox' + me.cid);
         },
 
-        _itemHTML: function (option, type) {
-            if (!option) { return; }
-            var me       = this,
-                opts     = me.options,
-                $o       = $(option),
-                dataList = {}, cname,
-                html     = '';
-
-            if (cname = $o.attr('data-sup')) { dataList['sup'] = cname; }
-            if (cname = $o.attr('data-cnum')) { dataList['cnum'] = cname; }
-            if (cname = $o.attr('data-cname')) { dataList['cname'] = cname; }
-            if (cname = $o.attr('data-cname-mobile')) { dataList['cnameMobile'] = cname; }
-
-            // option¿¡ data¼Ó¼ºÀÌ ÀÖÀ¸¸é
-            if (core.json.hasItems(dataList)) {
-                var isW768 = $('body').hasClass('w768');
-                core.each(opts.classSort, function (val) {
-                    if (dataList[val]) {
-                        if (val !== 'cname') {
-                            html += '<span class="' + val + '">' + dataList[val] + '</span>';
-                        } else if (val === 'cname' && type === 'label') {
-                            if (me.cname && !isW768) {
-                                html += '<span class="' + val + '">' + option.text + '</span>';
-                            } else {
-                                if( dataList['cnameMobile'] && isW768) {
-                                    html += '<span class="' + val + '">' + dataList['cnameMobile'] + '</span>';
-                                } else {
-                                    html += '<span class="' + val + '">' + dataList[val] + '</span>';
-                                }
-                            }
-                        } else {
-                            html += '<span class="' + val + '">' + option.text + '</span>';
-                        }
-                    }
-                });
-                if (type === 'label') {
-                    html = html + '<span class="hide">¼±ÅÃµÊ</span><span class="ico"></span>';
-                }
-                return html;
-            } else {
-                if (type === 'label') {
-                    return '<span class="ui_select_text">' + option.text + '</span><span class="hide">¼±ÅÃµÊ</span><span class="ico"></span>';
-                } else {
-                    return option.text;
-                }
-            }
-        },
-
         /**
-         * index¿¡ ÇØ´çÇÏ´Â optionÇ×¸ñÀ» ¼±ÅÃ
+         * indexì— í•´ë‹¹í•˜ëŠ” optioní•­ëª©ì„ ì„ íƒ
          *
-         * @param {number} index ¼±ÅÃÇÏ°íÀÚ ÇÏ´Â optionÀÇ ÀÎµ¦½º
-         * @param {boolean} trigger changeÀÌº¥Æ®¸¦ ¹ß»ı½ÃÅ³ °ÍÀÎÁö ¿©ºÎ
+         * @param {number} index ì„ íƒí•˜ê³ ì í•˜ëŠ” optionì˜ ì¸ë±ìŠ¤
+         * @param {boolean} trigger changeì´ë²¤íŠ¸ë¥¼ ë°œìƒì‹œí‚¬ ê²ƒì¸ì§€ ì—¬ë¶€
          */
         selectedIndex: function (index, trigger) {
             if (arguments.length === 0) {
@@ -1391,7 +1338,7 @@
             /*me.$list.attr({
              'aria-activedescendant': me.$list.find('li').attr('id')
              });*/
-            // ÀÌ°Ç ¸ÓÁö? me.text = (me.split === '') ? item.text() : item.text().split(me.split)[0];
+            // ì´ê±´ ë¨¸ì§€? me.text = (me.split === '') ? item.text() : item.text().split(me.split)[0];
             me.$label.find('a').html(me._itemHTML(me.el.options[index], 'label'));
 
             if (me.hideClass !== '') {
@@ -1400,16 +1347,16 @@
         },
 
         /**
-         * value ¿¡ ÇØ´çÇÏ´Â optionÇ×¸ñÀ» ¼±ÅÃ, ÀÎÀÚ°¡ ¾øÀ»¶© ÇöÀç ¼±ÅÃµÇ¾îÁø value¸¦ ¹İÈ¯
+         * value ì— í•´ë‹¹í•˜ëŠ” optioní•­ëª©ì„ ì„ íƒ, ì¸ìê°€ ì—†ì„ë• í˜„ì¬ ì„ íƒë˜ì–´ì§„ valueë¥¼ ë°˜í™˜
          *
-         * @param {string} index ¼±ÅÃÇÏ°íÀÚ ÇÏ´Â optionÀÇ ÀÎµ¦½º
-         * @param {boolean} trigger changeÀÌº¥Æ®¸¦ ¹ß»ı½ÃÅ³ °ÍÀÎÁö ¿©ºÎ
+         * @param {string} index ì„ íƒí•˜ê³ ì í•˜ëŠ” optionì˜ ì¸ë±ìŠ¤
+         * @param {boolean} trigger changeì´ë²¤íŠ¸ë¥¼ ë°œìƒì‹œí‚¬ ê²ƒì¸ì§€ ì—¬ë¶€
          * @return {string}
          * @example
          * &lt;select id="sel">&lt;option value="1">1&lt;/option>&lt;option value="2">2&lt;/option>&lt;/select>
          *
          * $('#sel').scSelectbox('value', 2);
-         * value = $('#sel').scSelectbox('value'); // = $('#sel')[0].value ¿Í µ¿ÀÏ
+         * value = $('#sel').scSelectbox('value'); // = $('#sel')[0].value ì™€ ë™ì¼
          */
         value: function (_value, trigger) {
             var me = this;
@@ -1427,7 +1374,7 @@
         },
 
         /**
-         * ¼±ÅÃµÈ option ÀÇ ÅØ½ºÆ® ¹İÈ¯
+         * ì„ íƒëœ option ì˜ í…ìŠ¤íŠ¸ ë°˜í™˜
          * @returns {*}
          */
         text: function () {
@@ -1435,7 +1382,7 @@
         },
 
         /**
-         * ¼±ÅÃµÈ option dom ÀÚÃ¼¸¦ ¹İÈ¯
+         * ì„ íƒëœ option dom ìì²´ë¥¼ ë°˜í™˜
          * @returns {*}
          */
         selectedOption: function () {
@@ -1443,9 +1390,9 @@
         },
 
         /**
-         * µ¿ÀûÀ¸·Î selectÀÇ Ç×¸ñµéÀÌ º¯°æµÇ¾úÀ» ¶§, UI¿¡ ¹İ¿µ
+         * ë™ì ìœ¼ë¡œ selectì˜ í•­ëª©ë“¤ì´ ë³€ê²½ë˜ì—ˆì„ ë•Œ, UIì— ë°˜ì˜
          *
-         * @param {json} (optional) list ¸¸¾à optionµéÀ» »õ·Î °»½ÅÇÏ°íÀÚ ÇÒ °æ¿ì
+         * @param {json} (optional) list ë§Œì•½ optionë“¤ì„ ìƒˆë¡œ ê°±ì‹ í•˜ê³ ì í•  ê²½ìš°
          * @example
          * &lt;select id="sel">&lt;option value="1">1&lt;/option>&lt;option value="2">2&lt;/option>&lt;/select>
          *
@@ -1462,7 +1409,7 @@
                 num   = 1;
 
             if (core.is(list, 'array')) {
-                // list °ªÀÌ ÀÖÀ¸¸é select¸¦ °»½Å½ÃÅ²´Ù.
+                // list ê°’ì´ ìˆìœ¼ë©´ selectë¥¼ ê°±ì‹ ì‹œí‚¨ë‹¤.
                 me.el.options.length = 0;
                 core.each(list, function (item, i) {
                     me.el.options.add(new Option(item.text || item.value, item.value));
@@ -1479,16 +1426,16 @@
                 .toggleClass('warn', me.$el.is('[data-class*=warn]'));
 
             if (me.isReadonly || me.isDisabled) {
-                me.$label.children().attr('title', me.title + ' ¼±ÅÃºÒ°¡').find('.hide').text('¼±ÅÃºÒ°¡');
+                me.$label.children().attr('title', me.title + ' ì„ íƒë¶ˆê°€').find('.hide').text('ì„ íƒë¶ˆê°€');
                 if (me.isDisabled) {
                     me.$label.children().attr('tabindex', -1);
                 }
                 return;
             } else {
-                me.$label.children().attr('title', me.title + ' ¿­±â').removeAttr('tabindex').find('.hide').text('¼±ÅÃµÊ');
+                me.$label.children().attr('title', me.title + ' ì—´ê¸°').removeAttr('tabindex').find('.hide').text('ì„ íƒë¨');
             }
 
-            // select¿¡ ÀÖ´Â options¸¦ ¹ÙÅÁÀ¸·Î UI¸¦ »õ·Î »ı¼ºÇÑ´Ù.
+            // selectì— ìˆëŠ” optionsë¥¼ ë°”íƒ•ìœ¼ë¡œ UIë¥¼ ìƒˆë¡œ ìƒì„±í•œë‹¤.
             core.each(core.toArray(me.$el[0].options), function (item, i) {
                 if ($(item).prop('selected')) {
                     index = i;
@@ -1513,7 +1460,7 @@
         },
 
         /**
-         * readonly ¸ğµå·Î º¯°æ
+         * readonly ëª¨ë“œë¡œ ë³€ê²½
          * @param flag
          */
         readonly: function(flag) {
@@ -1528,7 +1475,7 @@
         },
 
         /**
-         * disabled ¸ğµå·Î º¯°æ
+         * disabled ëª¨ë“œë¡œ ë³€ê²½
          * @param flag
          */
         disabled: function(flag) {
@@ -1541,7 +1488,7 @@
         },
 
         /**
-         * ¼¿·ºÆ®¹Ú½º UI Ç¥½Ã
+         * ì…€ë ‰íŠ¸ë°•ìŠ¤ UI í‘œì‹œ
          */
         show: function () {
             this.display = true;
@@ -1549,7 +1496,7 @@
         },
 
         /**
-         * ¼¿·ºÆ®¹Ú½º UI ¼û±è
+         * ì…€ë ‰íŠ¸ë°•ìŠ¤ UI ìˆ¨ê¹€
          */
         hide: function () {
             this.display = false;
@@ -1557,8 +1504,8 @@
         },
 
         /**
-         * ¼¿·ºÆ®¹Ú½º UI Åä±Û¸µ
-         * @param {Boolean} flag Ç¥½Ã ¿©ºÎ
+         * ì…€ë ‰íŠ¸ë°•ìŠ¤ UI í† ê¸€ë§
+         * @param {Boolean} flag í‘œì‹œ ì—¬ë¶€
          */
         toggle: function (flag) {
             if (arguments.length === 0) {
@@ -1569,7 +1516,7 @@
         },
 
         /**
-         * Selceted µÆÀ» °æ¿ì ¿µ¿ª Show Hide
+         * Selceted ëì„ ê²½ìš° ì˜ì—­ Show Hide
          *
          * @example
          * &lt;select id="sel">&lt;option value="#id1">1&lt;/option>&lt;option value="#id2">2&lt;/option>&lt;/select>
@@ -1587,7 +1534,7 @@
         },
 
         /**
-         * ¼Ò¸êÀÚ
+         * ì†Œë©¸ì
          */
         release: function () {
             var me = this;
@@ -1605,7 +1552,7 @@
     ///////////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * ÀÚµ¿ºôµå
+     * ìë™ë¹Œë“œ
      */
     /*
      Selectbox.autoBuild = function () {
@@ -1634,7 +1581,7 @@
      };
      */
 
-    // li ³»ºÎ¿¡ ¼¿·ºÆ®¹Ú½º°¡ µé¾îÀÖÀ» °æ¿ì Åä±Û¸µ½Ã li¿¡ frm_onÅ¬·¡½ºµµ Åä±Û¸µÇØÁÖ¾î¾ß ÇÔ
+    // li ë‚´ë¶€ì— ì…€ë ‰íŠ¸ë°•ìŠ¤ê°€ ë“¤ì–´ìˆì„ ê²½ìš° í† ê¸€ë§ì‹œ liì— frm_oní´ë˜ìŠ¤ë„ í† ê¸€ë§í•´ì£¼ì–´ì•¼ í•¨
     core.ui.setDefaults('Selectbox', {
         on: {
             'selectboxopen': function (e) {
@@ -1648,7 +1595,7 @@
         }
     });
 
-    // ³¯Â¥¹üÀ§ ¼¿·ºÆ®¹Ú½º: ¼¿·ºÆ®¹Ú½º¿¡¼­ »ó¼Ó¹Ş¾Æ ±¸Çö
+    // ë‚ ì§œë²”ìœ„ ì…€ë ‰íŠ¸ë°•ìŠ¤: ì…€ë ‰íŠ¸ë°•ìŠ¤ì—ì„œ ìƒì†ë°›ì•„ êµ¬í˜„
     var DateSelectbox = core.ui('DateSelectbox', Selectbox, {
         bindjQuery: 'dateSelectbox',
         initialize: function(el, options) {
@@ -1689,9 +1636,9 @@
                 }
             });
 
-            // »ç¿ëÀÚ°¡ ³¯Â¥¼±ÅÃ ºÎºĞÀ» º¯°æÇÏ¸é ¼¿·ºÆ®¹Ú½ºÀÇ °ªÀ» »ç¿ëÀÚ¼±ÅÃÀ¸·Î º¯°æÇØÁØ´Ù.
+            // ì‚¬ìš©ìê°€ ë‚ ì§œì„ íƒ ë¶€ë¶„ì„ ë³€ê²½í•˜ë©´ ì…€ë ‰íŠ¸ë°•ìŠ¤ì˜ ê°’ì„ ì‚¬ìš©ìì„ íƒìœ¼ë¡œ ë³€ê²½í•´ì¤€ë‹¤.
             $startTarget.add($endTarget).on('change calendarinsertdate.' + me.cid, function() {
-                me.$el.scDateSelectbox('value', 'user', false); // false´Â changeÀÌº¥Æ®°¡ ¹ß»ıÇÏÁö ¾Êµµ·Ï ÇÏ±â À§ÇÔ
+                me.$el.scDateSelectbox('value', 'user', false); // falseëŠ” changeì´ë²¤íŠ¸ê°€ ë°œìƒí•˜ì§€ ì•Šë„ë¡ í•˜ê¸° ìœ„í•¨
             });
         }
     });
@@ -1727,19 +1674,19 @@
         ui      = core.ui,
         _zIndex = 9000;
 
-    // ¸ğ´Ş°ü·ÃÇØ¼­ ÃÑ°ıÀ» ÇÏ´Â ¸ğµâ
+    // ëª¨ë‹¬ê´€ë ¨í•´ì„œ ì´ê´„ì„ í•˜ëŠ” ëª¨ë“ˆ
     var ModalManager = window.ModalManager = {
-        // ¸ğ´ŞÀÌ ¿©·¯°³ ¶ç¿öÁö´Â °ÍÀ» Çã¿ëÇÒ °ÍÀÎ°¡...
+        // ëª¨ë‹¬ì´ ì—¬ëŸ¬ê°œ ë„ì›Œì§€ëŠ” ê²ƒì„ í—ˆìš©í•  ê²ƒì¸ê°€...
         overlap: false,
         init: function (options) {
             var me = this;
 
             me.options = $.extend({}, options);
-            // ¿­·ÁÁ® ÀÖ´Â ¸ğ´ŞÀ» ´ãÀº ¹è¿­
+            // ì—´ë ¤ì ¸ ìˆëŠ” ëª¨ë‹¬ì„ ë‹´ì€ ë°°ì—´
             me.stack = [];
-            // ÇöÀç ÃÖ»óÀ§¿¡ º¸ÀÌ´Â ¸ğ´Ş
+            // í˜„ì¬ ìµœìƒìœ„ì— ë³´ì´ëŠ” ëª¨ë‹¬
             me.active = null;
-            // ±Û·Î¹úÀÌº¥Æ® ¹ÙÀÎµå ¿©ºÎ
+            // ê¸€ë¡œë²Œì´ë²¤íŠ¸ ë°”ì¸ë“œ ì—¬ë¶€
             me.globalEventBind = false;
 
             me._bind();
@@ -1748,22 +1695,22 @@
         _bind: function () {
             var me = this;
 
-            // ÃÊ±â¿¡ ±Û·Î¹ú ÀÌº¥Æ®¸¦ ¹ÙÀÎµù ÇÏÁö ¾Ê°í ¸ğ´ŞÀÌ ÇÑ°³¶óµµ ¶ç¿öÁ³À» ¶§,
-            // ºñ·Î¼Ò ±Û·Î¹úÀÌº¥Æ®¸¦ ¹ÙÀÎµù ½ÃÅ²´Ù.
+            // ì´ˆê¸°ì— ê¸€ë¡œë²Œ ì´ë²¤íŠ¸ë¥¼ ë°”ì¸ë”© í•˜ì§€ ì•Šê³  ëª¨ë‹¬ì´ í•œê°œë¼ë„ ë„ì›Œì¡Œì„ ë•Œ,
+            // ë¹„ë¡œì†Œ ê¸€ë¡œë²Œì´ë²¤íŠ¸ë¥¼ ë°”ì¸ë”© ì‹œí‚¨ë‹¤.
             var bindGlobalEvent = function () {
                 if (me.globalEventBind) {
                     return;
                 }
                 me.globalEventBind = true;
 
-                // Ã¢ ¸®»çÀÌÂ¡½Ã¿¡ °¡¿îµ¥¿¡ À§Ä¡½ÃÅ²´Ù.
+                // ì°½ ë¦¬ì‚¬ì´ì§•ì‹œì— ê°€ìš´ë°ì— ìœ„ì¹˜ì‹œí‚¨ë‹¤.
                 $win.on('resizeend.modalmanager', function () {
                     for (var i = -1, modal; modal = me.stack[++i];) {
                         modal.isShown && modal.center();
                     }
                 });
 
-                // Ã¢ÀÌ ´Ù ´İÈ÷¸é ±Û·Î¹úÀÌº¥Æ®¸¦ ¾ğ¹ÙÀÎµù ½ÃÅ²´Ù
+                // ì°½ì´ ë‹¤ ë‹«íˆë©´ ê¸€ë¡œë²Œì´ë²¤íŠ¸ë¥¼ ì–¸ë°”ì¸ë”© ì‹œí‚¨ë‹¤
                 $doc.on('modalhidden.modalmanager', '.ui_modal_layer', function (e) {
                     var $modal = $(e.currentTarget),
                         modal  = $modal.scModal('instance');
@@ -1777,12 +1724,12 @@
                     } else {
                         me.active = null;
                         unbindGlobalEvent();
-                        // º¸ÀÌ½º¿À¹ö°¡ º»¹® ³»¿ëÀ» ´Ù½Ã ÀĞÀ» ¼ö ÀÖµµ·Ï aria  ¼Ó¼ºÀ» »«´Ù.
+                        // ë³´ì´ìŠ¤ì˜¤ë²„ê°€ ë³¸ë¬¸ ë‚´ìš©ì„ ë‹¤ì‹œ ì½ì„ ìˆ˜ ìˆë„ë¡ aria  ì†ì„±ì„ ëº€ë‹¤.
                         $('#wrap').removeAttr('aria-hidden');
                     }
                     //core.ui.setBodyOverflow(false);
                 }).on('focusin.modalmanager', function (e) {
-                    // ÅÇÅ°·Î Æ÷Ä¿½Ì ÀÌµ¿ ½Ã ¸ğ´Ş¾È¿¡ ¸Ó¹°µµ·Ï Ã³¸®
+                    // íƒ­í‚¤ë¡œ í¬ì»¤ì‹± ì´ë™ ì‹œ ëª¨ë‹¬ì•ˆì— ë¨¸ë¬¼ë„ë¡ ì²˜ë¦¬
                     if (!me.active) {
                         return;
                     }
@@ -1793,7 +1740,7 @@
                 });
             };
 
-            // ±Û·Î¹úÀÌº¥Æ® ¾ğ¹ÙÀÎµù
+            // ê¸€ë¡œë²Œì´ë²¤íŠ¸ ì–¸ë°”ì¸ë”©
             var unbindGlobalEvent = function () {
                 $win.off('resizeend.modalmanager');
                 $doc.off('modalhidden.modalmanager');
@@ -1805,23 +1752,23 @@
                 var $modal = $(e.currentTarget),
                     modal  = $modal.scModal('instance');
 
-                // ´ÙÁß ¸ğ´Ş ¸ğµå°¡ ¾Æ´Ò °æ¿ì ±âÁ¸ ¸ğ´ŞÀ» ´İ´Â´Ù,
+                // ë‹¤ì¤‘ ëª¨ë‹¬ ëª¨ë“œê°€ ì•„ë‹ ê²½ìš° ê¸°ì¡´ ëª¨ë‹¬ì„ ë‹«ëŠ”ë‹¤,
                 if (!ModalManager.overlap) {
                     me.closeAll();
                 }
                 me.active = modal;
-                // stack¿¡ Ãß°¡
+                // stackì— ì¶”ê°€
                 me.add(modal);
             }).on('modalshown.modalmanager', '.ui_modal_layer', function (e) {
                 !me.globalEventBind && bindGlobalEvent();
                 if (me.stack.length === 1) {
-                    // ¸ğ´ŞÀÌ ¶° ÀÖ´Â »óÅÂ¿¡¼­ body º»¹®À» À» ¾ÈÀĞµµ·Ï aria Ãß°¡
+                    // ëª¨ë‹¬ì´ ë–  ìˆëŠ” ìƒíƒœì—ì„œ body ë³¸ë¬¸ì„ ì„ ì•ˆì½ë„ë¡ aria ì¶”ê°€
                     $('#wrap').attr('aria-hidden', 'true');
                 }
                 //core.ui.setBodyOverflow(true);
             });
 
-            // ¸µÅ©³ª ¹öÆ°¿¡  data-control="modal" °¡ ÀÖÀ¸¸é °ü·ÃÇÑ ¸ğ´ŞÀÌ ¶ßµµ·Ï Ã³¸®
+            // ë§í¬ë‚˜ ë²„íŠ¼ì—  data-control="modal" ê°€ ìˆìœ¼ë©´ ê´€ë ¨í•œ ëª¨ë‹¬ì´ ëœ¨ë„ë¡ ì²˜ë¦¬
             $doc.on('click.modalmanager', '[data-control=modal]', function (e) {
                 e.preventDefault();
 
@@ -1829,13 +1776,13 @@
                     $next = $el.next('.laypop_wrap, .laypop_mpc'),
                     target, $modal;
                 if ($next.size() > 0) {
-                    // ¸ğ´ŞÀÌ ¹öÆ° ´ÙÀ½¿¡ À§Ä¡ÇÏ°í ÀÖÀ» ¶§
+                    // ëª¨ë‹¬ì´ ë²„íŠ¼ ë‹¤ìŒì— ìœ„ì¹˜í•˜ê³  ìˆì„ ë•Œ
                     $next.scModal($el.data()).one('modalhidden.modalmanager', function (e) {
                         setTimeout(function (){ $el[0].focus(); });
                     });
                 } else {
                     if (target = ($el.attr('href') || $el.attr('data-target') || $el.attr('data-href'))) {
-                        // ajaxÇü ¸ğ´ŞÀÎ °æ¿ì
+                        // ajaxí˜• ëª¨ë‹¬ì¸ ê²½ìš°
                         if (!/^#/.test(target)) {
                             $.ajax({
                                 url: target
@@ -1851,7 +1798,7 @@
                                 $el.triggerHandler('modalloaded', {url: target, modal: $modal});
                             });
                         } else {
-                            // ¸ğ´ŞÀÌ ¹öÆ°°ú ´Ù¸¥ °÷¿¡ À§Ä¡ÇÏ°í ÀÖÀ» ¶§ target ¼Ó¼º¿¡ ¸ğ´Ş idÀ» ¼³Á¤
+                            // ëª¨ë‹¬ì´ ë²„íŠ¼ê³¼ ë‹¤ë¥¸ ê³³ì— ìœ„ì¹˜í•˜ê³  ìˆì„ ë•Œ target ì†ì„±ì— ëª¨ë‹¬ idì„ ì„¤ì •
                             $(target).scModal($el.data()).one('modalhidden', function (e) {
                                 setTimeout(function (){ $el[0].focus(); });
                             });
@@ -1860,27 +1807,27 @@
                 }
             });
         },
-        // ¸ğ´Ş stack Ãß°¡
+        // ëª¨ë‹¬ stack ì¶”ê°€
         add: function (modal) {
             this.stack.push(modal);
         },
-        // ¸ğ´Ş stack ¿¡¼­ Á¦°Å
+        // ëª¨ë‹¬ stack ì—ì„œ ì œê±°
         remove: function (modal) {
             this.stack = core.array.remove(this.stack, modal);
         },
-        // ÀüÃ¼ ¸ğ´Ş ´İ±â
+        // ì „ì²´ ëª¨ë‹¬ ë‹«ê¸°
         closeAll: function () {
             for(var i = this.stack.length - 1; i >= 0; i--) {
                 this.stack[i].close();
             }
         },
-        // ¸ğ´ŞÀ» ¶ç¿ï ¶§ zindex¸¦ 9000ºÎÅÍ ½ÃÀÛÇÏ¿© 1¾¿ Áõ°¡½ÃÄÑ ¸ğ´Ş¿¡ ¼³Á¤ÇÑ´Ù.
+        // ëª¨ë‹¬ì„ ë„ìš¸ ë•Œ zindexë¥¼ 9000ë¶€í„° ì‹œì‘í•˜ì—¬ 1ì”© ì¦ê°€ì‹œì¼œ ëª¨ë‹¬ì— ì„¤ì •í•œë‹¤.
         nextZIndex: function () {
             var zi = _zIndex;
             _zIndex += 1;
             return zi;
         },
-        // ¸ğ´ŞÀÌ ´İÈú ¶§ zindex¸¦ -1 ¹İÈ¯.
+        // ëª¨ë‹¬ì´ ë‹«í ë•Œ zindexë¥¼ -1 ë°˜í™˜.
         revertZIndex: function () {
             _zIndex -= 1;
         }
@@ -1890,15 +1837,15 @@
 
     // Modal ////////////////////////////////////////////////////////////////////////////
     /**
-     * ¸ğ´Ş Å¬·¡½º<br />
-     * // ±âº» ¿É¼Ç <br />
-     * options.overlay:true ¿À¹ö·¹ÀÌ¸¦ ±ò°ÍÀÎ°¡<br />
-     * options.clone: true  º¹Á¦ÇØ¼­ ¶ç¿ï °ÍÀÎ°¡<br />
-     * options.closeByEscape: true  // escÅ°¸¦ ´­·¶À» ¶§ ´İÈ÷°Ô ÇÒ °ÍÀÎ°¡<br />
-     * options.removeOnClose: false // ´İÀ» ¶§ dom¸¦ »èÁ¦ÇÒ°ÍÀÎ°¡<br />
-     * options.draggable: true              // µå·¡±×¸¦ Àû¿ëÇÒ °ÍÀÎ°¡<br />
-     * options.dragHandle: 'h1.title'       // µå·¡±×´ë»ó ¿ä¼Ò<br />
-     * options.show: true                   // È£ÃâÇÒ ¶§ ¹Ù·Î Ç¥½ÃÇÒ °ÍÀÎ°¡...
+     * ëª¨ë‹¬ í´ë˜ìŠ¤<br />
+     * // ê¸°ë³¸ ì˜µì…˜ <br />
+     * options.overlay:true ì˜¤ë²„ë ˆì´ë¥¼ ê¹”ê²ƒì¸ê°€<br />
+     * options.clone: true  ë³µì œí•´ì„œ ë„ìš¸ ê²ƒì¸ê°€<br />
+     * options.closeByEscape: true  // escí‚¤ë¥¼ ëˆŒë €ì„ ë•Œ ë‹«íˆê²Œ í•  ê²ƒì¸ê°€<br />
+     * options.removeOnClose: false // ë‹«ì„ ë•Œ domë¥¼ ì‚­ì œí• ê²ƒì¸ê°€<br />
+     * options.draggable: true              // ë“œë˜ê·¸ë¥¼ ì ìš©í•  ê²ƒì¸ê°€<br />
+     * options.dragHandle: 'h1.title'       // ë“œë˜ê·¸ëŒ€ìƒ ìš”ì†Œ<br />
+     * options.show: true                   // í˜¸ì¶œí•  ë•Œ ë°”ë¡œ í‘œì‹œí•  ê²ƒì¸ê°€...
      *
      * @class
      * @name coma.ui.Modal
@@ -1955,17 +1902,17 @@
         },
 
         /**
-         * »ı¼ºÀÚ
+         * ìƒì„±ì
          * @constructors
          * @param {String|Element|jQuery} el
          * @param {Object} options
-         * @param {Boolean}  options.overlay:true ¿À¹ö·¹ÀÌ¸¦ ±ò°ÍÀÎ°¡
-         * @param {Boolean}  options.clone: true    º¹Á¦ÇØ¼­ ¶ç¿ï °ÍÀÎ°¡
-         * @param {Boolean}  options.closeByEscape: true    // escÅ°¸¦ ´­·¶À» ¶§ ´İÈ÷°Ô ÇÒ °ÍÀÎ°¡
-         * @param {Boolean}  options.removeOnClose: false   // ´İÀ» ¶§ dom¸¦ »èÁ¦ÇÒ°ÍÀÎ°¡
-         * @param {Boolean}  options.draggable: true                // µå·¡±×¸¦ Àû¿ëÇÒ °ÍÀÎ°¡
-         * @param {Boolean}  options.dragHandle: 'h1.title'     // µå·¡±×´ë»ó ¿ä¼Ò
-         * @param {Boolean}  options.show: true                 // È£ÃâÇÒ ¶§ ¹Ù·Î Ç¥½ÃÇÒ °ÍÀÎ°¡...
+         * @param {Boolean}  options.overlay:true ì˜¤ë²„ë ˆì´ë¥¼ ê¹”ê²ƒì¸ê°€
+         * @param {Boolean}  options.clone: true    ë³µì œí•´ì„œ ë„ìš¸ ê²ƒì¸ê°€
+         * @param {Boolean}  options.closeByEscape: true    // escí‚¤ë¥¼ ëˆŒë €ì„ ë•Œ ë‹«íˆê²Œ í•  ê²ƒì¸ê°€
+         * @param {Boolean}  options.removeOnClose: false   // ë‹«ì„ ë•Œ domë¥¼ ì‚­ì œí• ê²ƒì¸ê°€
+         * @param {Boolean}  options.draggable: true                // ë“œë˜ê·¸ë¥¼ ì ìš©í•  ê²ƒì¸ê°€
+         * @param {Boolean}  options.dragHandle: 'h1.title'     // ë“œë˜ê·¸ëŒ€ìƒ ìš”ì†Œ
+         * @param {Boolean}  options.show: true                 // í˜¸ì¶œí•  ë•Œ ë°”ë¡œ í‘œì‹œí•  ê²ƒì¸ê°€...
          */
         initialize: function (el, options) {
             var me = this;
@@ -2010,8 +1957,8 @@
         },
 
         /**
-         * zindex¶§¹®¿¡ ¸ğ´ŞÀ» body¹Ù·Î À§·Î ¿Å±ä ÈÄ¿¡ ¶ç¿ì´Âµ¥, ´İÀ» ¶§ ¿ø·¡ À§Ä¡·Î º¹±¸½ÃÄÑ¾ß ÇÏ¹Ç·Î,
-         * ¿ø·¡ À§Ä¡¿¡ ÀÓ½Ã È¦´õ¸¦ ¸¸µé¾î ³õ´Â´Ù.
+         * zindexë•Œë¬¸ì— ëª¨ë‹¬ì„ bodyë°”ë¡œ ìœ„ë¡œ ì˜®ê¸´ í›„ì— ë„ìš°ëŠ”ë°, ë‹«ì„ ë•Œ ì›ë˜ ìœ„ì¹˜ë¡œ ë³µêµ¬ì‹œì¼œì•¼ í•˜ë¯€ë¡œ,
+         * ì›ë˜ ìœ„ì¹˜ì— ì„ì‹œ í™€ë”ë¥¼ ë§Œë“¤ì–´ ë†“ëŠ”ë‹¤.
          * @private
          */
         _createHolder: function () {
@@ -2021,7 +1968,7 @@
         },
 
         /**
-         * ¿ø·¡ À§Ä¡·Î º¹±¸½ÃÅ°°í È¦´õ´Â Á¦°Å
+         * ì›ë˜ ìœ„ì¹˜ë¡œ ë³µêµ¬ì‹œí‚¤ê³  í™€ë”ëŠ” ì œê±°
          * @private
          */
         _replaceHolder: function () {
@@ -2035,7 +1982,7 @@
         },
 
         /**
-         * Åä±Û
+         * í† ê¸€
          */
         toggle: function () {
             var me = this;
@@ -2044,7 +1991,7 @@
         },
 
         /**
-         * Ç¥½Ã
+         * í‘œì‹œ
          */
         show: function () {
             if (this.isShown) {
@@ -2062,7 +2009,7 @@
 
             me.isShown = true;
             if (opts.title) {
-                me.$(opts.cssTitle).html(opts.title || '¾Ë¸²');
+                me.$(opts.cssTitle).html(opts.title || 'ì•Œë¦¼');
             }
 
             me._createHolder();
@@ -2091,20 +2038,20 @@
                     module: me
                 });
 
-                me._bindAria(); // aria ¼ÂÆÃ
+                me._bindAria(); // aria ì…‹íŒ…
                 /*me.$el.attr('aria-hidden', 'false');*/
-                me._draggabled();    // µå·¡±× ±â´É ºôµå
+                me._draggabled();    // ë“œë˜ê·¸ ê¸°ëŠ¥ ë¹Œë“œ
                 if (me.options.closeByEscape){
-                    me._escape();   // escÅ°ÀÌº¥Æ® ¹ÙÀÎµù
+                    me._escape();   // escí‚¤ì´ë²¤íŠ¸ ë°”ì¸ë”©
                 }
-                //// ModalManager·Î ¿Å±è: me._enforceFocus();   // ÅÇÅ°·Î Æ÷Ä¿½º¸¦ ÀÌµ¿½ÃÅ³ ¶§ Æ÷Ä¿½º°¡ ·¹ÀÌ¾îÆË¾÷ ¾È¿¡¼­¸¸ µ¹µµ·Ï ºôµå
+                //// ModalManagerë¡œ ì˜®ê¹€: me._enforceFocus();   // íƒ­í‚¤ë¡œ í¬ì»¤ìŠ¤ë¥¼ ì´ë™ì‹œí‚¬ ë•Œ í¬ì»¤ìŠ¤ê°€ ë ˆì´ì–´íŒì—… ì•ˆì—ì„œë§Œ ëŒë„ë¡ ë¹Œë“œ
                 me._focusing();
             });
 
         },
 
         /**
-         * Ç¥½Ã¶§ Æ÷Ä¿½Ì´ë»ó¿¡ Æ÷Ä¿½º ÁÖ±â
+         * í‘œì‹œë•Œ í¬ì»¤ì‹±ëŒ€ìƒì— í¬ì»¤ìŠ¤ ì£¼ê¸°
          * @private
          */
         _focusing: function () {
@@ -2118,7 +2065,7 @@
         },
 
         /**
-         * ¼û±è
+         * ìˆ¨ê¹€
          */
         hide: function (e) {
             if (e) {
@@ -2151,13 +2098,13 @@
             defer.done(function () {
                 me.trigger('modalhidden');
 
-                me.$el.removeClass('ui_modal_layer');    // dom¿¡ Ãß°¡µÈ °Íµé Á¦°Å
+                me.$el.removeClass('ui_modal_layer');    // domì— ì¶”ê°€ëœ ê²ƒë“¤ ì œê±°
                 if (me.options.closeByEscape){
-                    me._escape(false);    // esc Å°ÀÌº¥Æ® Á¦°Å
+                    me._escape(false);    // esc í‚¤ì´ë²¤íŠ¸ ì œê±°
                 }
 
                 if (me.options.opener) {
-                    $(me.options.opener).removeAttr('aria-controls').focus();    // ·¹ÀÌ¾îÆË¾÷À» ¶ç¿î ¹öÆ°¿¡ Æ÷Ä¿½º¸¦ ÁØ´Ù.
+                    $(me.options.opener).removeAttr('aria-controls').focus();    // ë ˆì´ì–´íŒì—…ì„ ë„ìš´ ë²„íŠ¼ì— í¬ì»¤ìŠ¤ë¥¼ ì¤€ë‹¤.
                 }
 
                 me.$el.css({
@@ -2173,8 +2120,8 @@
                 }).off('.'+me.cid);////.attr('aria-hidden', 'true');
                 me._removeModalContainer();
                 //me.$container.remove();
-                //me.$container = null;    // ¿À¹ö·¹ÀÌ¸¦ Á¦°Å
-                ////// $('body').removeAttr('aria-hidden');    // ºñÈ°¼ºÈ­¸¦ Ç¬´Ù.
+                //me.$container = null;    // ì˜¤ë²„ë ˆì´ë¥¼ ì œê±°
+                ////// $('body').removeAttr('aria-hidden');    // ë¹„í™œì„±í™”ë¥¼ í‘¼ë‹¤.
 
                 me.release();
             });
@@ -2182,7 +2129,7 @@
 
 
         /**
-         * µµÅ¥¸ÕÆ®ÀÇ °¡¿îµ¥¿¡ À§Ä¡ÇÏµµ·Ï ÁöÁ¤
+         * ë„íë¨¼íŠ¸ì˜ ê°€ìš´ë°ì— ìœ„ì¹˜í•˜ë„ë¡ ì§€ì •
          */
         layout: function () {
             var me = this,
@@ -2244,7 +2191,7 @@
         },
 
         /**
-         * Å¸ÀÌÆ² ¿µ¿ªÀ» µå·¡±×±â´É ºôµå
+         * íƒ€ì´í‹€ ì˜ì—­ì„ ë“œë˜ê·¸ê¸°ëŠ¥ ë¹Œë“œ
          * @private
          */
         _draggabled: function () {
@@ -2305,7 +2252,7 @@
         },
 
         /**
-         * ¸ğ´ŞÀÌ ¶ç¿öÁø »óÅÂ¿¡¼­ ÅÇÅ°¸¦ ´©¸¦ ¶§, ¸ğ´Ş¾È¿¡¼­¸¸ Æ÷Ä¿½º°¡ ¿òÁ÷ÀÌ°Ô
+         * ëª¨ë‹¬ì´ ë„ì›Œì§„ ìƒíƒœì—ì„œ íƒ­í‚¤ë¥¼ ëˆ„ë¥¼ ë•Œ, ëª¨ë‹¬ì•ˆì—ì„œë§Œ í¬ì»¤ìŠ¤ê°€ ì›€ì§ì´ê²Œ
          * @private
          */
         _enforceFocus: function () {
@@ -2319,7 +2266,7 @@
         },
 
         /**
-         * escÅ°¸¦ ´©¸¦ ¶§ ´İÈ÷µµ·Ï
+         * escí‚¤ë¥¼ ëˆ„ë¥¼ ë•Œ ë‹«íˆë„ë¡
          * @private
          */
         _escape: function (isOff) {
@@ -2339,7 +2286,7 @@
         },
 
         /**
-         * ÄÁÅ×ÀÌ³Ê »ı¼º
+         * ì»¨í…Œì´ë„ˆ ìƒì„±
          * @private
          */
         _createModalContainer: function () {
@@ -2389,16 +2336,16 @@
         },
 
         /**
-         * ÄÁÅ×ÀÌ³Ê Á¦°Å
+         * ì»¨í…Œì´ë„ˆ ì œê±°
          * @private
          */
         _removeModalContainer: function () {
             var me = this;
 
             if (me.options.removeOnClose) {
-                me.$el.remove();    // ´İÈú ¶§ dom¿¡¼­ »èÁ¦ÇÏµµ·Ï ¿É¼ÇÀÌ ÁöÁ¤µÅÀÖÀ¸¸é, dom¿¡¼­ »èÁ¦ÇÑ´Ù.
+                me.$el.remove();    // ë‹«í ë•Œ domì—ì„œ ì‚­ì œí•˜ë„ë¡ ì˜µì…˜ì´ ì§€ì •ë¼ìˆìœ¼ë©´, domì—ì„œ ì‚­ì œí•œë‹¤.
             } else {
-                me._replaceHolder();    // body¹ØÀ¸·Î »« el¸¦ ´Ù½Ã ¿ø·¡ À§Ä¡·Î µÇµ¹¸°´Ù.
+                me._replaceHolder();    // bodyë°‘ìœ¼ë¡œ ëº€ elë¥¼ ë‹¤ì‹œ ì›ë˜ ìœ„ì¹˜ë¡œ ë˜ëŒë¦°ë‹¤.
             }
             me.$dim.off();
             me.$container.off().remove();
@@ -2407,25 +2354,25 @@
         },
 
         /**
-         * ¸ğ´ŞÀÇ »çÀÌÁî°¡ º¯°æµÇ¾úÀ» ¶§ °¡¿îµ¥À§Ä¡¸¦ ÀçÁ¶Àı
+         * ëª¨ë‹¬ì˜ ì‚¬ì´ì¦ˆê°€ ë³€ê²½ë˜ì—ˆì„ ë•Œ ê°€ìš´ë°ìœ„ì¹˜ë¥¼ ì¬ì¡°ì ˆ
          * @example
-         * $('...').scModal(); // ¸ğ´ŞÀ» ¶ç¿î´Ù.
-         * $('...').find('.content').html( '...');  // ¸ğ´Ş³»ºÎÀÇ ÄÁÅÙÃ÷¸¦ º¯°æ
-         * $('...').scModal('center');    // ÄÁÅÙÃ÷ÀÇ º¯°æÀ¸·Î ÀÎÇØ »çÀÌÁî°¡ º¯°æµÇ¾úÀ¸·Î, »çÀÌÁî¿¡ µû¶ó È­¸é°¡¿îµ¥·Î °­Á¦ ÀÌµ¿
+         * $('...').scModal(); // ëª¨ë‹¬ì„ ë„ìš´ë‹¤.
+         * $('...').find('.content').html( '...');  // ëª¨ë‹¬ë‚´ë¶€ì˜ ì»¨í…ì¸ ë¥¼ ë³€ê²½
+         * $('...').scModal('center');    // ì»¨í…ì¸ ì˜ ë³€ê²½ìœ¼ë¡œ ì¸í•´ ì‚¬ì´ì¦ˆê°€ ë³€ê²½ë˜ì—ˆìœ¼ë¡œ, ì‚¬ì´ì¦ˆì— ë”°ë¼ í™”ë©´ê°€ìš´ë°ë¡œ ê°•ì œ ì´ë™
          */
         center: function () {
             this.layout();
         },
 
         /**
-         * ¿­±â
+         * ì—´ê¸°
          */
         open: function () {
             this.show();
         },
 
         /**
-         * ´İ±â
+         * ë‹«ê¸°
          */
         close: function () {
             this.hide();
@@ -2443,7 +2390,7 @@
 
 
     /**
-     * ¿­·Á ÀÖ´Â ·¹ÀÌ¾îÆË¾÷À» °¡¿îµ¥¿¡ À§Ä¡½ÃÅ°´Â ±Û·Î¹úÀÌº¥Æ®
+     * ì—´ë ¤ ìˆëŠ” ë ˆì´ì–´íŒì—…ì„ ê°€ìš´ë°ì— ìœ„ì¹˜ì‹œí‚¤ëŠ” ê¸€ë¡œë²Œì´ë²¤íŠ¸
      * @example
      * coma.PubSub.trigger('resize:modal')
      */
@@ -2453,7 +2400,7 @@
      }
      });*/
 
-    //À©µµ¿ì°¡ ¸®»çÀÌÂ¡ µÉ¶§ °¡¿îµ¥¿¡ ÀÚµ¿À¸·Î À§Ä¡½ÃÅ´
+    //ìœˆë„ìš°ê°€ ë¦¬ì‚¬ì´ì§• ë ë•Œ ê°€ìš´ë°ì— ìë™ìœ¼ë¡œ ìœ„ì¹˜ì‹œí‚´
     /*$(window).on('resize.modal', function() {
      if(Modal.active){
      Modal.active.center();
@@ -2467,7 +2414,7 @@
     /**
      * @class
      * @name coma.ui.AjaxModal
-     * @description ajax·Î ºÒ·¯µéÀÎ ÄÁÅÙÃ÷¸¦ ¸ğ´Ş·Î ¶ç¿öÁÖ´Â ¸ğµâ
+     * @description ajaxë¡œ ë¶ˆëŸ¬ë“¤ì¸ ì»¨í…ì¸ ë¥¼ ëª¨ë‹¬ë¡œ ë„ì›Œì£¼ëŠ” ëª¨ë“ˆ
      * @extends coma.ui.View
      */
     $.ajaxModal = core.ui.ajaxModal = function () {
@@ -2492,14 +2439,14 @@
 
     core.ui.alert = function () {
         /**
-         * ¾ó·µ·¹ÀÌ¾î
+         * ì–¼ëŸ¿ë ˆì´ì–´
          * @memberOf coma.ui
          * @name alert
          * @function
-         * @param {string} msg ¾ó·µ ¸Ş¼¼Áö
-         * @param {Object} options ¸ğ´Ş ¿É¼Ç
+         * @param {string} msg ì–¼ëŸ¿ ë©”ì„¸ì§€
+         * @param {Object} options ëª¨ë‹¬ ì˜µì…˜
          * @example
-         * coma.ui.alert('¾È³çÇÏ¼¼¿ä');
+         * coma.ui.alert('ì•ˆë…•í•˜ì„¸ìš”');
          */
         return function (msg, options) {
             if (typeof msg !== 'string' && arguments.length === 0) {
@@ -2517,14 +2464,14 @@
         };
     }();
     core.ui.alert.tmpl = ['<div class="layer_popup small ui_alert" role="alert" style="display:none">',
-        '<h1 class="title ui_modal_title">¾Ë¸²Ã¢</h1>',
+        '<h1 class="title ui_modal_title">ì•Œë¦¼ì°½</h1>',
         '<div class="cntt">',
         '<div class="ui_modal_content">&nbsp;</div>',
         '<div class="wrap_btn_c">',
-        '<button type="button" class="btn_emphs_small" data-role="ok"><span><span>È®ÀÎ</span></span></button>',
+        '<button type="button" class="btn_emphs_small" data-role="ok"><span><span>í™•ì¸</span></span></button>',
         '</div>',
         '</div>',
-        '<button type="button" class="ui_modal_close"><span>´İ±â</span></button>',
+        '<button type="button" class="ui_modal_close"><span>ë‹«ê¸°</span></button>',
         '<span class="shadow"></span>',
         '</div>'].join('');
     ///////////////////////////////////////////////////////////////////////////////////////
@@ -2535,137 +2482,6 @@
         });
     }
 
-})(jQuery, window[LIB_NAME]);
-
-/*!
- * @module coma.ui.Tooltip
- * @author odyseek
- * @email odyseek@vi-nyl.com
- * @create 2015-03-17
- * @license MIT License
- */
-(function ($, core, undefined) {
-    "use strict";
-    if (core.ui.Tooltip) { return; }
-
-    var $doc    = $(document),
-        $win    = $(window),
-        isTouch = core.browser.isTouch;
-
-    /**
-     * ÅøÆÁ ·¹ÀÌ¾î
-     * @class
-     * @name coma.ui.Tooltip
-     * @extends coma.ui.View
-     */
-    var Tooltip = core.ui('Tooltip', /** @lends coma.ui.Tooltip# */{
-        bindjQuery: 'tooltip',
-        defaults: {
-            interval: 300
-        },
-
-        /**
-         * »ı¼ºÀÚ
-         * @param {jQuery|Node|String} el ´ë»ó ¿¤¸®¸ÕÆ®
-         * @param {JSON} options {Optional} ¿É¼Ç
-         */
-        initialize: function (el, options) {
-            var me = this;
-
-            if (me.supr(el, options) === false) {
-                return;
-            }
-
-            me.$tooltip = (me.$el.attr('data-tooltip-target') ? $(me.$el.attr('data-tooltip-target')) : me.$el.next('div'));
-            me.isShown = false;
-            me.timer = null;
-
-            me.on('click.tooltip', function (e) {
-                e.preventDefault();
-                e.stopPropagation();
-
-                if (me.isShown) {
-                    me.close();
-                } else {
-                    me.open();
-                }
-            });
-
-            // ¸¶¿ì½º°¡ ¹öÆ°À§¿¡¼­ .5ÃÊÀÌ»ó ¸Ó¹°¾úÀ» ¶§¸¸ ÅøÆÁÀÌ Ç¥½ÃµÇ¸ç,
-            // ¸¶¿ì½º°¡ ¹öÆ°°ú ÅøÆÁ¹Ú½º¸¦ ¿ÏÀüÈ÷ ¹ş¾î³ª¼­ .5ÃÊ°¡ Áö³µÀ» ¶§¸¸ ÅøÆÁÀÌ »ç¶óÁöµµ·Ï Ã³¸®
-            // ¸¶¿ì½º°¡ ´êÀ» ¶§¸¶´Ù º¸¿´´Ù¾Èº¸¿´´ÙÇÏ´Â °Ç ³Ê¹« ³­ÀâÇØ º¸¿©¼­...
-            me.on('mouseenter', me.open.bind(me)).on('mouseleave', me.close.bind(me));
-            me.$tooltip.on('focusin.tooltip mouseenter.tooltip', function () {
-                if (me.$tooltip.data('timer')) {
-                    clearTimeout(me.$tooltip.data('timer')), me.$tooltip.removeData('timer');
-                }
-            }).on('mouseleave.tooltip', function () {
-                me.isShown && me.$tooltip.data('timer', setTimeout(function () {
-                    me.isShown = false, me.$tooltip.hide();
-                    if (me.$tooltip.data('timer')) {
-                        clearTimeout(me.$tooltip.data('timer')), me.$tooltip.removeData('timer');
-                    }
-                }, me.options.interval));
-            }).on('click', function (){
-                clearTimeout(me.$tooltip.data('timer')), me.$tooltip.removeData('timer');
-            }).on('click.tooltip focusout.tooltip', '.ui_tooltip_close', function (e) {
-                e.preventDefault();
-                me.close();
-                if (e.type === 'click') me.$el.focus();
-            });
-
-            me.open();
-        },
-        /**
-         * Ç¥½Ã
-         */
-        open: function () {
-            var me     = this,
-                offset = me.$el.offset();
-
-            offset.top += me.$el.height();
-            me.timer = setTimeout(function () {
-                me.$tooltip/*.css(offset)*/.fadeIn('fast');
-                me.isShown = true;
-            }, me.options.interval);
-        },
-        /**
-         * ¼û±è
-         */
-        close: function () {
-            var me = this;
-
-            clearTimeout(me.timer), me.timer = null;
-            if (me.isShown) {
-                me.$tooltip.data('timer', setTimeout(function () {
-                    me.isShown = false;
-                    me.$tooltip.hide();
-                }, me.options.interval));
-            }
-        },
-        /**
-         * ¼Ò¸êÀÚ
-         */
-        destroy: function () {
-            var me = this;
-
-            me.supr();
-            me.$tooltip.off('.tooltip').removeData('timer');
-        }
-    });
-
-    $doc.on('mouseenter.tooltip focusin.tooltip click.tooltip', '[data-control=tooltip]', function () {
-        var $btn = $(this);
-        //if ($btn.data('ui_tooltip')){ return; }
-
-        $btn.scTooltip();
-    });
-
-    if (typeof define === "function" && define.amd) {
-        define('modules/tooltip', [], function () {
-            return Tooltip;
-        });
-    }
 })(jQuery, window[LIB_NAME]);
 
 /*!
@@ -2728,22 +2544,22 @@
             });
         },
 
-        // º°µµÀÇ Ã³¸®°¡ ÇÊ¿äÇÑ°Å´Â ¿À¹ö¶óÀÌµå
+        // ë³„ë„ì˜ ì²˜ë¦¬ê°€ í•„ìš”í•œê±°ëŠ” ì˜¤ë²„ë¼ì´ë“œ
         _selectTab: function (index) {},
         _toggleText: function (index) {
             var me = this,
                 txtSpan = (me.options.btnSelector ? me.options.btnSelector + ' ' : '')+'span.hide';
 
             me.$tabs.find(txtSpan).html(' ');
-            me.$tabs.eq(index).find(txtSpan).html('ÇöÀç ¼±ÅÃµÊ');
+            me.$tabs.eq(index).find(txtSpan).html('í˜„ì¬ ì„ íƒë¨');
         },
         _getEventTarget: function (index) {
             var me = this;
             return me.options.btnSelector ? me.$tabs.eq(index).find(me.options.btnSelector) : me.$tabs.eq(index);
         },
         /**
-         * index¿¡ ÇØ´çÇÏ´Â ÅÇÀ» È°¼ºÈ­
-         * @param {number} index ÅÇ¹öÆ° ÀÎµ¦½º
+         * indexì— í•´ë‹¹í•˜ëŠ” íƒ­ì„ í™œì„±í™”
+         * @param {number} index íƒ­ë²„íŠ¼ ì¸ë±ìŠ¤
          */
         selectTab: function(index) {
             var me = this, e, param;
@@ -2773,15 +2589,15 @@
     });
 
     /**
-     * ´ÙÀ½ ³×Ç×¸ñ Áß¿¡¼­ type¿¡ µû¶ó ÇÊ¿äÇÑ°É ±¸ÇöÇØÁÖ¸é µÈ´Ù.
-     * defaults: ±âº» ¿É¼Ç°ª
-     * _toggleText: ÅÇÀÌ ¼±ÅÃ¿©ºÎ¿¡ µû¸¥ ¼û±è¹®±¸ º¯°æÇÏ´Â ÇÔ¼ö
-     * _selectTab: ¼±ÅÃµÉ ¶§ È£ÃâµÇ´Â ÇÔ¼ö
-     * _initTab: ÃÊ±âÈ­ ÇÔ¼ö
+     * ë‹¤ìŒ ë„¤í•­ëª© ì¤‘ì—ì„œ typeì— ë”°ë¼ í•„ìš”í•œê±¸ êµ¬í˜„í•´ì£¼ë©´ ëœë‹¤.
+     * defaults: ê¸°ë³¸ ì˜µì…˜ê°’
+     * _toggleText: íƒ­ì´ ì„ íƒì—¬ë¶€ì— ë”°ë¥¸ ìˆ¨ê¹€ë¬¸êµ¬ ë³€ê²½í•˜ëŠ” í•¨ìˆ˜
+     * _selectTab: ì„ íƒë  ë•Œ í˜¸ì¶œë˜ëŠ” í•¨ìˆ˜
+     * _initTab: ì´ˆê¸°í™” í•¨ìˆ˜
      */
     var TabTypes = {
         'type01': BaseTab,
-        'type02': BaseTab.extend({ // ¹Ù·Î ÇÏÀ§¿¡ ¹öÆ°ÀÌ ÀÖ´Â °æ¿ì
+        'type02': BaseTab.extend({ // ë°”ë¡œ í•˜ìœ„ì— ë²„íŠ¼ì´ ìˆëŠ” ê²½ìš°
             defaults: {
                 tabSelector: '>a, >button',
                 btnSelector: false
@@ -2790,10 +2606,10 @@
             _toggleText: function (index) {
                 var me = this;
                 me.$tabs.find('span.hide').html(' ');
-                me.$tabs.eq(index).find('span.hide').html('ÇöÀç ¼±ÅÃµÊ');
+                me.$tabs.eq(index).find('span.hide').html('í˜„ì¬ ì„ íƒë¨');
             }
         }),
-        'type03': BaseTab.extend({  // ÅÇÀÌ ÅÇ¿µ¿ªÀ» ¹ş¾î³¯ °æ¿ì ÁÂ¿ì·Î ½º¿ÍÀÌÇÎ µÇ´Â ÅÇ
+        'type03': BaseTab.extend({  // íƒ­ì´ íƒ­ì˜ì—­ì„ ë²—ì–´ë‚  ê²½ìš° ì¢Œìš°ë¡œ ìŠ¤ì™€ì´í•‘ ë˜ëŠ” íƒ­
             defaults: {
                 tabSelector: '>.tab_hbox>ul>li',
                 btnSelector: '>a'
@@ -2807,8 +2623,8 @@
                 var me = this, html, $ul, size;
 
                 html = ['<div class="tab_nav" style="display:none;">',
-                    '<a href="#" class="prev_tab"><span class="hide">ÀÌÀü ÅÇº¸±â</span></a>',
-                    '<a href="#" class="next_tab"><span class="hide">´ÙÀ½ ÅÇº¸±â</span></a>',
+                    '<a href="#" class="prev_tab"><span class="hide">ì´ì „ íƒ­ë³´ê¸°</span></a>',
+                    '<a href="#" class="next_tab"><span class="hide">ë‹¤ìŒ íƒ­ë³´ê¸°</span></a>',
                     '</div>'].join('');
 
                 size = me._getTabsWidth();
@@ -2846,7 +2662,7 @@
 
                 };
 
-                // ÅÇ Å¬¸¯
+                // íƒ­ í´ë¦­
                 me.on('click', '.tab_nav a', function(e) {
                     e.preventDefault();
 
@@ -2891,7 +2707,7 @@
             },
 
             /**
-             * ÅÇ ³Êºñ ±¸ÇÏ±â
+             * íƒ­ ë„ˆë¹„ êµ¬í•˜ê¸°
              * @returns {{isOver: boolean, tabWidth: *, tabsWidth: (number|tabsWidth)}}
              * @private
              */
@@ -2915,7 +2731,7 @@
                 };
             }
         }),
-        'type04': BaseTab.extend({  // ¶óµğ¿À¹Ú½º
+        'type04': BaseTab.extend({  // ë¼ë””ì˜¤ë°•ìŠ¤
             defaults: {
                 tabSelector: '>li',
                 btnSelector: '>span>a'
@@ -2963,7 +2779,7 @@
             me._detectTabType();
         },
         /**
-         * tabType¿¡ µû¶ó ÅÇÅ¬·¡½º »ı¼º
+         * tabTypeì— ë”°ë¼ íƒ­í´ë˜ìŠ¤ ìƒì„±
          * @private
          */
         _detectTabType: function () {
@@ -2974,13 +2790,13 @@
             if (TabClass = TabTypes[tabType]) {
                 me.tab = new TabClass(me.el, me.options);
             } else {
-                throw new Error('ÅÇ°¡ÀÌµå¿¡ ¾ø´Â Çü½ÄÀÔ´Ï´Ù.');
+                throw new Error('íƒ­ê°€ì´ë“œì— ì—†ëŠ” í˜•ì‹ì…ë‹ˆë‹¤.');
             }
         },
 
         /**
-         * index¿¡ ÇØ´çÇÏ´Â ÅÇÀ» È°¼ºÈ­
-         * @param {number} index ÅÇ¹öÆ° ÀÎµ¦½º
+         * indexì— í•´ë‹¹í•˜ëŠ” íƒ­ì„ í™œì„±í™”
+         * @param {number} index íƒ­ë²„íŠ¼ ì¸ë±ìŠ¤
          */
         selectTab: function(index) {
             var me = this, e;
@@ -3204,7 +3020,7 @@
  * @email comahead@vi-nyl.com
  * @create 2014-12-08
  * @license MIT License
- * @description ÄÚ¸¶Ä«µå Àü¿ë À¯Æ¿ÇÔ¼ö ¸ğÀ½
+ * @description ì½”ë§ˆì¹´ë“œ ì „ìš© ìœ í‹¸í•¨ìˆ˜ ëª¨ìŒ
  */
 (function ($, core, undefined) {
     "use strict";
@@ -3212,7 +3028,7 @@
 
     core.ui.isNumberKeys = function (keyCode) {
         return (keyCode >= 48 && keyCode <= 57)
-            || (keyCode >= 96 && keyCode <= 105) // ¿À¸¥ÂÊ ¼ıÀÚÅ°
+            || (keyCode >= 96 && keyCode <= 105) // ì˜¤ë¥¸ìª½ ìˆ«ìí‚¤
             || (keyCode === 37) // left
             || (keyCode === 39)  // right
             || (keyCode === 9)// left
@@ -3244,7 +3060,7 @@
         $html.data('overflowCount', cnt);
     };
 
-    // ÁÖ¾îÁø ¿¤¸®¸ÕÆ®À§Ä¡·Î ½ºÅ©·Ñ(Çì´õ¾Æ·¡)
+    // ì£¼ì–´ì§„ ì—˜ë¦¬ë¨¼íŠ¸ìœ„ì¹˜ë¡œ ìŠ¤í¬ë¡¤(í—¤ë”ì•„ë˜)
     core.util.scrollToElement = function($el, opts) {
         opts || (opts = {});
         var top,
@@ -3295,7 +3111,7 @@ jQuery.easing.jswing=jQuery.easing.swing,jQuery.extend(jQuery.easing,{def:"easeO
     var $doc = $(document),
         $win = $(window);
 
-    // 768ÀÌÇÏ ÇØ»óµµ¿¡¼­ ¾ÆÄÚµğ¿ÂÀ» ÆîÃÆÀ» ¶§ topÀ¸·Î °­Á¦ ½ºÅ©·Ñ
+    // 768ì´í•˜ í•´ìƒë„ì—ì„œ ì•„ì½”ë””ì˜¨ì„ í¼ì³¤ì„ ë•Œ topìœ¼ë¡œ ê°•ì œ ìŠ¤í¬ë¡¤
     core.ui.setDefaults('Accordion', {
         on: {
             'accordionexpand': function (e, data) {
@@ -3312,28 +3128,28 @@ jQuery.easing.jswing=jQuery.easing.swing,jQuery.extend(jQuery.easing,{def:"easeO
                 if ($scrollview.size() === 0){
                     core.util.scrollToElement(data.header);
                 } else {
-                    // º¸·ù: Çö¾÷ÀÌ ¿ä±¸ÇÏ¸é: core.util.scrollToElement(data.header, {scroller: $scrollview});
+                    // ë³´ë¥˜: í˜„ì—…ì´ ìš”êµ¬í•˜ë©´: core.util.scrollToElement(data.header, {scroller: $scrollview});
                 }
             }
         }
     });
 
 
-    // °øÅë UIÄÁÆ®·Ñ ºôµå
+    // ê³µí†µ UIì»¨íŠ¸ë¡¤ ë¹Œë“œ
     $.fn.buildUIControls = function () {
-        // ¾ÆÄÚµğ¾ğ
+        // ì•„ì½”ë””ì–¸
         $('.ui_accordion', this).scAccordion();
 
-        // ³»ºÎ ½ºÅ©·Ñ
+        // ë‚´ë¶€ ìŠ¤í¬ë¡¤
         $('.ui_scrollview', this).scScrollview();
 
-        // ¼¿·ºÆ® ¹Ú½º
+        // ì…€ë ‰íŠ¸ ë°•ìŠ¤
         $('.ui_selectbox', this).scSelectbox();
 
-        // ÅÇ
+        // íƒ­
         $('.ui_tab', this).scTab();
 
-        // ÀüÃ¼¼±ÅÃ
+        // ì „ì²´ì„ íƒ
         $(':checkbox[data-check-all]', this).scCheckboxAllChecker();
 
         return this;
@@ -3343,9 +3159,9 @@ jQuery.easing.jswing=jQuery.easing.swing,jQuery.extend(jQuery.easing,{def:"easeO
         $doc.buildUIControls();
     });
 
-    // Çü½Ä ÀÔ·ÂÆû(±İ¾×, ÀüÈ­¹øÈ£): ±è½ÂÀÏ
-    //  ÀÛµ¿¿ø¸®: getElementsByTagNameÀ¸·Î Æ¯Á¤ ÅÂ±×¸¦ Ã£°í³ª¼­ domÀÌ µ¿ÀûÀ¸·Î º¯°æµÆÀ» ¶§, ´Ù½Ã °Ë»öÇÏÁö ¾Ê¾Æµµ
-    // ÀÚµ¿À¸·Î »õ·Î Ãß°¡µÈ ¿¤¸®¸ÕÆ®°¡ º¯¼ö¿¡ Ãß°¡µÈ´Ù. ÀÌ¸¦ ÀÌ¿ëÇÏ¿© Çü½ÄÆûÀ» ºôµå½ÃÅ²´Ù.
+    // í˜•ì‹ ì…ë ¥í¼(ê¸ˆì•¡, ì „í™”ë²ˆí˜¸): ê¹€ìŠ¹ì¼
+    //  ì‘ë™ì›ë¦¬: getElementsByTagNameìœ¼ë¡œ íŠ¹ì • íƒœê·¸ë¥¼ ì°¾ê³ ë‚˜ì„œ domì´ ë™ì ìœ¼ë¡œ ë³€ê²½ëì„ ë•Œ, ë‹¤ì‹œ ê²€ìƒ‰í•˜ì§€ ì•Šì•„ë„
+    // ìë™ìœ¼ë¡œ ìƒˆë¡œ ì¶”ê°€ëœ ì—˜ë¦¬ë¨¼íŠ¸ê°€ ë³€ìˆ˜ì— ì¶”ê°€ëœë‹¤. ì´ë¥¼ ì´ìš©í•˜ì—¬ í˜•ì‹í¼ì„ ë¹Œë“œì‹œí‚¨ë‹¤.
     $(function() {
         core.importJs([
             'modules/formatter'
