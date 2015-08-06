@@ -8,7 +8,9 @@
  * @author 김승일
  * @version 1.0(2013. 03. 11) 최초 생성
  * @example
+ * 샘플: http://framework.hanulo.com/js/src/comahead/test/parallax-scroller.html
  * new ParallaxScroller({
+ *		autoStart: true,
  *     data: [{
  *          target: '#item01',
  *          frames: '0 {left:0px;top:0px} 100 {left:200px;top:100px} 200 {left:0px;top:0}'  
@@ -229,12 +231,11 @@
         }, options);
 
         // 멤버 변수
-        this.$container = $(opts.containerSelector);
-        this.$items = this.$container.find(opts.itemSelector);
+		this.$container = $(opts.containerSelector);
         this.scrollTop = 1;
         this.beforeScrollTop = -1;
         this.smoothSrollTop = 1;
-        this.data = opts.data || [];
+        this.data = [];
 
         // 실행 준비
         this._cacheData();
@@ -371,26 +372,39 @@
          * @function
          */
         _cacheData: function () {
-            var framesAttr = this.options.framesAttribute,
-                data = this.data,
-                $items = this.$items,
-                $e,
-                i;
+			var data = [], $e, i, frm;
+			if (this.options.data) {
+				for (var i = 0, item; item = this.options.data[i++]; ){
+					data.push({
+						target: ($e = this.$container.find(item.target)),
+						frames: this._parseData(item.frames, item.easing)
+					});
 
-            for (i = 0; ( $e = $items.eq(i) )[0]; i += 1) {
-                if (!$e.attr(framesAttr)) {
-                    continue;
-                }
+					if ($e.css('position') === 'static') {
+						$e.css('position', 'absolute');
+					}
+				}
+			} else {
+				var framesAttr = this.options.framesAttribute,
+					$items = this.$container.find(opts.itemSelector);
 
-                if ($e.css('position') === 'static') {
-                    $e.css('position', 'absolute');
-                }
+				for (i = 0; ( $e = $items.eq(i) )[0]; i += 1) {
+					if (!(frm = $e.attr(framesAttr))) {
+						continue;
+					}
 
-                data.push({
-                    target: $e,
-                    frames: this._parseData($e)
-                });
-            }
+					data.push({
+						target: $e,
+						frames: this._parseData(frm, $e.attr(this.options.easingAttr))
+					});
+
+					if ($e.css('position') === 'static') {
+						$e.css('position', 'absolute');
+					}
+				}
+			}
+
+			this.data = data;
         },
 
         /**
@@ -401,25 +415,22 @@
          *
          * @private
          * @function
-         * @param {jQuery} $e 대상 객체
+         * @param 
          * @return {Array} 프레임 데이터 배열
          */
-        _parseData: function ($e) {
-            var framesAttr = $e.attr(this.options.framesAttribute),
-                easingAttr = $e.attr(this.options.easingAttribute) || 'linear',
-                frameMatch,	// 0:frame
+        _parseData: function (frms, easing) {
+            var frameMatch,	// 0:frame
                 partsMatch, // 1:frameKey, 2:frameEasing, 3:frameStyle
                 styleMatch, // 1:styleName, 2:styleEasing, 3:styleValue, 4:styleUnit
-                easing,
                 style,
                 combineStyle = {},
                 frames = [];
 
             // 각 프레임을 분리
-            while (( frameMatch = REGEXP_FRAME.exec(framesAttr) )) {
+            while (( frameMatch = REGEXP_FRAME.exec(frms) )) {
                 // 프레임과 스타일 분리
                 partsMatch = frameMatch[0].match(REGEXP_PARTS);
-                easing = partsMatch[2] || easingAttr;
+                easing = partsMatch[2] || easing || 'linear';
                 style = {};
 
                 // 스타일문자열 파싱
