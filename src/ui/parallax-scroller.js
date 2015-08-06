@@ -8,7 +8,9 @@
  * @author 김승일
  * @version 1.0(2013. 03. 11) 최초 생성
  * @example
+ * 샘플: http://framework.hanulo.com/js/src/comahead/test/parallax-scroller.html
  * new ParallaxScroller({
+ *		autoStart: true,
  *     data: [{
  *          target: '#item01',
  *          frames: '0 {left:0px;top:0px} 100 {left:200px;top:100px} 200 {left:0px;top:0}'  
