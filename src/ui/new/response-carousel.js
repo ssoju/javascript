@@ -1,6 +1,6 @@
 /*!
- * @mdule coma.ui.ResponseCarousel
- * @author comahead@vi-nyl.com(±è½ÂÀÏ Ã¥ÀÓ)
+ * @mdule axl.ui.ResponseCarousel
+ * @author comahead@vi-nyl.com(ê¹€ìŠ¹ì¼ ì±…ì„)
  */
 (function ($, core) {
     "use strict";
@@ -12,20 +12,20 @@
         css3 = core.css3;
 
     /**
-     * ¹İÀÀÇü Carousel
+     * ë°˜ì‘í˜• Carousel
      */
     var ResponseCarousel = core.ui('ResponseCarousel', {
         bindjQuery: 'responseCarousel',
         defaults: {
-            autoPlay: false,    // ÀÚµ¿ ½º¶óÀÌµå ¿©ºÎ
-            interval: 5000,     // ÀÚµ¿ ½½¶óÀÌµå °£°İ
-            duration: 300,      // ¾Ö´Ï¸ŞÀÌ¼Ç ½Ã°£
+            autoPlay: false,    // ìë™ ìŠ¤ë¼ì´ë“œ ì—¬ë¶€
+            interval: 5000,     // ìë™ ìŠ¬ë¼ì´ë“œ ê°„ê²©
+            duration: 300,      // ì• ë‹ˆë©”ì´ì…˜ ì‹œê°„
             addHeight: 110      //
         },
         selectors: {
-            con: '.banner_list',        // ÄÁÅ×ÀÌ³Ê
-            items: '.banner_list>li',   // ¾ÆÀÌÅÛ
-            indiCon: '.bnr_control'     // ÀÎµğÄÉÀÌÅÍ ¹Ú½º
+            con: '.banner_list',        // ì»¨í…Œì´ë„ˆ
+            items: '.banner_list>li',   // ì•„ì´í…œ
+            indiCon: '.bnr_control'     // ì¸ë””ì¼€ì´í„° ë°•ìŠ¤
         },
         initialize: function (el, options) {
             var me = this;
@@ -33,9 +33,9 @@
                 return;
             }
 
-            me.pageIndex = 0;       // ÇöÀç ÆäÀÌÁö ÀÎµ¦½º
-            me.totalPage = 0;       // ÃÑ ÆäÀÌÁö ¼ö
-            me.totalCount = me.$items.length;       // ÃÑ °¹¼ö
+            me.pageIndex = 0;       // í˜„ì¬ í˜ì´ì§€ ì¸ë±ìŠ¤
+            me.totalPage = 0;       // ì´ í˜ì´ì§€ ìˆ˜
+            me.totalCount = me.$items.length;       // ì´ ê°¯ìˆ˜
             me.perCount = 0;
 
             me.$items.eq(0).find('img').onImgLoaded(function() {
@@ -63,14 +63,14 @@
         _bindEvents: function () {
             var me = this;
 
-            // ÀÎµğÄÉÀÌÅÍ Àç°è»ê
+            // ì¸ë””ì¼€ì´í„° ì¬ê³„ì‚°
             $win.on('changemediasize.' + me.cid, function (e) {
                 var data = core.ui.mediaInfo;
                 me.perCount = me._perCount(data.mode);
                 me._createIndicator();
             });
 
-            // UI Àç¹èÄ¡
+            // UI ì¬ë°°ì¹˜
             $win.on('resize.' + me.cid, function () {
                 me._refresh();
             }).on('resizeend.' + me.cid, function (e) {
@@ -79,7 +79,7 @@
                 me.moveIndex(Math.min(me.pageIndex, me.totalPage - 1), false);
             });
 
-            // ÀÎµğÄÉÀÌÅÍ Å¬¸¯½Ã ÇØ´ç ÆäÀÌÁö·Î ½½¶óÀÌµù
+            // ì¸ë””ì¼€ì´í„° í´ë¦­ì‹œ í•´ë‹¹ í˜ì´ì§€ë¡œ ìŠ¬ë¼ì´ë”©
             me.$indiCon.on('click', 'a', function (e) {
                 e.preventDefault();
                 var index = $(this).parent().index();
@@ -91,7 +91,7 @@
             me.on('mousedown selectstart', function(e) {
                 e.preventDefault();
             });
-            // ÀÚµ¿ Àç»ı ¸ğµåÀÏ ¶§, ¸¶¿ì½º°¡ ¿Ã¶ó¿À¸é ÀÏ½ÃÀûÀ¸·Î Á¤Áö ½ÃÅ°°í ³ª°¡¸é ¿øº¹½ÃÅ²´Ù.
+            // ìë™ ì¬ìƒ ëª¨ë“œì¼ ë•Œ, ë§ˆìš°ìŠ¤ê°€ ì˜¬ë¼ì˜¤ë©´ ì¼ì‹œì ìœ¼ë¡œ ì •ì§€ ì‹œí‚¤ê³  ë‚˜ê°€ë©´ ì›ë³µì‹œí‚¨ë‹¤.
             me.options.autoPlay && me.on('mouseenter touchstart mouseleave touchend touchcancel', function(e) {
                 switch(e.type) {
                     case 'mouseenter':
@@ -113,42 +113,45 @@
                 }
             });
 
-            var startLeft, currLeft;
-            // ½º¿ÍÀÌÇÎ ¹ÙÀÎµù
+            var startLeft, currLeft, prevX, isEast;
+            // ìŠ¤ì™€ì´í•‘ ë°”ì¸ë”©
             me.$con.gesture().on('gesturestart gesturemove gestureend gesturecancel', function (e, data) {
                 switch(e.type) {
                     case 'gesturestart':
                         startLeft = css3.position(me.$con).x; //parseInt(me.$con.css('left'), 10);
+                        prevX = data.x;
                         break;
                     case 'gesturemove':
-                        var limit = me.conWidth - me.totalWidth;
+                    var limit = me.conWidth - me.totalWidth;
                         currLeft = (startLeft + data.diff.x);
                         if (currLeft > 0) {
                             currLeft = currLeft/3;
                         } else if (currLeft < limit) {
                             currLeft = currLeft + Math.abs(limit);
-                            currLeft = limit + (currLeft / 3);
+                        currLeft = limit + (currLeft / 3);
                         }
+                    isEast = data.x < prevX;
+                    prevX = data.x;
                         me.move(currLeft, false);
                         break;
                     case 'gestureend':
                     case 'gesturecancel':
                         var index;
-                        if (data.direction === 'left') {
+                        if (isEast/*data.direction === 'left'*/) {
                             index = Math.ceil(Math.abs(currLeft) / me.conWidth);
                             me.moveIndex(index);
-                        } else if (data.direction === 'right') {
+                        } else /*if (data.direction === 'right')*/ {
                             index = Math.floor(Math.abs(currLeft) / me.conWidth);
                             me.moveIndex(index);
-                        } else {
+                        }/* else {
                             me.moveIndex(me.pageIndex);
-                        }
+                        }*/
                         break;
                 }
             });
         },
         /**
-         * ÀÎµğÄÉÀÌÅÍ »ı¼º
+         * ì¸ë””ì¼€ì´í„° ìƒì„±
          * @private
          */
         _createIndicator: function () {
@@ -157,12 +160,12 @@
 
             for (var i = 0; i < me.totalPage; i++) {
                 html += '<span class="' + (i === me.pageIndex ? 'on' : '') + '">' +
-                    '<a href="#"><span class="hide">'+(i === me.pageIndex ? 'ÇöÀçÆäÀÌÁö' : '')+'</span>' + (i + 1) + '</a></span>';
+                    '<a href="#"><span class="hide">'+(i === me.pageIndex ? 'í˜„ì¬í˜ì´ì§€' : '')+'</span>' + (i + 1) + '</a></span>';
             }
             me.$indiCon.html(html);
         },
         /**
-         * Àç»ı
+         * ì¬ìƒ
          */
         play: function() {
             var me = this;
@@ -173,7 +176,7 @@
             }, me.options.interval);
         },
         /**
-         * Á¤Áö
+         * ì •ì§€
          */
         stop: function() {
             var me = this;
@@ -181,7 +184,7 @@
             me.playTimer = null;
         },
         /**
-         * ´ÙÀ½
+         * ë‹¤ìŒ
          */
         next: function () {
             var me = this,
@@ -192,7 +195,7 @@
             me.moveIndex(index);
         },
         /**
-         * ÀÌÀü
+         * ì´ì „
          */
         prev: function () {
             var me = this,
@@ -203,9 +206,9 @@
             me.moveIndex(index);
         },
         /**
-         * ÆäÀÌÁö ÀÌµ¿
-         * @param newIndex ÀÌµ¿ÇÒ ÆäÀÌÁö ÀÎµ¦½º
-         * @param isAni ¾Ö´Ï¸ŞÀÌ¼Ç µ¿ÀÛ ¿©ºÎ
+         * í˜ì´ì§€ ì´ë™
+         * @param newIndex ì´ë™í•  í˜ì´ì§€ ì¸ë±ìŠ¤
+         * @param isAni ì• ë‹ˆë©”ì´ì…˜ ë™ì‘ ì—¬ë¶€
          */
         moveIndex: function (newIndex, isAni) {
             var me = this;
@@ -231,10 +234,10 @@
         },
 
         /**
-         * ½½¶óÀÌµù
+         * ìŠ¬ë¼ì´ë”©
          * @function
-         * @param newLeft ÀÌµ¿ÇÒ À§Ä¡
-         * @param isAni ¾Ö´Ï¸ŞÀÌ¼Ç µ¿ÀÛ ¿©ºÎ
+         * @param newLeft ì´ë™í•  ìœ„ì¹˜
+         * @param isAni ì• ë‹ˆë©”ì´ì…˜ ë™ì‘ ì—¬ë¶€
          */
         move: css3.support ? function (newLeft, isAni) {
             var me = this;
@@ -253,7 +256,7 @@
 
         },
         /**
-         * ½½¶óÀÌµå°¡ ³¡³µÀ» ¶§ ½ÇÇà
+         * ìŠ¬ë¼ì´ë“œê°€ ëë‚¬ì„ ë•Œ ì‹¤í–‰
          * @private
          */
         _transitionEnd: function () {
@@ -262,10 +265,10 @@
             me.isAnimate = false;
             //me._hideOuter(-newLeft);
             me.$indiCon.children().removeClass('on').find('span.hide').html('').end()
-                .eq(me.pageIndex).addClass('on').find('span.hide').html('ÇöÀç ÆäÀÌÁö');
+                .eq(me.pageIndex).addClass('on').find('span.hide').html('í˜„ì¬ í˜ì´ì§€');
         },
         /**
-         * °¡½Ã¿µ¿ª ¹Û¿¡ Æ÷Ä¿½º°¡ ¾È°¡µµ·Ï ÇÏ±â À§ÇØ ¼û±è
+         * ê°€ì‹œì˜ì—­ ë°–ì— í¬ì»¤ìŠ¤ê°€ ì•ˆê°€ë„ë¡ í•˜ê¸° ìœ„í•´ ìˆ¨ê¹€
          * @param conLeft
          * @private
          */
@@ -284,7 +287,7 @@
             }).css('display', 'none');
         },
         /**
-         * ÇØ»óµµ¿¡ µû¶ó ¸î°³ Ç¥½ÃÇÒÁö °è»ê
+         * í•´ìƒë„ì— ë”°ë¼ ëª‡ê°œ í‘œì‹œí• ì§€ ê³„ì‚°
          * @returns {number}
          * @private
          */
@@ -296,7 +299,7 @@
             return Math.round(me.$el.width() / me.$items.eq(0).width());
         },
         /**
-         * ÇöÀç UIµéÀÇ Ä¡¼ö¸¦ ´Ù½Ã °è»ê
+         * í˜„ì¬ UIë“¤ì˜ ì¹˜ìˆ˜ë¥¼ ë‹¤ì‹œ ê³„ì‚°
          * @private
          */
         _refresh: function () {
@@ -329,4 +332,10 @@
         }
     });
 
+
+    if (typeof define === "function" && define.amd) {
+        define([], function() {
+            return ResponseCarousel;
+        });
+    }
 })(jQuery, window[LIB_NAME]);
