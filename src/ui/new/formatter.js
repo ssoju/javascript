@@ -115,7 +115,7 @@ inputSel.set(el, Math.min(caret.begin, el.value.length));
     // placeholder 지원여부
     var supportPlaceholder = ('placeholder' in document.createElement('input'));
 
-    var FormatInput = core.ui('FormatInput', /** @lends scui.ui.Formatter# */{
+    var FormatInput = core.ui('FormatInput', /** @lends axl.ui.Formatter# */{
         $statics: {
             // 허용할 기능키
             byPassKeys: [8, 9, 16, 17, 18, 35, 36, 37, 38, 39, 40, 46, 91, 116],
