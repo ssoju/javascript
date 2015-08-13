@@ -1,10 +1,3 @@
-
-________________________________________
-보낸 사람: 김승일
-보낸 날짜: 2015년 8월 14일 금요일 오전 6:12
-받는 사람: 김승일
-제목: common
-
 /*!
  * @author 김승일
  * @email comahead@vi-nyl.com<mailto:comahead@vi-nyl.com>
