@@ -1,9 +1,9 @@
 /**
- * Created by ±è½ÂÀÏ(comahead@vi-nyl.com) on 2015-05-04.
+ * Created by ê¹€ìŠ¹ì¼(comahead@vi-nyl.com) on 2015-05-04.
  * Benchmark
  * github: https://github.com/firstopinion/formatter.js
  * License: The MIT License (MIT) Copyright (c) 2013 First Opinion
- */
+ */ 
 (function ($, core) {
     "use strict";
 
@@ -13,9 +13,9 @@
     // mobile
     // email
 
-    // Ä³¾ó ¸ðµâ
+    // ìºì–¼ ëª¨ë“ˆ
     var inputSel = {
-        // Ä³·µ À§Ä¡ ¹ÝÈ¯
+        // ìºëŸ¿ ìœ„ì¹˜ ë°˜í™˜
         get: function(el) {
             if(core.is(el.selectionStart, 'number')) {
                 return {
@@ -48,7 +48,7 @@
                 end: 0
             };
         },
-        // Ä³·µ À§Ä¡ ¼³Á¤
+        // ìºëŸ¿ ìœ„ì¹˜ ì„¤ì •
         set: function(el, pos) {
             if(!core.is(pos, 'object')) {
                 pos = {
@@ -70,14 +70,56 @@
         }
     };
 
-    // placeholder Áö¿ø¿©ºÎ
+var utils = {
+numRegex: /[^0-9]/g,
+engRegex: /[^a-zA-Z\s]/g,
+alphaRegex: /[^a-zA-Z]/g,
+alnumRegex: /[^a-zA-Z0-9]/g,
+engnumRegex: /[^a-zA-Z0-9\s]/g,
+
+isPressedMetaKey: function (e) {
+return e.ctrlKey || e.shiftKey || e.altKey;
+},
+numKey: function (e) {
+var kc = e.keyCode;
+return (e.keyCode >= 48 && e.keyCode <= 57) || (e.keyCode >= 96 && e.keyCode <= 105);
+},
+engKey: function (e) {
+var kc = e.keyCode;
+return (kc >= 65 && kc <=90) || (kc >= 97 && kc <=122) || kc === 32; // 32: space bar
+},
+alphaKey: function (e) {
+var kc = e.keyCode;
+return (kc >= 65 && kc <=90) || (kc >= 97 && kc <=122);
+},
+alnumKey: function (e) {
+var kc = e.keyCode;
+return (kc >= 65 && kc <= 90) || (kc >= 97 && kc <= 122) || (kc >= 48 && kc <= 57);
+},
+engnumKey: function (e) {
+var kc = e.keyCode;
+return (kc >= 65 && kc <= 90) || (kc >= 97 && kc <= 122) || (kc >= 48 && kc <= 57) || kc === 32; // 32: space bar
+},
+isInvalidKey: function (e, type, ignoreKeys) {
+return !utils.isPressedMetaKey(e) && !utils[type+'Key'](e) && !core.array.include(ignoreKeys, e.keyCode);
+},
+cleanChars: function (type, el, focusin) {
+var caret = inputSel.get(el);
+el.value = el.value.replace(utils[type+'Regex'], '');
+if (focusin) {
+inputSel.set(el, Math.min(caret.begin, el.value.length));
+}
+}
+};
+
+    // placeholder ì§€ì›ì—¬ë¶€
     var supportPlaceholder = ('placeholder' in document.createElement('input'));
 
-    var FormatInput = core.ui('FormatInput', /** @lends coma.ui.Formatter# */{
+    var FormatInput = core.ui('FormatInput', /** @lends scui.ui.Formatter# */{
         $statics: {
-            // Çã¿ëÇÒ ±â´ÉÅ°
+            // í—ˆìš©í•  ê¸°ëŠ¥í‚¤
             byPassKeys: [8, 9, 16, 17, 18, 35, 36, 37, 38, 39, 40, 46, 91, 116],
-            // °¢ ÄÚµå¿¡ ´ëÇÑ Á¤±Ô½Ä
+            // ê° ì½”ë“œì— ëŒ€í•œ ì •ê·œì‹
             translation: {
                 '0': {pattern: /\d/},
                 '9': {pattern: /\d/, optional: true},
@@ -85,48 +127,48 @@
                 'A': {pattern: /[a-zA-Z0-9]/},
                 'S': {pattern: /[a-zA-Z]/}
             },
-            // ¸¶½ºÅ· Å¸ÀÔ
+            // ë§ˆìŠ¤í‚¹ íƒ€ìž…
             masks: {
-                // Çö±Ý
+                // í˜„ê¸ˆ
                 comma: {format: '000,000,000,000,000,000,000,000,000', reverse: true},
-                // ÀüÈ­¹øÈ£
+                // ì „í™”ë²ˆí˜¸
                 tel: {
                     format: function(val, e, field, options) {
                         return val.replace(/\D/g, '').length < 8 ? '000-0000' : '0000-0000'
                     }
                 },
-                // ÇÚµåÆù ¹øÈ£
+                // í•¸ë“œí° ë²ˆí˜¸
                 mobile: {
                     format: function(val, e, field, options) {
                         return val.replace(/\D/g, '').length < 8 ? '000-0000' : '0000-0000'
                     }
                 },
-                // ¼ýÀÚ
+                // ìˆ«ìž
                 num: {format: '0000000000000000000'},
-                // Ä«µå
+                // ì¹´ë“œ
                 card: {format: '0000-0000-0000-0000'},
-                // ¾Æ¸ß½ºÄ«µå
+                // ì•„ë©•ìŠ¤ì¹´ë“œ
                 amexcard: {format: '0000-000000-00000'},
-                // ¿îÀü¸éÇã¹øÈ£
+                // ìš´ì „ë©´í—ˆë²ˆí˜¸
                 driverno: {format: '00-000000-00'},
-                // »ç¾÷ÀÚ¹øÈ£
+                // ì‚¬ì—…ìžë²ˆí˜¸
                 bizno: {format:'000-00-00000'},
-                // ¹ýÀÎ¹øÈ£
+                // ë²•ì¸ë²ˆí˜¸
                 corpno: {format:'000000-0000000'},
-                // ³¯Â¥
+                // ë‚ ì§œ
                 date: {format:'0000.00.00'},
-                // ¿µ¹®
-                eng: {format: 'S'}
+            // ì˜ë¬¸
+            eng: {format: 'S'}
             }
         },
         bindjQuery: 'formatter',
         defaults: {
-            format: 'comma', // ±âº» Æ÷¸Ë
-            watch: true,    // ¼öÁ¤À» °¨½ÃÇÒ°Ç°¡
-            watchInterval: 300 // °¨½Ã ÀÎÅÍ¹ú
+            format: 'comma', // ê¸°ë³¸ í¬ë§·
+            watch: true,    // ìˆ˜ì •ì„ ê°ì‹œí• ê±´ê°€
+            watchInterval: 300 // ê°ì‹œ ì¸í„°ë²Œ
         },
         /**
-         * »ý¼ºÀÚ
+         * ìƒì„±ìž
          * @param el
          * @param options
          * @returns {boolean}
@@ -136,55 +178,54 @@
 
             if(me.supr(el, options) === false) { return false; }
 
-            // ÀÚµ¿¿Ï¼º …Ç
+            // ìžë™ì™„ì„± ëœ
             me.$el.attr('autocomplete', 'off');
-            // ¼ýÀÚ ¿Í °°ÀÌ ´Ü¼øÇÑ Æ÷¸ËÀº °Á Å°¸¸ ¸·°í ºüÁ®³ª°£´Ù
+            // ìˆ«ìž ì™€ ê°™ì´ ë‹¨ìˆœí•œ í¬ë§·ì€ ê± í‚¤ë§Œ ë§‰ê³  ë¹ ì ¸ë‚˜ê°„ë‹¤
             if(me._isSimpleFormat() === true) {
+            me.clean = function () { return me.$el.val() === me.txtPlaceholder ? '' : me.$el.val(); };
                 return;
             }
 
-            // ÀÌº¥Æ® ¹ÙÀÎµù
+            // ì´ë²¤íŠ¸ ë°”ì¸ë”©
             me._bindEvents();
 
-            me.oldValue = me.$el.trimVal(); // ¿ø·¡ °ª
+            me.oldValue = me.$el.val(); // ì›ëž˜ ê°’
             me.byPassKeys = FormatInput.byPassKeys; // alias
             me.translation = core.extend({}, FormatInput.translation, me.options.translation);  // alias
             me.invalid = [];
             if(!supportPlaceholder) {
-                // placeholder¸¦ Áö¿øÇÏÁö ¾Ê´Â ºê¶ó¿ìÀú¸é placeholder ¹®±¸¸¦ º¸°üÇÏ°í ÀÖ´Â´Ù.
+                // placeholderë¥¼ ì§€ì›í•˜ì§€ ì•ŠëŠ” ë¸Œë¼ìš°ì €ë©´ placeholder ë¬¸êµ¬ë¥¼ ë³´ê´€í•˜ê³  ìžˆëŠ”ë‹¤.
                 me.notSupportPlaceholder = true;
                 me.txtPlaceholder = me.$el.attr('placeholder');
             }
 
             me._reloadMask();
-            var caret = inputSel.get(me.el).begin; // Ä³·µ À§Ä¡¸¦ º¸°ü
+            var caret = inputSel.get(me.el).begin; // ìºëŸ¿ ìœ„ì¹˜ë¥¼ ë³´ê´€
             me.update();
             if(me.$el.is(':focus')) {
                 inputSel.set(me.el, caret + me._getMCharsBeforeCount(caret, true));
             }
-            // ¸¶½ºÅ·¿¡ ´ëÇÑ ÀüÃ¼ Á¤±Ô½ÄÀ» °¡Á®¿Â´Ù
+            // ë§ˆìŠ¤í‚¹ì— ëŒ€í•œ ì „ì²´ ì •ê·œì‹ì„ ê°€ì ¸ì˜¨ë‹¤
             me.regexMask = me._getRegexMask();
-            // °ªÀÌ º¯°æµÆ´ÂÁö °¨½Ã
+            // ê°’ì´ ë³€ê²½ëëŠ”ì§€ ê°ì‹œ
             if(me.options.watch) {
                 me._watchStart();
             }
         },
 
         /**
-         * ¸¶½ºÅ·Ã³¸®µÈ °ªÀ» ÀÎÇ²¿¡ ³Ö¾îÁØ´Ù
+         * ë§ˆìŠ¤í‚¹ì²˜ë¦¬ëœ ê°’ì„ ì¸í’‹ì— ë„£ì–´ì¤€ë‹¤
          */
-        update: supportPlaceholder ? function() {
-            var me = this;
-            me.$el.val(this._getMasked());
-        } : function(){
-            var me = this;
-            if(me.el.value !== me.txtPlaceholder) {
-                me.$el.val(this._getMasked());
-            }
+        update: function() {
+            var me = this,
+            val = me.$el.val();
+        if (val) {
+        me.$el.val(this._getMasked());
+        }
         },
 
         /**
-         * ¸¶½ºÅ· ¿É¼ÇÀÌ º¯°æµÆÀ» ¼öµµ ÀÖ±â ¶§¹®¿¡ ´Ù½Ã Á¤±ÔÈ­ ÇÑ´Ù.
+         * ë§ˆìŠ¤í‚¹ ì˜µì…˜ì´ ë³€ê²½ëì„ ìˆ˜ë„ ìžˆê¸° ë•Œë¬¸ì— ë‹¤ì‹œ ì •ê·œí™” í•œë‹¤.
          * @private
          */
         _reloadMask: function() {
@@ -193,7 +234,7 @@
 
             if(m = FormatInput.masks[me.options.format]) {
                 if(core.is(m.format, 'function')) {
-                    me.mask = m.format.call(me, me.$el.trimVal());
+                    me.mask = m.format.call(me, me.$el.val());
                 } else {
                     me.mask = m.format;
                 }
@@ -204,74 +245,59 @@
         },
 
         /**
-         * ¼ýÀÚ, ¿µ¹®ÀÚ ¸¸ ÀÔ·ÂÇÏ´Â°Å¸é ¸¶½ºÅ· Ã³¸®´Â ÇÏÁö ¾Ê°í Å°º¸µå¸¸ ¸·´Â´Ù.
+         * ìˆ«ìž, ì˜ë¬¸ìž ë§Œ ìž…ë ¥í•˜ëŠ”ê±°ë©´ ë§ˆìŠ¤í‚¹ ì²˜ë¦¬ëŠ” í•˜ì§€ ì•Šê³  í‚¤ë³´ë“œë§Œ ë§‰ëŠ”ë‹¤.
          * @returns {boolean}
          * @private
          */
         _isSimpleFormat: function(){
-            var me = this;
-            var old;
+            var me = this,
+            format = me.options.format,
+            old;
 
-            if(me.options.format === 'eng') {
-                // ¿µ¹®ÀÚ
-                me.$el.on('keydown', function(e) {
-                    if(!e.ctrlKey && !e.shiftKey && !e.altKey
-                        && !(e.keyCode === 16 // enter
-                        || (e.keyCode >= 65 && e.keyCode <=90)
-                        || (e.keyCode >= 97 && e.keyCode <=122)
-                        || core.array.include(FormatInput.byPassKeys, e.keyCode))) {
-                        e.preventDefault();
+            if(format === 'eng' || format === 'alnum' || format === 'num') {
+                me.$el.on('keydown focusin keyup focusout paste', function(e) {
+                var el = this;
+                    switch (e.type) {
+                    case 'keydown':
+                    if(utils.isInvalidKey(e, format, [].concat(FormatInput.byPassKeys, 16))) {
+                    e.preventDefault();
                     }
+                    // break;
+                    case 'focusin':
                     old = this.value;
-                }).on('keyup blur paste', function() {
-                    if(old != this.value) {
-                        var caret = inputSel.get(this);
-                        me.$el.val(this.value.replace(/[^a-zA-Z\s]/g, ''));
-                        inputSel.set(this, Math.min(caret.begin, this.value.length));
+                    break;
+                    case 'keyup':
+                    case 'focusout':
+                    case 'paste':
+                    setTimeout(function () {
+                    if (old != el.value) {
+                        utils.cleanChars(format, el, e.type !== 'focusout');
+                    old = el.value;
+                    }
+                    });
+                    break;
                     }
                 });
-                return true; // ´Ù¸¥°Ç Ã³¸®¾ÈÇÏµµ·Ï true ¹ÝÈ¯
-            } else if (me.options.format === 'alnum') {
-                me.$el.on('keydown', function(e) {
-                    if(!e.ctrlKey && !e.shiftKey && !e.altKey
-                        && !((e.keyCode >= 65 && e.keyCode <=90)
-                        || (e.keyCode >= 97 && e.keyCode <=122)
-                        || (e.keyCode >= 48 && e.keyCode <= 57)
-                        || core.array.include(FormatInput.byPassKeys, e.keyCode))) {
-                        e.preventDefault();
-                    }
-                    old = this.value;
-                }).on('keyup blur paste', function() {
-                    if(old != this.value) {
-                        var caret = inputSel.get(this);
-                        me.$el.val(this.value.replace(/[^a-zA-Z0-9\s]/g, ''));
-                        inputSel.set(this, Math.min(caret.begin, this.value.length));
-                    }
-                });
-                return true; // ´Ù¸¥°Ç Ã³¸®¾ÈÇÏµµ·Ï true ¹ÝÈ¯
-            } else if(core.array.include(['num', 'card', 'amexcard',
-                    'tel', 'mobile', 'bizno', 'corpno', 'comma', 'date'], me.options.format)) {
+                return true;  // ë§ˆìŠ¤í‚¹ì€ ì²˜ë¦¬ì•ˆí•˜ë„ë¡ true ë°˜í™˜
+            } else if(core.array.include(['card', 'amexcard',
+                    'tel', 'mobile', 'bizno', 'corpno', 'comma', 'date'], format)) {
                 if (window.IS_DEBUG && core.browser.isMobile) {
-                    me.$el.attr('type', 'tel');
+                me.$el.attr('type', 'tel');
                 }
-                // ¼ýÀÚ
-                me.$el.on('keydown', function(e) {
-                    if (!e.ctrlKey && !e.shiftKey && !e.altKey
-                        && !((e.keyCode >= 48 && e.keyCode <= 57)
-                        || (e.keyCode >= 96 && e.keyCode <= 105)
-                        || core.array.include(FormatInput.byPassKeys, e.keyCode))) {
-                        e.preventDefault();
+                // ìˆ«ìž
+                me.$el.on('keydown focusin', function(e) {
+                    if (e.type === 'keydown') {
+                    if (utils.isInvalidKey(e, 'num', FormatInput.byPassKeys)) {
+                    e.preventDefault();
                     }
-
-                    if(me.options.format === 'num') {
-                        return true; // ´Ù¸¥°Ç Ã³¸®¾ÈÇÏµµ·Ï true ¹ÝÈ¯
                     }
+                old = this.value;
                 });
             }
         },
 
         /**
-         * ÀÌº¥Æ® ¹ÙÀÎµù
+         * ì´ë²¤íŠ¸ ë°”ì¸ë”©
          * @private
          */
         _bindEvents: function() {
@@ -291,30 +317,30 @@
                     me.$el.data('changed', true);
                 })
                 .on('blur', function(e) {
-                    if(me.oldValue != me.$el.trimVal() && !me.$el.data('changed')) {
+                    if(me.oldValue != me.$el.val() && !me.$el.data('changed')) {
                         me.$el.triggerHandler('change');
                     }
                     me.$el.data('change', false);
                     me._watchStart();
                 })
                 .on('keydown blur', function() {
-                    me.oldValue = me.$el.trimVal();
+                    me.oldValue = me.$el.val();
                 })
                 .on('focusin', function() {
-                    // Æ÷Ä¿½ÌµÉ ¶§ ¼¿·ºÆ®½ÃÅ³ °ÍÀÎ°¡..
+                    // í¬ì»¤ì‹±ë  ë•Œ ì…€ë ‰íŠ¸ì‹œí‚¬ ê²ƒì¸ê°€..
                     if(me.options.selectOnFocus === true) {
                         $(e.target).select();
                     }
                     me._watchStop();
                 })
                 .on('focusout', function() {
-                    // Æ÷Ä¿½º°¡ ³ª°¥ ¶§ ¾È¸Â´Â °ªÀ» Áö¿ï°ÍÀÎ°¡
-                    if(me.options.clearIfNotMatch && !me.regexMask.test(me.$el.trimVal())) {
+                    // í¬ì»¤ìŠ¤ê°€ ë‚˜ê°ˆ ë•Œ ì•ˆë§žëŠ” ê°’ì„ ì§€ìš¸ê²ƒì¸ê°€
+                    if(me.options.clearIfNotMatch && !me.regexMask.test(me.$el.val())) {
                         me.$el.val('');
                     }
                 });
 
-            // comma Çü½ÄÀÏ ¶© ,°¡ Á¦°ÅµÈ »óÅÂ·Î ³Ñ¾î°¡°Ô
+            // comma í˜•ì‹ì¼ ë• ,ê°€ ì œê±°ëœ ìƒíƒœë¡œ ë„˜ì–´ê°€ê²Œ
             me.options.format === 'comma' && $(me.el.form).on('submit', function(e) {
                 me.remove();
                 me.oldValue = '';
@@ -322,7 +348,7 @@
         },
 
         /**
-         * °ªÀÌ º¯°æµÆ´ÂÁö °¨½Ã ½ÃÀÛ
+         * ê°’ì´ ë³€ê²½ëëŠ”ì§€ ê°ì‹œ ì‹œìž‘
          * @private
          */
         _watchStart: function(){
@@ -333,29 +359,28 @@
 
             var totalTime = 0, dur = me.options.watchInterval;
             me.watchTimer = setInterval(function() {
-                // 40ÃÊ¿¡ ÇÑ¹ø¾¿ dom¿¡¼­ Á¦°Å µÆ°ÇÁö Ã¼Å©ÇØ¼­ Å¸ÀÌ¸Ó¸¦ ¸ØÃá´Ù.
+                // 40ì´ˆì— í•œë²ˆì”© domì—ì„œ ì œê±° ëê±´ì§€ ì²´í¬í•´ì„œ íƒ€ì´ë¨¸ë¥¼ ë©ˆì¶˜ë‹¤.
                 if (totalTime > 40000){
                     totalTime = 0;
                     if (!$.contains(document, me.$el[0])) {
                         clearInterval(me.watchTimer);
                         me.watchTimer = null;
-                        return;
+                    return;
                     }
                 } else {
                     totalTime += dur;
                 }
+            if (me.$el[0].disabled || 0 <= me.$el[0].className.indexOf('disabled')) { return; }
 
-                if (!me.$el) { me._watchStop(); return; }
-                if (me.$el[0].disabled || me.$el[0].className.indexOf('disabled')) { return; }
-                var val = me.el.value;
-                if(me.oldValue != val){
+                var val = me.$el.val();
+                if(val && me.oldValue != val){
                     me.update();
                 }
             }, dur);
         },
 
         /**
-         * °ª º¯°æ °¨½Ã ÁßÁö
+         * ê°’ ë³€ê²½ ê°ì‹œ ì¤‘ì§€
          * @private
          */
         _watchStop: function() {
@@ -365,7 +390,7 @@
         },
 
         /**
-         * ¸¶½ºÅ·¿¡ ´ëÇÑ Á¤±Ô½Ä ¹ÝÈ¯
+         * ë§ˆìŠ¤í‚¹ì— ëŒ€í•œ ì •ê·œì‹ ë°˜í™˜
          * @returns {RegExp}
          * @private
          */
@@ -391,7 +416,7 @@
             }
 
             r = maskChunks.join('');
-            // ±âÁØÀ» ³¡À¸·Î ÇßÀ» ¶§
+            // ê¸°ì¤€ì„ ëìœ¼ë¡œ í–ˆì„ ë•Œ
             if(oRecursive) {
                 r = r.replace(new RegExp('(' + oRecursive.digit + '(.*' + oRecursive.digit + ')?)'), '($1)?')
                     .replace(new RegExp(oRecursive.digit, 'g'), oRecursive.pattern);
@@ -400,7 +425,7 @@
             return new RegExp(r);
         },
         /**
-         * indexÀ§Ä¡ÀÇ ¸¶½ºÅ·Ã³¸®µÈ ¹®ÀÚ¼ö
+         * indexìœ„ì¹˜ì˜ ë§ˆìŠ¤í‚¹ì²˜ë¦¬ëœ ë¬¸ìžìˆ˜
          * @param index
          * @param onCleanVal
          * @returns {number}
@@ -417,7 +442,7 @@
             return count;
         },
         /**
-         * Ä³·µ À§Ä¡
+         * ìºëŸ¿ ìœ„ì¹˜
          * @param originalCaretPos
          * @param oldLength
          * @param newLength
@@ -434,7 +459,7 @@
                 : Math.min(originalCaretPos + newLength - oldLength - maskDif, newLength);
         },
         /**
-         * ¸¶½ºÅ·Ã³¸®
+         * ë§ˆìŠ¤í‚¹ì²˜ë¦¬
          * @param e
          * @returns {*}
          * @private
@@ -442,13 +467,13 @@
         _process: function(e) {
             var me = this,
                 keyCode = e.keyCode;
-            // TODO
+        // TODO
             if (keyCode === 17 || (keyCode === 65 && e.ctrlKey)) { return; }
 
             me.invalid = [];
             if ($.inArray(keyCode, me.byPassKeys) === -1 || keyCode === 46 || keyCode === 8) {
                 var caretPos = inputSel.get(me.el).begin,
-                    currVal = me.$el.trimVal(),
+                    currVal = me.$el.val(),
                     currValL = currVal.length,
                     changeCaret = caretPos < currValL,
                     newVal = me._getMasked(),
@@ -472,7 +497,7 @@
             }
         },
         /**
-         * ¸¶½ºÅ·Ã³¸® ÄÚ¾îºÎºÐ
+         * ë§ˆìŠ¤í‚¹ì²˜ë¦¬ ì½”ì–´ë¶€ë¶„
          * @param skipMaskChars
          * @returns {string}
          * @private
@@ -481,7 +506,7 @@
             var me = this,
                 mask = me.mask,
                 buf = [],
-                value = me.$el.trimVal(),
+                value = me.$el.val(),
                 m = 0, maskLen = mask.length,
                 v = 0, valLen = value.length,
                 offset = 1, addMethod = 'push',
@@ -557,14 +582,14 @@
             return buf.join('');
         },
         /**
-         * ÄÝ¹éÇÔ¼ö ¹ÙÀÎµù
+         * ì½œë°±í•¨ìˆ˜ ë°”ì¸ë”©
          * @param e
          * @private
          */
         _callbacks: function (e) {
             var me = this,
                 mask = me.mask,
-                val = me.$el.trimVal(),
+                val = me.$el.val(),
                 changed = val !== me.oldValue,
                 defaultArgs = [val, e, me.el, me.options],
                 callback = function(name, criteria, args) {
@@ -579,12 +604,12 @@
             callback('onInvalid', me.invalid.length > 0, [val, e, me.el, me.invalid, me.options]);
         },
         /**
-         * Áö¿ì±â
+         * ì§€ìš°ê¸°
          */
         remove: function() {
             var me = this,
                 caret = inputSel.get(me.el).begin;
-            me._watchStop();
+        me._watchStop();
             me.$el.off();
             me.$el.val(me.clean());
             if(me.$el.is(':focus')) {
@@ -592,7 +617,7 @@
             }
         },
         /**
-         * ¸¶½ºÅ· Á¦°Å
+         * ë§ˆìŠ¤í‚¹ ì œê±°
          * @returns {*|string}
          */
         clean: function() {
@@ -607,4 +632,3 @@
     }
 
 })(jQuery, window[LIB_NAME]);
- 
