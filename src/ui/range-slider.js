@@ -185,10 +185,10 @@
                 val = me.getValue();
             me.$minInput.val(val.minValue);
             me.$maxInput.val(val.maxValue);
-            me.$btnMin.find('span.hide>span').text(me.$position.eq(me._getMinIndex()).data('title')+'¿¡¼­');
-            me.$btnMax.find('span.hide>span').text(me.$position.eq(me._getMaxIndex()).data('title')+'±îÁö');
+            me.$btnMin.find('span.hide>span').text(me.$position.eq(me._getMinIndex()).data('title')+'ì—ì„œ');
+            me.$btnMax.find('span.hide>span').text(me.$position.eq(me._getMaxIndex()).data('title')+'ê¹Œì§€');
 
-            // ¼³Á¤µÈ ¹öÆ° À§Ä¡ÀÇ li¿¡ on Å¬·¡½º Ãß°¡
+            // ì„¤ì •ëœ ë²„íŠ¼ ìœ„ì¹˜ì˜ liì— on í´ë˜ìŠ¤ ì¶”ê°€
             me.$position.parent().removeClass('on').eq(me._getMinIndex()).addClass('on').end().eq(me._getMaxIndex()).addClass('on');
         },
 
