@@ -1,5 +1,5 @@
 /**
- * Created by ±è½ÂÀÏÃ¥ÀÓ(comahead@vi-nyl.com) on 2015-05-27.
+ * Created by ê¹€ìŠ¹ì¼ì±…ì„(comahead@vi-nyl.com) on 2015-05-27.
  */
 (function ($, core) {
     "use strict";
@@ -53,18 +53,18 @@
                 }
             });
 
-            // Ãß°¡
+            // ì¶”ê°€
             me.$btnAdd.on('click', function(e) {
                 var $sourceItems = me._getSourceItems(),
                     sourceCount = $sourceItems.size();
 
                 if (sourceCount === 0) {
-                    alert('ÃßÃâÇÒ Ç×¸ñÀ» ¼±ÅÃÇØ ÁÖ¼¼¿ä.');
+                    alert('ì¶”ì¶œí•  í•­ëª©ì„ ì„ íƒí•´ ì£¼ì„¸ìš”.');
                     return;
                 }
 
                 if (me._getTargetItems(false).size() + sourceCount > me.options.maxCount) {
-                    alert('ÃÖ´ë '+me.options.maxCount+'°Ç±îÁö Ãß°¡ÇÏ½Ç ¼ö ÀÖ½À´Ï´Ù');
+                    alert('ìµœëŒ€ '+me.options.maxCount+'ê±´ê¹Œì§€ ì¶”ê°€í•˜ì‹¤ ìˆ˜ ìˆìŠµë‹ˆë‹¤');
                     return;
                 }
 
@@ -73,7 +73,7 @@
                 $items.each(function(){
                     var $item = $(this).addClass('ui_added_item');
                     $item.children().show().filter('.ui_hide_item').remove();
-                    // for, id º¯°æ
+                    // for, id ë³€ê²½
                     $item.find('[for]').each(function(){
                         var t = +new Date();
                         $item.find('[id='+$(this).attr('for')+']').attr('id', t);
@@ -88,12 +88,12 @@
                 me._complete();
             });
 
-            // ÀüÃ¼ »èÁ¦
+            // ì „ì²´ ì‚­ì œ
             me.$btnClear.on('click', function(){
                 me.clear();
             });
 
-            // »èÁ¦
+            // ì‚­ì œ
             me.$targetTable.on('click', '.ui_item_del', function(e) {
                 var $targetItems = $(this).parent().parent();
 
@@ -103,11 +103,11 @@
                 me._complete();
             });
 
-// »èÁ¦
+// ì‚­ì œ
             me.$btnDel.on('click', function(e) {
                 var $targetItems = me._getTargetItems();
                 if ($targetItems.size() === 0) {
-                    alert('»èÁ¦ÇÒ Ç×¸ñÀ» ¼±ÅÃÇØ ÁÖ¼¼¿ä.');
+                    alert('ì‚­ì œí•  í•­ëª©ì„ ì„ íƒí•´ ì£¼ì„¸ìš”.');
                     return;
                 }
 
@@ -120,7 +120,7 @@
                 me._complete();
             });
 
-// ÀüÃ¼ »èÁ¦
+// ì „ì²´ ì‚­ì œ
             me.$btnDelAll.on('click', function(){
                 me._getTargetItems(false).each(function(){
                     me._enableItems(me.$sourceTable.find('tr:has(:checkbox[value='+$(this).find(':checkbox').val()+'])'));
@@ -130,7 +130,7 @@
                 me._complete();
             });
 
-// À§·Î
+// ìœ„ë¡œ
             me.$btnUp.on('click', function(e) {
                 var $items = me._getTargetItems();
                 $items.each(function(){
@@ -142,7 +142,7 @@
                 me._numbering();
             });
 
-// ¾Æ·¡·Î
+// ì•„ë˜ë¡œ
             me.$btnDown.on('click', function(e) {
                 var $items = me._getTargetItems();
                 Array.prototype.reverse.call($items).each(function(){
@@ -154,7 +154,7 @@
                 me._numbering();
             });
 
-            // ÆûÀÌ ¼­ºê¹ÔµÉ ¶§ Ãß°¡µÈ Ç×¸ñÀ» Ã¼Å©ÇØÁØ´Ù.
+            // í¼ì´ ì„œë¸Œë°‹ë  ë•Œ ì¶”ê°€ëœ í•­ëª©ì„ ì²´í¬í•´ì¤€ë‹¤.
             $(me.$el.find(':checkbox:first').get(0).form).on('submit', function(){
                 me.$sourceTable.find('tbody :checkbox').checked(false);
             });
@@ -209,7 +209,7 @@
                 .find('a').attr('tabindex', -1).addClass('disabled');
         },
 
-        // ÃÊ±âÈ­
+        // ì´ˆê¸°í™”
         clear: function(){
             var me = this;
 
