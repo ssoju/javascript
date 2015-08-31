@@ -1,22 +1,24 @@
 /*!
  * @author 김승일
- * @email comahead@gmail.com
- * @description 이마트 코어 라이브러리
+ * @email comahead@vi-nyl.com
+ * @description 액슬 코어 라이브러리
  * @license MIT License
  */
 window.LIB_NAME = 'axl';
 window.LIB_DIV_DEBUG = false;
+window.IS_DEBUG = location.href.indexOf('jsdebug=true') >= 0;
 /*
  *
  */
-(function ($) {
+(function($) {
     "use strict";
     /* jshint expr: true, validthis: true */
-    /* global common, alert, escape, unescape */
+    /* global axl, alert, escape, unescape */
 
     /**
      * @callback arrayCallback
      * @param  {*} item - 배열의 요소
+     *
      * @param  {number} index   - 배열의 인덱스
      * @param  {Array}  array   - 배열 자신
      * @return {boolean} false를 반환하면 반복을 멈춘다.
@@ -55,17 +57,22 @@ window.LIB_DIV_DEBUG = false;
      * tab.select(2);
      */
 
+    // 프레임웍 이름
+    var /** @const */ LIB_NAME = window.LIB_NAME || 'axl';
+    if (window[LIB_NAME]) {
+        return;
+    }
+
     if (!$) {
         throw new Error("This library requires jQuery");
     }
 
-    // 프레임웍 이름
-    var /** @const */LIB_NAME = window.LIB_NAME || 'common',
-        context = window,
+    var context = window,
         $root = $(document.documentElement).addClass('js'),
         tmpInput = document.createElement('input'),
         isTouch = ('ontouchstart' in context),
-        isMobile = ('orientation' in context);
+        isMobile = ('orientation' in context) || isTouch,
+        supportPlaceholder = ('placeholder' in tmpInput);
 
     isTouch && $root.addClass('touch');
     isMobile && $root.addClass('mobile');
@@ -83,15 +90,17 @@ window.LIB_DIV_DEBUG = false;
          *
          * Test(); -> alert('axl rose');
          */
-        Function.prototype.bind = function () {
+        Function.prototype.bind = function() {
             var fn = this,
                 args = arraySlice.call(arguments),
                 object = args.shift();
 
-            return function (context) {
+            return function(context) {
                 // bind로 넘어오는 인자와 원본함수의 인자를 병합하여 넘겨줌.
                 var local_args = args.concat(arraySlice.call(arguments));
-                if (this !== window) { local_args.push(this); }
+                if (this !== window) {
+                    local_args.push(this);
+                }
                 return fn.apply(object, local_args);
             };
         };
@@ -100,20 +109,19 @@ window.LIB_DIV_DEBUG = false;
     if (!window.console) {
         // 콘솔을 지원하지 않는 브라우저를 위해 출력요소를 생성
         window.console = {};
-        if(window.LIB_DIV_DEBUG === true) {
+        if (window.LIB_DIV_DEBUG === true) {
             window.$debugDiv = $('<div class="ui_debug" style=""></div>');
-            $(function () {
+            $(function() {
                 window.$debugDiv.appendTo('body');
             });
         }
-        var consoleMethods = ['log', 'info', 'warn', 'error', 'assert', 'dir', 'clear', 'profile', 'profileEnd'];
-        for(var i = -1, method; method = consoleMethods[++i]; ) {
-            +function(method) {
+        var consoleMethods = ['log', 'info', 'warn', 'error', 'assert', 'dir', 'clear', 'profile', 'profileEnd', 'trace'];
+        for (var i = -1, method; method = consoleMethods[++i];) {
+            + function(method) {
                 console[method] = window.LIB_DIV_DEBUG === true ?
-                    function () {
+                    function() {
                         window.$debugDiv.append('<div style="font-size:9pt;">&gt; <span>[' + method + ']</span> ' + [].slice.call(arguments).join(', ') + '</div>');
-                    } : function () {
-                };
+                    } : function() {};
             }(method);
         }
     }
@@ -123,22 +131,29 @@ window.LIB_DIV_DEBUG = false;
      * @class
      * @name $
      */
-
-    $.extend(jQuery.expr[':'], {
-        focusable: function(el){
-            return $(el).is(':visible, a, button, input[type=text], input[type=file], input[type=checkbox], input[type=radio], select, textarea, [tabindex]');
-        }
-    });
-
     // TODO: 뺄 것
     var oldOff = $.fn.off;
     $.fn.unbind = $.fn.off = function(name) {
-        if((this[0] === window || this[0] === document)
-            && name !== 'ready' && name.indexOf('.') < 0) {
-            throw new Error('['+name+'] window, document에서 이벤트를 off할 때는 네임스페이스를 꼭 넣어주셔야 합니다.');
+        if ((this[0] === window || this[0] === document) && name !== 'ready' && name.indexOf('.') < 0) {
+            throw new Error('[' + name + '] window, document에서 이벤트를 off할 때는 네임스페이스를 꼭 넣어주셔야 합니다.');
+        }
+        if (IS_DEBUG) {
+            console.log('off', name);
+            console.trace();
         }
         return oldOff.apply(this, arguments);
     };
+    // TODO 테스트용
+    if (IS_DEBUG) {
+        var oldOn = $.fn.on;
+        $.fn.on = function(name) {
+            if (this[0] === window || this[0] === document) {
+                console.log('on', name);
+                console.trace();
+            }
+            return oldOn.apply(this, arguments);
+        };
+    }
 
     /**
      * value값을 URI인코딩하여 반환
@@ -154,48 +169,10 @@ window.LIB_DIV_DEBUG = false;
         }
     };
 
-    $.fn.getPlaceholder = function(){
-        var val = '';
-        if(this.attr('ori-placeholder')){
-            val = this.attr('ori-placeholder').replace(/\\r\\n/g, "\n").replace(/\\n/g, "\n");
-        } else {
-            val = ('placeholder' in tmpInput ? this.attr('placeholder') : '');
-        }
-        return val;
-    };
-
-    /**
-     * value값의 앞뒤 스페이스문자 또는 old ie인경우에 placeholder를 제거하여 실제 값만 반환
-     * @function
-     * @name $#trimVal
-     * @return {string} 문자열
-     */
-    $.fn.trimVal = (function() {
-        var supportPlaceholder = ('placeholder' in tmpInput);
-
-        return  function(value) {
-            if(supportPlaceholder && !this.attr('ori-placeholder')){
-                if (arguments.length === 0) { return $.trim(this.val()); }
-                else { return this.val($.trim(value)); }
-            } else {
-                var txtPlaceholder = this.getPlaceholder();
-                if (arguments.length === 0) {
-                    if (this.val() === txtPlaceholder) {
-                        return '';
-                    }
-                    return $.trim(this.val());
-                } else {
-                    value = $.trim(value) || txtPlaceholder;
-                    return this.val(value);
-                }
-            }
-        };
-    })();
-
     $.fn.toggleLayer = function() {
         return this.each(function() {
             var $el = $(this),
-                $target = $( $el.attr('data-target') || $el.attr('href') );
+                $target = $($el.attr('data-target') || $el.attr('href'));
 
             $el.on('click', function(e) {
                 e.preventDefault();
@@ -205,33 +182,38 @@ window.LIB_DIV_DEBUG = false;
         });
     };
 
+    /**
+     * $(':focusable')  포커싱할 수 있는 대상을 검색
+     * @name $#focusable
+     */
+    $.extend(jQuery.expr[':'], {
+        focusable: function(el, index, selector) {
+            return $(el).is('a, button, input[type=text], input[type=file], input[type=checkbox], input[type=radio], select, textarea, [tabindex]');
+        }
+    });
 
     /**
-     * 체크여부를 지정할 때, changed 이벤트를 발생시킨다.(연결된 label에 on클래스를 토글링하고자 할 때 사용)
-     * @function
-     * @name $#checked
-     * @param {boolean} checked 체크여부
-     * @param {boolean} isBubble 버블링 여부
+     * 해당 이미지가 로드됐을 때 콜백함수 실행
+     *
+     * @param cb 콜백함수
      * @returns {jQuery}
-     * @fires $#changed
-     * @example
-     * // 먼저 changed 이벤트 바인딩
-     * $('input:checkbox').on('changed', function(e, isChecked) { $(this).parent()[isChecked?'addClass':'removeClass']('on'); });
-     * ..
-     * // checked 값을 변경
-     * $('input:checkbox').checked(true); // 해당체크박스의 부모에 on클래스가 추가된다.
      */
-    $.fn.checked = function(checked, isBubble) {
-        return this.each(function() {
-            if (this.type !== 'checkbox' && this.type !== 'radio') { return; }
-            /**
-             * @event $#changed
-             * @type {Object}
-             * @peoperty {boolean} checked - 체크 여부
-             */
-            $(this).prop('checked', checked)[isBubble === false ? 'triggerHandler' : 'trigger']('checkboxchanged', [checked])
-                .parent().toggleClass('on', checked);
+    $.fn.onImgLoaded = function(cb) {
+        core.util.waitImageLoad(this).done(cb);
+        return this;
+    };
+
+    /**
+     * 비동기 방식으로 이미지 사이즈를 계산해서 콜백함수로 넘겨준다.
+     * @param cb
+     * @returns {jQuery}
+     */
+    $.fn.getImgSize = function(cb) {
+        var $img = this.eq(0);
+        $img.imgLoaded(function() {
+            cb && cb.call($img[0], $img.css('width', '').width(), $img.css('height', '').height());
         });
+        return this;
     };
 
     /**
@@ -257,7 +239,7 @@ window.LIB_DIV_DEBUG = false;
      * @param {Element|jQuery} [options.button] 버튼
      * @param {Function} [options.onShow] 표시될 때 실행될 함수
      */
-    $.fn.showLayer = function(options, isBubble) {
+    $.fn.showLayer = function(options, isTrigger) {
         options = extend({
             onShow: core.emptyFn,
             opener: null
@@ -265,15 +247,21 @@ window.LIB_DIV_DEBUG = false;
 
         return this.each(function() {
             var $this = $(this),
-                trigger = [isBubble === false ? 'triggerHandler' : 'trigger'],
                 evt;
             if (options.opener) {
                 $this.data('opener', options.opener);
-                $(options.opener).attr({'aria-pressed': 'true', 'aria-expand': 'true'});
+                $(options.opener).attr({
+                    'aria-pressed': 'true',
+                    'aria-expand': 'true'
+                });
             }
 
-            $this[trigger](evt = $.Event($.fn.showLayer.ON_BEFORESHOW));
-            if (evt.isDefaultPrevented()) { return; }
+            if (isTrigger !== false) {
+                $this.trigger(evt = $.Event($.fn.showLayer.ON_BEFORESHOW));
+                if (evt.isDefaultPrevented()) {
+                    return;
+                }
+            }
 
             // 표시될 때 d_open 클래스 추가
             $this.addClass($.fn.showLayer.openClass).show()[trigger]($.fn.showLayer.ON_SHOWN);
@@ -291,8 +279,9 @@ window.LIB_DIV_DEBUG = false;
      * @name $#hideLayer
      * @param {boolean} [options.focusOpener = false] 숨겨진 후에 버튼에 포커스를 줄것인지 여부
      * @param {Function} [options.onHide] 숨겨진 후에 실행될 함수
+     * @param {boolean} [isTrigger = true] 이벤트 날릴 것인가
      */
-    $.fn.hideLayer = function(options, isBubble) {
+    $.fn.hideLayer = function(options, isTrigger) {
         options = extend({
             onHide: core.emptyFn,
             focusOpener: false
@@ -300,13 +289,20 @@ window.LIB_DIV_DEBUG = false;
 
         return this.each(function() {
             var $this = $(this);
-            $this.removeClass($.fn.showLayer.openClass).hide()[isBubble === false ? 'triggerHandler' : 'trigger']($.fn.hideLayer.ON_HIDDEN);
+            $this.removeClass($.fn.showLayer.openClass).hide();
+            if (isTrigger !== false) {
+                $this.trigger($.fn.hideLayer.ON_HIDDEN);
+            }
             options.onHide.call($this[0]);
 
             // 숨겨진 후에 열었던 원래버튼에 포커스를 강제로 준다.
             if ($this.data('opener')) {
-                var $btn = $( $this.data('opener') );
-                $btn.attr({'aria-pressed': 'false', 'aria-expand': 'false'});
+                var $btn = $($this.data('opener'));
+                $this.removeData('opener');
+                $btn.attr({
+                    'aria-pressed': 'false',
+                    'aria-expand': 'false'
+                });
                 if (options.focusOpener === true) {
                     $btn.focus();
                 }
@@ -335,7 +331,7 @@ window.LIB_DIV_DEBUG = false;
     $.fn.checkedValues = function() {
         var results = [];
         this.each(function() {
-            if ((this.type === 'checkbox' || this.type === 'radio') && this.checked === true) {
+            if ((this.type === 'checkbox' || this.type === 'radio') && !this.disabled && this.checked === true) {
                 results.push(this.value);
             }
         });
@@ -355,41 +351,58 @@ window.LIB_DIV_DEBUG = false;
     };
 
     /**
-     * disabled 및 flag에 따라 클래스 토글
-     * @function
-     * @name $#disabled
-     * @param {string} [name = disabled] 클래스명
-     * @param {boolean} flag
+     * append 한 다음 첫번째에 포커스 주기
+     * @param html
      * @returns {*}
      */
-    $.fn.disabled = function(name, flag) {
-        if(arguments.length === 0){
-            name = 'disabled';
-            flag = true;
-        }
-        if(typeof name !== 'string') {
-            flag = !!name;
-            name = 'disabled';
-        }
-        return this.prop('disabled', flag).toggleClass(name, flag);
+    $.fn.appendAndFocus = function(html, element) {
+        var $html = $(html),
+            $focus = ($(element).size() === 0) ? $html.find(':focusable').eq(0) : $(element).find(':focusable').eq(0);
+
+        this.append($html);
+        $focus.size() && $focus.focus();
+        return this;
     };
 
     /**
-     * $(':focusable')  포커싱할 수 있는 대상을 검색
-     * @name $#focusable
+     * html 한 다음 첫번째에 포커스 주기
+     * @param html
+     * @returns {*}
      */
-    $.extend(jQuery.expr[':'], {
-        focusable: function(el, index, selector){
-            return $(el).is('a, button, input[type=text], input[type=file], input[type=checkbox], input[type=radio], select, textarea, [tabindex]');
-        }
-    });
+    $.fn.htmlAndFocus = function(html, opts) {
+        var me = this;
+        me.html(html);
+
+        setTimeout(function() {
+            window[LIB_NAME].util.scrollToElement(me, {
+                offset: me.offset().top + parseInt(me.css('marginTop'), 10),
+                complete: function() {
+                    me.attr('tabindex', -1).focus();
+                }
+            });
+        }, 50);
+        return me;
+    };
+
+    /**
+     * 같은 레벨에 있는 다른 row에서 on를 제거하고 현재 row에 on 추가
+     * @function
+     * @name $#activeOne
+     * @param {string} cls 활성 클래스명
+     * @return {jQuery}
+     */
+    $.fn.activeOne = function(index, cls, isReverse) {
+        cls = cls || 'on';
+        return this.removeClass(cls, !isReverse).eq(index).addClass(cls, isReverse).end();
+    };
+
 
     /**
      * @namespace
-     * @name common
+     * @name axl
      * @description root namespace of hib site
      */
-    var core = context[ LIB_NAME ] || (context[ LIB_NAME ] = {});
+    var core = context[LIB_NAME] || (context[LIB_NAME] = {});
     var doc = document,
         arrayProto = Array.prototype,
         objectProto = Object.prototype,
@@ -397,20 +410,19 @@ window.LIB_DIV_DEBUG = false;
         hasOwn = objectProto.hasOwnProperty,
         arraySlice = arrayProto.slice,
 
-        isPlainObject = (toString.call(null) === '[object Object]') ? function (value) {
-            return value !== null
-                && value !== undefined
-                && toString.call(value) === '[object Object]'
-                && value.ownerDocument === undefined;
-        } : function (value) {
+        isPlainObject = (toString.call(null) === '[object Object]') ? function(value) {
+            return value !== null && value !== undefined && toString.call(value) === '[object Object]' && value.ownerDocument === undefined;
+        } : function(value) {
             return toString.call(value) === '[object Object]';
         },
 
-        isType = function (value, typeName) {
+        isType = function(value, typeName) {
             var isGet = arguments.length === 1;
+
             function result(name) {
                 return isGet ? name : typeName === name;
             }
+
             if (value === null) {
                 return result('null');
             }
@@ -443,11 +455,11 @@ window.LIB_DIV_DEBUG = false;
             return isGet ? type : type === typeName;
         },
 
-        isArray = function(obj){
+        isArray = function(obj) {
             return isType(obj, 'array');
         },
 
-        isFunction = function (obj) {
+        isFunction = function(obj) {
             return isType(obj, 'function');
         },
 
@@ -467,7 +479,7 @@ window.LIB_DIV_DEBUG = false;
          *     }
          * });
          */
-        each = function (obj, iterater, ctx) {
+        each = function(obj, iterater, ctx) {
             if (!obj) {
                 return obj;
             }
@@ -498,6 +510,25 @@ window.LIB_DIV_DEBUG = false;
             }
             return obj;
         },
+        eachReverse = function(obj, iterater, ctx) {
+            if (!obj) {
+                return obj;
+            }
+            var i = 0,
+                len = 0,
+                isArr = isArray(obj);
+
+            if (isArr) {
+                for (i = obj.length - 1; i >= 0; i--) {
+                    if (iterater.call(ctx || obj, obj[i], i, obj) === false) {
+                        break;
+                    }
+                }
+            } else {
+                throw new Error('eachReverse 함수는 배열에만 사용할 수 있습니다.');
+            }
+            return obj;
+        },
         /**
          * 객체 확장 함수
          * @function
@@ -512,19 +543,21 @@ window.LIB_DIV_DEBUG = false;
          */
         extend = function(deep, obj) {
             var args;
-            if(deep === true) {
+            if (deep === true) {
                 args = arraySlice.call(arguments, 2);
             } else {
                 args = arraySlice.call(arguments, 1);
                 obj = deep;
                 deep = false;
             }
-            each(args, function (source) {
-                if(!source) { return; }
+            each(args, function(source) {
+                if (!source) {
+                    return;
+                }
 
-                each(source, function (val, key) {
+                each(source, function(val, key) {
                     var isArr = isArray(val);
-                    if(deep && (isArr || isPlainObject(val))) {
+                    if (deep && (isArr || isPlainObject(val))) {
                         obj[key] || (obj[key] = isArr ? [] : {});
                         obj[key] = extend(deep, obj[key], val);
                     } else {
@@ -577,9 +610,10 @@ window.LIB_DIV_DEBUG = false;
         name: LIB_NAME,
         debug: false,
         each: each,
+        eachReverse: eachReverse,
         extend: extend,
         clone: clone,
-        emptyFn: function(){},
+        emptyFn: function() {},
         /**
          * 특정속성을 지원하는지 체크하기 위한 엘리먼트
          * @member
@@ -675,13 +709,8 @@ window.LIB_DIV_DEBUG = false;
          * axl.isEmpty([]); // true
          * axl.isEmpty({}); // true
          */
-        isEmpty: function (value, allowEmptyString) {
-            return (value === null)
-                || (value === undefined)
-                || (value === 0)
-                || (core.is(value, 'string') && !allowEmptyString ? value === '' : false)
-                || (core.is(value, 'array') && value.length === 0)
-                || (core.is(value, 'object') && !core.object.hasItems(value));
+        isEmpty: function(value, allowEmptyString) {
+            return (value === null) || (value === undefined) || (value === 0) || (core.is(value, 'string') && !allowEmptyString ? value === '' : false) || (core.is(value, 'array') && value.length === 0) || (core.is(value, 'object') && !core.object.hasItems(value));
         },
 
         /**
@@ -696,7 +725,7 @@ window.LIB_DIV_DEBUG = false;
          *     alert('obj객체에 a가 존재합니다.');
          * }
          */
-        hasOwn: function (obj, name) {
+        hasOwn: function(obj, name) {
             return hasOwn.call(obj, name);
         },
         /**
@@ -713,14 +742,14 @@ window.LIB_DIV_DEBUG = false;
          * @example
          * axl.namesapce('axl.widget.Tabcontrol', TabControl)
          * // 를 native로 풀면,
-         * var common = {
+         * var axl = {
          *     widget: {
          *         Tabcontrol: TabControl
          *     }
          * };
          *
          */
-        namespace: function (name, obj) {
+        namespace: function(name, obj) {
             if (typeof name !== 'string') {
                 obj && (name = obj);
                 return name;
@@ -737,12 +766,12 @@ window.LIB_DIV_DEBUG = false;
             return extend(root, obj || {});
         },
         /**
-         * common 하위에 name에 해당하는 네임스페이스를 생성하여 object를 설정해주는 함수
+         * axl 하위에 name에 해당하는 네임스페이스를 생성하여 object를 설정해주는 함수
          *
          * @function
          * @name axl.addon
          *
-         * @param {string} name .를 구분자로 해서 axl을 시작으로 하위 네임스페이스를 생성. name이 없으면 vinyl에 추가된다.
+         * @param {string} name .를 구분자로 해서 axl을 시작으로 하위 네임스페이스를 생성. name이 없으면 axl에 추가된다.
          * @param {Object|Function} obj
          *
          * @example
@@ -754,7 +783,7 @@ window.LIB_DIV_DEBUG = false;
          * alert(axl.urls.store);
          * alert(axl.urls.company);
          */
-        addon: function (name, object, isExecFn) {
+        addon: function(name, object, isExecFn) {
             if (typeof name !== 'string') {
                 object = name;
                 name = '';
@@ -766,7 +795,6 @@ window.LIB_DIV_DEBUG = false;
                 leaf = names[ln];
 
             if (isExecFn !== false && typeof object === 'function' && !hasOwn.call(object, 'superclass')) {
-                console.log(name);
                 object = object.call(root);
             }
 
@@ -782,7 +810,7 @@ window.LIB_DIV_DEBUG = false;
     /**
      * benchmart functions
      */
-    extend(core, /** @lends common */{
+    extend(core, /** @lends axl */ {
         /**
          * timeStart("name")로 name값을 키로하는 타이머가 시작되며, timeEnd("name")로 해당 name값의 지난 시간을 로그에 출력해준다.
          *
@@ -794,7 +822,7 @@ window.LIB_DIV_DEBUG = false;
          * ...
          * axl.timeEnd('animate'); -> animate: 10203ms
          */
-        timeStart: function (name, reset) {
+        timeStart: function(name, reset) {
             if (!name) {
                 return;
             }
@@ -819,7 +847,7 @@ window.LIB_DIV_DEBUG = false;
          * ...
          * axl.timeEnd('animate'); -> animate: 10203ms
          */
-        timeEnd: function (name) {
+        timeEnd: function(name) {
             if (!this.timeCounters) {
                 return null;
             }
@@ -847,7 +875,7 @@ window.LIB_DIV_DEBUG = false;
      * @namespace
      * @name axl.number
      */
-    core.addon('number', /** @lends axl.number */{
+    core.addon('number', /** @lends axl.number */ {
         /**
          * 주어진 수를 자릿수만큼 앞자리에 0을 채워서 반환
          *
@@ -859,14 +887,14 @@ window.LIB_DIV_DEBUG = false;
          * @example
          * axl.number.zeroPad(2, 3); // "002"
          */
-        zeroPad: function (value, size, ch) {
+        zeroPad: function(value, size, ch) {
             var sign = value < 0 ? '-' : '',
                 result = String(Math.abs(value));
 
             ch || (ch = "0");
             size || (size = 2);
 
-            if(result.length >= size) {
+            if (result.length >= size) {
                 return sign + result.slice(-size);
             }
 
@@ -877,7 +905,7 @@ window.LIB_DIV_DEBUG = false;
         },
 
         /**
-         * 세자리마다 ,를 삽입
+         * 세자리마다 ,를 삽입, .comma로 해도 됨
          *
          * @function
          * @param {number} value
@@ -885,10 +913,12 @@ window.LIB_DIV_DEBUG = false;
          *
          * @example
          * axl.number.addComma(21342); // "21,342"
+         * // or
+         * axl.number.comma(21342); // 21,342
          */
-        addComma: (function () {
+        addComma: (function() {
             var regComma = /(\d+)(\d{3})/;
-            return function (value) {
+            return function(value) {
                 value += '';
                 var x = value.split('.'),
                     x1 = x[0],
@@ -908,7 +938,7 @@ window.LIB_DIV_DEBUG = false;
          * @param {number} max 최대값
          * @return {number} 랜덤값
          */
-        random: function (min, max) {
+        random: function(min, max) {
             if (!max) {
                 max = min;
                 min = 0;
@@ -924,9 +954,12 @@ window.LIB_DIV_DEBUG = false;
          * @param {number} max 최대값
          * @return {number}
          */
-        limit: function (value, min, max) {
-            if (value < min) { return min; }
-            else if (value > max) { return max; }
+        limit: function(value, min, max) {
+            if (value < min) {
+                return min;
+            } else if (value > max) {
+                return max;
+            }
             return value;
         },
 
@@ -936,8 +969,8 @@ window.LIB_DIV_DEBUG = false;
          * @return {number}
          */
         parse: function(value) {
-            value = (value||'').replace(/[^-0-9\.]/gi, '');
-            return value|0;
+            value = (value || '').replace(/[^-0-9\.]/gi, '');
+            return value | 0;
         },
         /**
          * 2진수로 변환
@@ -945,9 +978,9 @@ window.LIB_DIV_DEBUG = false;
          * @param bits 비트길이 (4 or 8)
          * @return {string}
          */
-        toBinary: function(d, bits)  {
-            var b  = [];
-            if(!bits) {
+        toBinary: function(d, bits) {
+            var b = [];
+            if (!bits) {
                 bits = 8;
             }
             while (d > 0) {
@@ -962,7 +995,7 @@ window.LIB_DIV_DEBUG = false;
             return b.join("");
         },
         fromBinary: function(b) {
-            var ba  = (b||'').split(""),
+            var ba = (b || '').split(""),
                 n = 1,
                 r = 0;
             for (var i in ba) {
@@ -970,6 +1003,43 @@ window.LIB_DIV_DEBUG = false;
                 n *= 2;
             }
             return r;
+        },
+        toKorean: function(num) {
+            var nums = num.toString().replace(/[^0-9]/, '').split('');
+
+            var kor = ['', '일', '이', '삼', '사', '오', '육', '칠', '팔', '구'],
+                unit = ['', '십', '백', '천'],
+                unit2 = ['', '만', '억', '조', '경', '해'],
+
+                c = 0,
+                c2 = 0,
+                result = '',
+                ch = '';
+
+            for (var i = nums.length - 1; i >= 0; i--) {
+                ch = kor[nums[i]];
+                console.log(nums[i], ch, c, c2);
+                if (!ch) {
+                    c++;;
+                    continue;
+                }
+                if (c % 4 === 0) {
+                    result = unit2[c2 % 6] + result; // 만, 억, 조, 경, 해
+                    if (ch === '일' && (i === 0 && c2 <= 1)) {
+                        ch = '';
+                    }
+                    if (i > 0) {
+                        c2++;
+                    }
+                } else {
+                    if (ch === '일') {
+                        ch = '';
+                    }
+                }
+                result = ch + unit[c % 4] + result;
+                c++;
+            }
+            return result;
         }
     });
     /**
@@ -979,6 +1049,7 @@ window.LIB_DIV_DEBUG = false;
      * @name axl.number.pad
      */
     core.number.pad = core.number.zeroPad;
+    core.comma = core.number.addComma;
     /////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -987,7 +1058,7 @@ window.LIB_DIV_DEBUG = false;
      * @namespace
      * @name axl.string
      */
-    core.addon('string', function () {
+    core.addon('string', function() {
         var escapeChars = {
                 '&': '&amp;',
                 '>': '&gt;',
@@ -995,9 +1066,9 @@ window.LIB_DIV_DEBUG = false;
                 '"': '&quot;',
                 "'": '&#39;'
             },
-            unescapeChars = (function (escapeChars) {
+            unescapeChars = (function(escapeChars) {
                 var results = {};
-                each(escapeChars, function (v, k) {
+                each(escapeChars, function(v, k) {
                     results[v] = k;
                 });
                 return results;
@@ -1007,7 +1078,7 @@ window.LIB_DIV_DEBUG = false;
             tagRegexp = /<\/?[^>]+>/gi,
             scriptRegexp = /<script[^>]*>([\\S\\s]*?)<\/script>/img;
 
-        return /** @lends axl.string */{
+        return /** @lends axl.string */ {
             /**
              * 앞뒤 빈문자열을 제거
              * @param {string} value
@@ -1029,7 +1100,7 @@ window.LIB_DIV_DEBUG = false;
              * @example
              * axl.string.replaceAll("a,b,c,d", ',', ''); // "abcd"
              */
-            replaceAll: function (value, find, rep) {
+            replaceAll: function(value, find, rep) {
                 if (find.constructor === RegExp) {
                     return value.replace(new RegExp(find.toString().replace(/^\/|\/$/gi, ""), "gi"), rep);
                 }
@@ -1045,9 +1116,9 @@ window.LIB_DIV_DEBUG = false;
              * @example
              * axl.string.byteLength("동해물과"); // 8
              */
-            byteLength: function (value) {
+            byteLength: function(value) {
                 var l = 0;
-                for (var i=0, len = value.length; i < len; i++) {
+                for (var i = 0, len = value.length; i < len; i++) {
                     l += (value.charCodeAt(i) > 255) ? 2 : 1;
                 }
                 return l;
@@ -1060,7 +1131,7 @@ window.LIB_DIV_DEBUG = false;
              * @example
              * axl.string.getFileExt('etc/bin/jslib.js'); // 'js'
              */
-            getFileExt: function(fname){
+            getFileExt: function(fname) {
                 fname || (fname = '');
                 return fname.substr((~-fname.lastIndexOf(".") >>> 0) + 2);
             },
@@ -1078,6 +1149,27 @@ window.LIB_DIV_DEBUG = false;
             },
 
             /**
+             * 주어진 문자열을 지정된 길이만큼 자른 후, 꼬리글을 덧붙여 반환
+             *
+             * @param {string} value 문자열
+             * @param {number} length 잘라낼 길이
+             * @param {string} [truncation = '...'] 꼬리글
+             * @return {string} 결과 문자열
+             *
+             * @example
+             * axl.string.cut("동해물과", 3, "..."); // "동..."
+             */
+            cut: function(value, length, truncation) {
+                var str = value;
+
+                truncation || (truncation = '');
+                if (str.length > length) {
+                    return str.substring(0, length) + truncation;
+                }
+                return str;
+            },
+
+            /**
              * 주어진 문자열을 지정된 길이(바이트)만큼 자른 후, 꼬리글을 덧붙여 반환
              *
              * @param {string} value 문자열
@@ -1088,7 +1180,7 @@ window.LIB_DIV_DEBUG = false;
              * @example
              * axl.string.cutByByte("동해물과", 3, "..."); // "동..."
              */
-            cutByByte: function (value, length, truncation) {
+            cutByByte: function(value, length, truncation) {
                 var str = value,
                     chars = this.indexByByte(value, length);
 
@@ -1108,12 +1200,15 @@ window.LIB_DIV_DEBUG = false;
              * @example
              * axl.string.indexByByte("동해물과", 3); // 2
              */
-            indexByByte: function (value, length) {
+            indexByByte: function(value, length) {
                 var str = value,
-                    l = 0, len, i;
-                for (i=0, len = str.length; i < len; i++) {
+                    l = 0,
+                    len, i;
+                for (i = 0, len = str.length; i < len; i++) {
                     l += (str.charCodeAt(i) > 255) ? 2 : 1;
-                    if (l > length) { return i; }
+                    if (l > length) {
+                        return i;
+                    }
                 }
                 return i;
             },
@@ -1127,7 +1222,7 @@ window.LIB_DIV_DEBUG = false;
              * @example
              * axl.string.capitalize("abCdEfg"); // "Abcdefg"
              */
-            capitalize: function (value) {
+            capitalize: function(value) {
                 return value ? value.charAt(0).toUpperCase() + value.substring(1) : value;
             },
 
@@ -1140,7 +1235,7 @@ window.LIB_DIV_DEBUG = false;
              * @example
              * axl.string.capitalize("ab-cd-efg"); // "abCdEfg"
              */
-            camelize: function (value) {
+            camelize: function(value) {
                 return value ? value.replace(/(\-|_|\s)+(.)?/g, function(a, b, c) {
                     return (c ? c.toUpperCase() : '');
                 }) : value
@@ -1155,7 +1250,7 @@ window.LIB_DIV_DEBUG = false;
              * @example
              * axl.string.dasherize("abCdEfg"); // "ab-cd-efg"
              */
-            dasherize: function (value) {
+            dasherize: function(value) {
                 return value ? value.replace(/[_\s]+/g, '-').replace(/([A-Z])/g, '-$1').replace(/-+/g, '-').toLowerCase() : value;
             },
 
@@ -1166,8 +1261,10 @@ window.LIB_DIV_DEBUG = false;
              * @example
              * axl.string.toFirstLower("Welcome"); // 'welcome'
              */
-            toFirstLower: function (value) {
-                return value ? value.replace(/^[A-Z]/, function(s) { return s.toLowerCase(); }) : value;
+            toFirstLower: function(value) {
+                return value ? value.replace(/^[A-Z]/, function(s) {
+                    return s.toLowerCase();
+                }) : value;
             },
 
             /**
@@ -1180,7 +1277,7 @@ window.LIB_DIV_DEBUG = false;
              * @example
              * axl.string.repeat("ab", 4); // "abababab"
              */
-            repeat: function (value, cnt, sep) {
+            repeat: function(value, cnt, sep) {
                 sep || (sep = '');
                 var result = [];
 
@@ -1199,8 +1296,8 @@ window.LIB_DIV_DEBUG = false;
              * @example
              * axl.string.escapeHTML('<div><a href="#">링크</a></div>'); // "&lt;div&gt;&lt;a href=&quot;#&quot;&gt;링크&lt;/a&gt;&lt;/div&gt;"
              */
-            escapeHTML: function (value) {
-                return value ? (value+"").replace(escapeRegexp, function (m) {
+            escapeHTML: function(value) {
+                return value ? (value + "").replace(escapeRegexp, function(m) {
                     return escapeChars[m];
                 }) : value;
             },
@@ -1214,8 +1311,8 @@ window.LIB_DIV_DEBUG = false;
              * @example
              * axl.string.unescapeHTML('&lt;div&gt;&lt;a href=&quot;#&quot;&gt;링크&lt;/a&gt;&lt;/div&gt;');  // '<div><a href="#">링크</a></div>'
              */
-            unescapeHTML: function (value) {
-                return value ? (value+"").replace(unescapeRegexp, function (m) {
+            unescapeHTML: function(value) {
+                return value ? (value + "").replace(unescapeRegexp, function(m) {
                     return unescapeChars[m];
                 }) : value;
             },
@@ -1233,7 +1330,7 @@ window.LIB_DIV_DEBUG = false;
              * axl.string.toggle('ASC", "ASC", "DESC"); // "DESC"
              * axl.string.toggle('DESC", "ASC", "DESC"); // "ASC"
              */
-            toggle: function (value, these, other) {
+            toggle: function(value, these, other) {
                 return these === value ? other : value;
             },
 
@@ -1247,11 +1344,11 @@ window.LIB_DIV_DEBUG = false;
              * @example
              * axl.string.format("{0}:{1}:{2} {0}", "a", "b", "c");  // "a:b:c a"
              */
-            format: function (format, val) {
+            format: function(format, val) {
                 var args = core.toArray(arguments).slice(1),
                     isJson = core.is(val, 'object');
 
-                return format.replace(/\{([0-9a-z]+)\}/ig, function (m, i) {
+                return format.replace(/\{([0-9a-z]+)\}/ig, function(m, i) {
                     return isJson ? val[i] : args[i] || '';
                 });
             },
@@ -1275,13 +1372,14 @@ window.LIB_DIV_DEBUG = false;
              * @returns {String} 랜덤문자열
              */
             random: function(len) {
-                var keystr = '', x;
+                var keystr = '',
+                    x;
                 for (var i = 0; i < len; i++) {
                     x = Math.floor((Math.random() * 36));
-                    if (x<10) {
+                    if (x < 10) {
                         keystr += String(x);
                     } else {
-                        keystr += String.fromCharCode(x+87);
+                        keystr += String.fromCharCode(x + 87);
                     }
                 }
                 return keystr;
@@ -1295,7 +1393,7 @@ window.LIB_DIV_DEBUG = false;
              * @example
              * axl.string.stripTags('welcome to <b>the</b> jungle'); // 'welcome to the jungle'
              */
-            stripTags: function (value) {
+            stripTags: function(value) {
                 return value.replace(tagRegexp, '');
             },
 
@@ -1307,7 +1405,7 @@ window.LIB_DIV_DEBUG = false;
              * @example
              * axl.string.stripScripts('welcome <s'+'cript>alert('hello');</s'+'cript> to the jungle'); // 'welcome to the jungle'
              */
-            stripScripts: function (value) {
+            stripScripts: function(value) {
                 return value.replace(scriptRegexp, '');
             }
 
@@ -1319,7 +1417,7 @@ window.LIB_DIV_DEBUG = false;
      * @namespace
      * @name axl.object
      */
-    core.addon('object', /** @lends axl.object */{
+    core.addon('object', /** @lends axl.object */ {
 
         /**
          * 개체의 열거가능한 속성 및 메서드 이름을 배열로 반환
@@ -1331,9 +1429,9 @@ window.LIB_DIV_DEBUG = false;
          * @example
          * axl.object.keys({"name": "Axl rose", "age": 50}); // ["name", "age"]
          */
-        keys: Object.keys || function (obj) {
+        keys: Object.keys || function(obj) {
             var results = [];
-            each(obj, function (v, k) {
+            each(obj, function(v, k) {
                 results.push(k);
             });
             return results;
@@ -1349,9 +1447,9 @@ window.LIB_DIV_DEBUG = false;
          * @example
          * axl.object.values({"name": "Axl rose", "age": 50}); // ["Axl rose", 50]
          */
-        values: Object.values || function (obj) {
+        values: Object.values || function(obj) {
             var results = [];
-            each(obj, function (v) {
+            each(obj, function(v) {
                 results.push(v);
             });
             return results;
@@ -1366,12 +1464,15 @@ window.LIB_DIV_DEBUG = false;
          *
          * @example
          * axl.object.map({1; 'one', 2: 'two', 3: 'three'}, function(item, key) {
-		 *		return item + '__';
-		 * });
+         *
+        return item + '__';
+         * });
          * // {1: 'one__', 2: 'two__', 3: 'three__'}
          */
         map: function(obj, cb) {
-            if (!core.is(obj, 'object') || !core.is(cb, 'function')) { return obj; }
+            if (!core.is(obj, 'object') || !core.is(cb, 'function')) {
+                return obj;
+            }
             var results = {};
             each(obj, function(v, k) {
                 results[k] = cb(obj[k], k, obj);
@@ -1390,7 +1491,7 @@ window.LIB_DIV_DEBUG = false;
          * axl.object.hasItems(obj1); // false
          * axl.object.hasItems(obj2); // true
          */
-        hasItems: function (obj) {
+        hasItems: function(obj) {
             if (!core.is(obj, 'object')) {
                 return false;
             }
@@ -1413,24 +1514,24 @@ window.LIB_DIV_DEBUG = false;
          * @example
          * axl.object.toQueryString({"a":1, "b": 2, "c": {"d": 4}}); // "a=1&b=2&c[d]=4"
          */
-        toQueryString: function (params, isEncode) {
+        toQueryString: function(params, isEncode) {
             if (typeof params === 'string') {
                 return params;
             }
             var queryString = '',
-                encode = isEncode === false ? function (v) {
+                encode = isEncode === false ? function(v) {
                     return v;
                 } : encodeURIComponent;
 
-            each(params, function (value, key) {
-                if (typeof (value) === 'object') {
-                    each(value, function (innerValue, innerKey) {
+            each(params, function(value, key) {
+                if (typeof(value) === 'object') {
+                    each(value, function(innerValue, innerKey) {
                         if (queryString !== '') {
                             queryString += '&';
                         }
                         queryString += encode(key) + '[' + encode(innerKey) + ']=' + encode(innerValue);
                     });
-                } else if (typeof (value) !== 'undefined') {
+                } else if (typeof(value) !== 'undefined') {
                     if (queryString !== '') {
                         queryString += '&';
                     }
@@ -1448,11 +1549,11 @@ window.LIB_DIV_DEBUG = false;
          *
          * @example
          * axl.object.travere({1:a, 2:b, 3:c, 4:d]);
-		 * // {a:1, b:2, c:3, d:4}
-		 */
-        traverse: function (obj) {
+         * // {a:1, b:2, c:3, d:4}
+         */
+        traverse: function(obj) {
             var result = {};
-            each(obj, function (item, index) {
+            each(obj, function(item, index) {
                 result[item] = index;
             });
             return result;
@@ -1468,8 +1569,10 @@ window.LIB_DIV_DEBUG = false;
          * var obj = {"a": "A", "b": "B"}
          * axl.object.remove(obj, 'b'); // {"a":"A"} // delete obj.b;로 하는게 더 낫겠네..ㅎ
          */
-        remove: function (value, key) {
-            if (!core.is(value, 'object')) { return value; }
+        remove: function(value, key) {
+            if (!core.is(value, 'object')) {
+                return value;
+            }
             value[key] = null;
             delete value[key];
             return value;
@@ -1488,7 +1591,7 @@ window.LIB_DIV_DEBUG = false;
          * @example
          * axl.object.stringify({"a": "A"
          */
-        stringify: window.JSON ? JSON.stringify : function (val, opts, pad) {
+        stringify: window.JSON ? JSON.stringify : function(val, opts, pad) {
             var cache = [];
             return (function stringify(val, opts, pad) {
                 var objKeys;
@@ -1506,8 +1609,8 @@ window.LIB_DIV_DEBUG = false;
                     return val;
                 }
 
-                if(typeof val === 'string') {
-                    return '"' + val +'"';
+                if (typeof val === 'string') {
+                    return '"' + val + '"';
                 }
 
                 if (val instanceof Date) {
@@ -1519,10 +1622,10 @@ window.LIB_DIV_DEBUG = false;
                         return '[]';
                     }
 
-                    return '[' + opts.nr + core.array.map(val, function (el, i) {
-                            var eol = val.length - 1 === i ? opts.nr : ', '+opts.nr;
-                            return pad + opts.indent + stringify(el, opts, pad + opts.indent) + eol;
-                        }).join('') + pad + ']';
+                    return '[' + opts.nr + core.array.map(val, function(el, i) {
+                        var eol = val.length - 1 === i ? opts.nr : ', ' + opts.nr;
+                        return pad + opts.indent + stringify(el, opts, pad + opts.indent) + eol;
+                    }).join('') + pad + ']';
                 }
 
                 if (core.isPlainObject(val)) {
@@ -1538,17 +1641,17 @@ window.LIB_DIV_DEBUG = false;
 
                     objKeys = core.object.keys(val);
 
-                    return '{'+opts.nr + core.array.map(objKeys, function (el, i) {
-                            var eol = objKeys.length - 1 === i ? opts.nr : ', '+opts.nr;
-                            var key = /^[^a-z_]|\W+/ig.test(el) && el[0] !== '$' ? stringify(el, opts) : el;
-                            return pad + opts.indent + '"' + key + '": ' + stringify(val[el], opts, pad + opts.indent) + eol;
-                        }).join('') + pad + '}';
+                    return '{' + opts.nr + core.array.map(objKeys, function(el, i) {
+                        var eol = objKeys.length - 1 === i ? opts.nr : ', ' + opts.nr;
+                        var key = /^[^a-z_]|\W+/ig.test(el) && el[0] !== '$' ? stringify(el, opts) : el;
+                        return pad + opts.indent + '"' + key + '": ' + stringify(val[el], opts, pad + opts.indent) + eol;
+                    }).join('') + pad + '}';
                 }
 
                 if (opts.singleQuotes === false) {
-                    return '"' + (val+'').replace(/"/g, '\\\"') + '"';
+                    return '"' + (val + '').replace(/"/g, '\\\"') + '"';
                 } else {
-                    return "'" + (val+'').replace(/'/g, "\\\'") + "'";
+                    return "'" + (val + '').replace(/'/g, "\\\'") + "'";
                 }
             })(val, opts, pad);
         }
@@ -1570,7 +1673,7 @@ window.LIB_DIV_DEBUG = false;
      * @namespace
      * @name axl.array
      */
-    core.addon('array', /** @lends axl.array# */{
+    core.addon('array', /** @lends axl.array# */ {
         /**
          * 배열 병합
          * @param {Array} arr 원본 배열
@@ -1579,10 +1682,9 @@ window.LIB_DIV_DEBUG = false;
          * @exmaple
          * var newArray = axl.array.append([1,2,3], [4,5,6], [6, 7, 8]); // [1,2,3,4,5,6,7,8]
          */
-        append: function (arr) {
+        append: function(arr) {
             var args = arraySlice.call(arguments);
-            arrayProto.push.apply.apply(args);
-            return args[0];
+            return Array.prototype.concat.apply([], args);
         },
         /**
          * 콜백함수로 하여금 요소를 가공하는 함수
@@ -1596,16 +1698,19 @@ window.LIB_DIV_DEBUG = false;
          *
          * @example
          * axl.array.map([1, 2, 3], function(item, index) {
-		 *		return item * 10;
-		 * });
+         *
+        return item * 10;
+         * });
          * // [10, 20, 30]
          */
-        map: nativeCall(arrayProto.map) || function (obj, cb, ctx) {
+        map: nativeCall(arrayProto.map) || function(obj, cb, ctx) {
             var results = [];
-            if (!core.is(obj, 'array') || !core.is(cb, 'function')) { return results; }
+            if (!core.is(obj, 'array') || !core.is(cb, 'function')) {
+                return results;
+            }
             // vanilla js~
-            for(var i =0, len = obj.length; i < len; i++) {
-                results[results.length] = cb.call(ctx||obj, obj[i], i, obj);
+            for (var i = 0, len = obj.length; i < len; i++) {
+                results[results.length] = cb.call(ctx || obj, obj[i], i, obj);
             }
             return results;
         },
@@ -1627,9 +1732,11 @@ window.LIB_DIV_DEBUG = false;
          */
         every: nativeCall(arrayProto.every) || function(arr, cb, ctx) {
             var isTrue = true;
-            if (!core.is(arr, 'array') || !core.is(cb, 'function')) { return isTrue; }
+            if (!core.is(arr, 'array') || !core.is(cb, 'function')) {
+                return isTrue;
+            }
             each(arr, function(v, k) {
-                if (cb.call(ctx||this, v, k) !== true) {
+                if (cb.call(ctx || this, v, k) !== true) {
                     return isTrue = false, false;
                 }
             });
@@ -1653,9 +1760,11 @@ window.LIB_DIV_DEBUG = false;
          */
         any: nativeCall(arrayProto.any) || function(arr, cb, ctx) {
             var isTrue = false;
-            if (!core.is(arr, 'array') || !core.is(cb, 'function')) { return isTrue; }
+            if (!core.is(arr, 'array') || !core.is(cb, 'function')) {
+                return isTrue;
+            }
             each(arr, function(v, k) {
-                if (cb.call(ctx||this, v, k) === true) {
+                if (cb.call(ctx || this, v, k) === true) {
                     return isTrue = true, false;
                 }
             });
@@ -1670,13 +1779,13 @@ window.LIB_DIV_DEBUG = false;
          * @example
          * axl.array.shuffle([1, 3, 4, 6, 7, 8]); // [6, 3, 8, 4, 1, 7]
          */
-        shuffle: function (obj) {
+        shuffle: function(obj) {
             var rand,
                 index = 0,
                 shuffled = [],
                 number = core.number;
 
-            each(obj, function (value) {
+            each(obj, function(value) {
                 rand = number.random(index++);
                 shuffled[index - 1] = shuffled[rand], shuffled[rand] = value;
             });
@@ -1694,15 +1803,18 @@ window.LIB_DIV_DEBUG = false;
          *
          * @example
          * axl.array.filter([1, '일', 2, '이', 3, '삼'], function(item, index) {
-		 *		return typeof item === 'string';
-		 * });
+         *
+        return typeof item === 'string';
+         * });
          * // ['일','이','삼']
          */
-        filter: nativeCall(arrayProto.filter) || function (obj, cb, ctx) {
+        filter: nativeCall(arrayProto.filter) || function(obj, cb, ctx) {
             var results = [];
-            if (!core.is(obj, 'array') || !core.is(cb, 'function')) { return results; }
-            for(var i =0, len = obj.length; i < len; i++) {
-                cb.call(ctx||obj, obj[i], i, obj) && (results[results.length] = obj[i]);
+            if (!core.is(obj, 'array') || !core.is(cb, 'function')) {
+                return results;
+            }
+            for (var i = 0, len = obj.length; i < len; i++) {
+                cb.call(ctx || obj, obj[i], i, obj) && (results[results.length] = obj[i]);
             }
             return results;
         },
@@ -1717,11 +1829,13 @@ window.LIB_DIV_DEBUG = false;
          * @example
          * axl.array.include([1, '일', 2, '이', 3, '삼'], '삼');  // true
          */
-        include: function (arr, value, b) {
-            if (!core.is(arr, 'array')) { return value; }
-            if(typeof value === 'function') {
-                for(var i = 0; i<arr.length; i++) {
-                    if(value(arr[i], i) === true){
+        include: function(arr, value, b) {
+            if (!core.is(arr, 'array')) {
+                return value;
+            }
+            if (typeof value === 'function') {
+                for (var i = 0; i < arr.length; i++) {
+                    if (value(arr[i], i) === true) {
                         return true;
                     }
                 }
@@ -1741,9 +1855,11 @@ window.LIB_DIV_DEBUG = false;
          * @example
          * axl.array.indexOf([1, '일', 2, '이', 3, '삼'], '일');  // 1
          */
-        indexOf: nativeCall(arrayProto.indexOf) || function (arr, value, b) {
+        indexOf: nativeCall(arrayProto.indexOf) || function(arr, value, b) {
             for (var i = 0, len = arr.length; i < len; i++) {
-                if ( (b !== false && arr[i] === value) || (b === false && arr[i] == value) ) { return i; }
+                if ((b !== false && arr[i] === value) || (b === false && arr[i] == value)) {
+                    return i;
+                }
             }
             return -1;
         },
@@ -1757,8 +1873,10 @@ window.LIB_DIV_DEBUG = false;
          * @example
          * axl.array.removeAt([1, 2, 3, 4], 1); // [1, 3, 4]
          */
-        removeAt: function (value, index) {
-            if (!core.is(value, 'array')) { return value; }
+        removeAt: function(value, index) {
+            if (!core.is(value, 'array')) {
+                return value;
+            }
             value.splice(index, 1);
             return value;
         },
@@ -1777,18 +1895,22 @@ window.LIB_DIV_DEBUG = false;
          *     return value === 'b';
          * }); // ['a', 'c']
          */
-        remove: function (value, iter) {
-            if (!core.is(value, 'array')) { return value; }
-            if(typeof iter === 'function'){
-                for(var i = value.length, item; item = value[--i]; ){
-                    if(iter(item, i) === true){
+        remove: function(value, iter) {
+            if (!core.is(value, 'array')) {
+                return value;
+            }
+            if (typeof iter === 'function') {
+                for (var i = value.length, item; item = value[--i];) {
+                    if (iter(item, i) === true) {
                         value = this.removeAt(value, i);
                     }
                 }
                 return value;
             } else {
                 var index = this.indexOf(value, iter);
-                if(index < 0) { return value; }
+                if (index < 0) {
+                    return value;
+                }
                 return this.removeAt(value, index);
             }
         },
@@ -1801,8 +1923,8 @@ window.LIB_DIV_DEBUG = false;
          * @example
          * axl.array.max([2, 1, 3, 5, 2, 8]); // 8
          */
-        max: function( array ) {
-            return Math.max.apply( Math, array );
+        max: function(array) {
+            return Math.max.apply(Math, array);
         },
 
         /**
@@ -1813,8 +1935,8 @@ window.LIB_DIV_DEBUG = false;
          * @example
          * axl.array.min([2, 1, 3, 5, 2, 8]); // 1
          */
-        min: function( array ) {
-            return Math.min.apply( Math, array );
+        min: function(array) {
+            return Math.min.apply(Math, array);
         },
 
         /**
@@ -1827,7 +1949,8 @@ window.LIB_DIV_DEBUG = false;
          * axl.array.reverse([1, 2, 3]); // [3, 2, 1]
          */
         reverse: nativeCall(arrayProto.reverse) || function(array) {
-            var tmp = null, first, last;
+            var tmp = null,
+                first, last;
             var length = array.length;
 
             for (first = 0, last = length - 1; first < length / 2; first++, last--) {
@@ -1849,13 +1972,13 @@ window.LIB_DIV_DEBUG = false;
          */
         different: function(arr1, arr2) {
             var newArr = [];
-            core.each(arr1, function (value) {
-                if(core.array.indexOf(arr2, value) < 0) {
+            core.each(arr1, function(value) {
+                if (core.array.indexOf(arr2, value) < 0) {
                     newArr.push(value);
                 }
             });
-            core.each(arr2, function (value) {
-                if(core.array.indexOf(arr1, value) < 0) {
+            core.each(arr2, function(value) {
+                if (core.array.indexOf(arr1, value) < 0) {
                     newArr.push(value);
                 }
             });
@@ -1868,21 +1991,26 @@ window.LIB_DIV_DEBUG = false;
      * @namespace
      * @name axl.date
      */
-    core.addon('date', function () {
+    core.addon('date', function() {
         var months = "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec".split(","),
             fullMonths = "January,Febrary,March,April,May,June,July,Augst,September,October,November,December".split(",");
 
 
         function compare(d1, d2) {
-            if(!(d1 instanceof Date)){ d1 = core.date.parse(d1); }
-            if(!(d2 instanceof Date)){ d2 = core.date.parse(d2); }
+            if (!(d1 instanceof Date)) {
+                d1 = core.date.parse(d1);
+            }
+            if (!(d2 instanceof Date)) {
+                d2 = core.date.parse(d2);
+            }
 
             return d1.getTime() > d2.getTime() ? -1 : (d1.getTime() === d2.getTime() ? 0 : 1);
         }
 
-        return /** @lends axl.date */{
+        return /** @lends axl.date */ {
             MONTHS_NAME: months,
             MONTHS_FULLNAME: fullMonths,
+            FORMAT: 'yyyy.MM.dd',
 
             /**
              * 날짜형식을 지정한 포맷의 문자열로 변환
@@ -1892,11 +2020,34 @@ window.LIB_DIV_DEBUG = false;
              * @return {string} 변환된 문자열
              *
              * @example
+             * // ex) 2015-04-07 15:03:45
+             * // yyyy: 2015
+             * // yy: 15
+             * // M: 4
+             * // MM: 04
+             * // MMM: Apr
+             * // MMMMM: April
+             * // d: 7
+             * // dd: 07
+             * // h: 15
+             * // hh: 15
+             * // H: 3
+             * // m: 3
+             * // mm: 03
+             * // s: 45
+             * // ss: 45
+             * // x: PM
+             *
              * axl.date.format(new Date(), "yy/MM/dd");
              * // '15/01/05'
              */
-            format: function (formatDate, formatString) {
-                formatString || (formatString = 'yyyy-MM-dd');
+            format: function(formatDate, formatString) {
+                formatString || (formatString = this.FORMAT);
+                if (core.is(formatDate, 'number')) {
+                    formatDate = new Date(formatDate);
+                } else if (core.is(formatDate, 'string')) {
+                    formatDate = this.parse(formatDate);
+                }
                 if (formatDate instanceof Date) {
                     var yyyy = formatDate.getFullYear(),
                         yy = yyyy.toString().substring(2),
@@ -1918,7 +2069,24 @@ window.LIB_DIV_DEBUG = false;
                     if (H === 0) {
                         H = 12;
                     }
-                    return formatString.replace(/yyyy/g, yyyy).replace(/yy/g, yy).replace(/MMMM/g, MMMM).replace(/MMM/g, MMM).replace(/MM/g, MM).replace(/M/g, M).replace(/dd/g, dd).replace(/d/g, d).replace(/hh/g, hh).replace(/h/g, h).replace(/mm/g, mm).replace(/m/g, m).replace(/ss/g, ss).replace(/s/g, s).replace(/!!!!/g, MMMM).replace(/!!!/g, MMM).replace(/H/g, H).replace(/x/g, x);
+                    return formatString.replace(/yyyy/g, yyyy)
+                        .replace(/yy/g, yy)
+                        .replace(/MMMM/g, MMMM)
+                        .replace(/MMM/g, MMM)
+                        .replace(/MM/g, MM)
+                        .replace(/M/g, M)
+                        .replace(/dd/g, dd)
+                        .replace(/d/g, d)
+                        .replace(/hh/g, hh)
+                        .replace(/h/g, h)
+                        .replace(/mm/g, mm)
+                        .replace(/m/g, m)
+                        .replace(/ss/g, ss)
+                        .replace(/s/g, s)
+                        .replace(/!!!!/g, MMMM)
+                        .replace(/!!!/g, MMM)
+                        .replace(/H/g, H)
+                        .replace(/x/g, x);
                 } else {
                     return "";
                 }
@@ -1929,13 +2097,13 @@ window.LIB_DIV_DEBUG = false;
              * @param {string} date 날짜 문자열
              * @returns {boolean} 유효한 날자인지 여부
              * @example
-             * axl.date.isValid('2013-13-23'); // false
-             * axl.date.isValid('2013-11-23'); // true
+             * axl.date.isValid('2014-13-23'); // false
+             * axl.date.isValid('2014-11-23'); // true
              */
             isValid: function(date) {
                 try {
-                    return !isNaN( this.parse(date).getTime() );
-                } catch(e){
+                    return !isNaN(this.parse(date).getTime());
+                } catch (e) {
                     return false;
                 }
             },
@@ -1948,13 +2116,19 @@ window.LIB_DIV_DEBUG = false;
              * @param {Date} end 만료일시
              * @return {boolean} 두날짜 사이에 있는지 여부
              * @example
-             * axl.date.between('2013-09-12', '2013-09-11', '2013=09-12'); // true
-             * axl.date.between('2013-09-12', '2013-09-11', '2013=09-11') // false
+             * axl.date.between('2014-09-12', '2014-09-11', '2014=09-12'); // true
+             * axl.date.between('2014-09-12', '2014-09-11', '2014=09-11') // false
              */
-            between: function (date, start, end) {
-                if(!date.getDate) { date = core.date.parse(date); }
-                if(!start.getDate) { start = core.date.parse(start); }
-                if(!end.getDate) { end = core.date.parse(end); }
+            between: function(date, start, end) {
+                if (!date.getDate) {
+                    date = core.date.parse(date);
+                }
+                if (!start.getDate) {
+                    start = core.date.parse(start);
+                }
+                if (!end.getDate) {
+                    end = core.date.parse(end);
+                }
                 return date.getTime() >= start.getTime() && date.getTime() <= end.getTime();
             },
 
@@ -1967,8 +2141,8 @@ window.LIB_DIV_DEBUG = false;
              * @param {Date} date2 날짜2
              * @return {number} -1: date1가 이후, 0: 동일, 1:date2가 이후
              * @example
-             * var d1 = new Date(2013, 11, 23);
-             * var d2 = new Date(2013, 09, 23);
+             * var d1 = new Date(2014, 11, 23);
+             * var d2 = new Date(2014, 09, 23);
              *
              * axl.date.compare(d1, d2); // -1
              * axl.date.compare(d1, d1); // 0
@@ -1983,65 +2157,52 @@ window.LIB_DIV_DEBUG = false;
              * @param {Date|string} date2 날짜2
              * @return {boolean} 두 날짜의 년월일이 동일한지 여부
              * @example
-             * axl.date.equalsYMH('2013-12-23 11:12:23', '2013-12-23 09:00:21'); // true
+             * axl.date.equalsYMD('2014-12-23 11:12:23', '2014-12-23 09:00:21'); // true
              */
-            equalsYMH: function(a, b) {
+            equalsYMD: function(a, b) {
                 var ret = true;
-                if (!a || !b){ return false; }
-                if(!a.getDate) { a = this.parse(a); }
-                if(!b.getDate) { b = this.parse(b); }
+                if (!a || !b) {
+                    return false;
+                }
+                if (!a.getDate) {
+                    a = this.parse(a);
+                }
+                if (!b.getDate) {
+                    b = this.parse(b);
+                }
                 each(['getFullYear', 'getMonth', 'getDate'], function(fn) {
                     ret = ret && (a[fn]() === b[fn]());
-                    if (!ret) { return false; }
+                    if (!ret) {
+                        return false;
+                    }
                 });
                 return ret;
             },
 
-            /**
-             * value날짜가 date이후인지 여부
-             *
-             * @param {Date} value 날짜
-             * @param {Date} date 체크할 날짜
-             * @return {boolean} 주어진 날짜가 지정된 날짜의 이후인지 체크
-             * @example
-             * axl.date.isAfter('2013-12-23', '2013-12-23'); // false
-             */
-            isAfter: function (value, date) {
-                return compare(value, date || new Date()) === 1;
-            },
 
             /**
-             * value날짜가 date이전인지 여부
-             *
-             * @param {Date} value 날짜
-             * @param {Date} date 체크할 날짜
-             * @return {boolean} 주어진 날짜가 지정된 날짜의 이후인지 체크
-             * @example
-             * axl.date.isBefore('2013-12-23', '2013-12-23'); // true
-             */
-            isBefore: function (value, date) {
-                return compare(value, date || new Date()) === -1;
-            },
-
-            /**
-             * 주어진 날짜를 기준으로 type만큼 가감된 날짜를 format형태로 반환(내가 이걸 왜 beforeDate로 명명 했을까나..;;;)
+             * 주어진 날짜를 기준으로 type만큼 가감된 날짜를 format형태로 반환
              * @param {Date} date 기준날짜
              * @param {string} type -2d, -3d, 4M, 2y ..
              * @param {string} format 포맷
              * @returns {Date|string} format지정값에 따라 결과를 날짜형 또는 문자열로 변환해서 반환
              * @example
-             * axl.date.calcDate('2013-12-23', '-3m'); // 2013-09-23(Date)
-             * axl.date.calcDate('2013-12-23', '-3m', 'yyyy/MM/dd'); // '2013/09/23'(string)
+             * axl.date.calcDate('2014-12-23', '-3m'); // 2014-09-23(Date)
+             * axl.date.calcDate('2014-12-23', '-3m', 'yyyy/MM/dd'); // '2014/09/23'(string)
              *
-             * axl.date.calcDate('2013-12-23', '-10d'); // 2013-12-13(Date)
+             * axl.date.calcDate('2014-12-23', '-10d'); // 2014-12-13(Date)
              */
             calcDate: function(date, type, format) {
                 date = this.parse(date);
+                if (!date) {
+                    return null;
+                }
+
                 var m = type.match(/([-+]*)([0-9]*)([a-z]+)/i),
                     g = m[1] === '-' ? -1 : 1,
-                    d = (m[2]|0) * g;
+                    d = (m[2] | 0) * g;
 
-                switch(m[3]) {
+                switch (m[3]) {
                     case 'd':
                         date.setDate(date.getDate() + d);
                         break;
@@ -2055,10 +2216,14 @@ window.LIB_DIV_DEBUG = false;
                         date.setFullYear(date.getFullYear() + d);
                         break;
                 }
-                if(format) {
-                    return this.format(date, format);
+                if (format) {
+                    return this.format(date, format === 'format' ? this.FORMAT : format);
                 }
                 return date;
+            },
+
+            calc: function() {
+                return this.calcDate.apply(this, [].slice.call(arguments));
             },
 
             /**
@@ -2069,22 +2234,36 @@ window.LIB_DIV_DEBUG = false;
              * @param {string} dateStringInRange 날짜 형식의 문자열
              * @return {Date} 주어진 날짜문자열을 파싱한 값을 Date형으로 반환
              * @example
-             * axl.date.parse('2013-11-12');
-             * // Wed Nov 12 2013 00:00:00 GMT+0900 (대한민국 표준시)
+             * axl.date.parse('2014-11-12');
+             * // Wed Nov 12 2014 00:00:00 GMT+0900 (대한민국 표준시)
              *
              * axl.date.parse('20141112');
-             * // Wed Nov 12 2013 00:00:00 GMT+0900 (대한민국 표준시)
+             * // Wed Nov 12 2014 00:00:00 GMT+0900 (대한민국 표준시)
              */
             parse: (function() {
                 var isoExp = /^\s*(\d{4})(\d{2})(\d{2})(\d{2})?(\d{2})?(\d{2})?\s*$/;
-                return function (dateStringInRange) {
+                return function(dateStringInRange) {
                     var date, month, parts;
 
                     if (dateStringInRange instanceof Date) {
-                        return dateStringInRange;
+                        return core.clone(dateStringInRange);
                     }
 
-                    dateStringInRange = (dateStringInRange+'').replace(/[^\d]+/g, '');
+                    dateStringInRange = (dateStringInRange + '').replace(/[^\d]+/g, '');
+                    if (dateStringInRange.length !== 8 && dateStringInRange.length !== 14) {
+                        return new Date(NaN);
+                    }
+                    if (dateStringInRange.length === 14) {
+                        date = new Date(dateStringInRange.substr(0, 4) | 0, (dateStringInRange.substr(4, 2) | 0) - 1,
+                            dateStringInRange.substr(6, 2) | 0,
+                            dateStringInRange.substr(8, 2) | 0,
+                            dateStringInRange.substr(10, 2) | 0,
+                            dateStringInRange.substr(12, 2) | 0
+                        );
+                        if (!isNaN(date)) {
+                            return date;
+                        }
+                    }
                     date = new Date(dateStringInRange);
                     if (!isNaN(date)) {
                         return date;
@@ -2095,16 +2274,16 @@ window.LIB_DIV_DEBUG = false;
 
                     if (parts) {
                         month = +parts[2];
-                        date.setFullYear(parts[1]|0, month - 1, parts[3]|0);
-                        date.setHours(parts[4]|0);
-                        date.setMinutes(parts[5]|0);
-                        date.setSeconds(parts[6]|0);
+                        date.setFullYear(parts[1] | 0, month - 1, parts[3] | 0);
+                        date.setHours(parts[4] | 0);
+                        date.setMinutes(parts[5] | 0);
+                        date.setSeconds(parts[6] | 0);
                         if (month != date.getMonth() + 1) {
                             date.setTime(NaN);
                         }
                         return date;
                     }
-                    return new Date;
+                    return date;
                 };
             })(),
 
@@ -2113,7 +2292,7 @@ window.LIB_DIV_DEBUG = false;
              * @param {Date} d1 날짜 1
              * @param {Date} d2 날짜 2
              * @return {number} 두날짜의 월차
-             * axl.date.monthDiff('2011-02-12', '2013-11-23'); // 44
+             * axl.date.monthDiff('2011-02-12', '2014-11-23'); // 44
              */
             monthDiff: function(d1, d2) {
                 d1 = this.parse(d1);
@@ -2133,60 +2312,12 @@ window.LIB_DIV_DEBUG = false;
              * @param {number} month 월
              * @return {Date} 주어진 년월이 마지막 날짜
              * @example
-             * axl.date.daysInMonth(2013, 2); // 28
+             * axl.date.daysInMonth(2014, 2); // 28
              */
             daysInMonth: function(year, month) {
-                var dd = new Date(year|0, month|0, 0);
+                var dd = new Date(year | 0, month | 0, 0);
                 return dd.getDate();
             },
-
-            /**
-             * 주어진 시간이 현재부터 몇시간 이전인지 표현(예: -54000 -> 54초 이전)
-             *
-             * @function
-             * @name axl.date.prettyDuration
-             * @param {Date|Interval} time 시간
-             * @param {Date|Interval} [std] 기준시간
-             * @param {string} [tailWord = '이전'] 기준시간
-             * @return {Object}
-             *
-             * @example
-             * axl.date.prettyDuration(new Date() - 51811); -> "52초 이전"
-             */
-            prettyDuration: (function() {
-                var ints = {
-                    '초': 1,
-                    '분': 60,
-                    '시': 3600,
-                    '일': 86400,
-                    '주': 604800,
-                    '월': 2592000,
-                    '년': 31536000
-                };
-
-                return function(time, std, tailWord) {
-                    std || (std = +new Date);
-                    tailWord || (tailWord = '이전');
-
-                    if(time instanceof Date) {
-                        time = time.getTime();
-                    }
-                    // time = +new Date(time);
-
-                    var gap = (std - time) / 1000,
-                        amount, measure;
-
-                    for (var i in ints) {
-                        if (gap > ints[i]) { measure = i; }
-                    }
-
-                    amount = gap / ints[measure];
-                    amount = gap > ints.day ? (Math.round(amount * 100) / 100) : Math.round(amount);
-                    amount += measure + ' ' + tailWord;
-
-                    return amount;
-                };
-            }()),
 
             /**
              * 밀리초를 시,분,초로 변환
@@ -2197,10 +2328,10 @@ window.LIB_DIV_DEBUG = false;
              * @returns {number} dates.mins 분 수
              * @returns {number} dates.secs 초 수
              * @example
-             * axl.date.msToTime(2134000);
+             * axl.date.splits(2134000);
              * // {days: 0, hours: 0, mins: 35, secs: 34}
              */
-            msToTime: function(amount) {
+            splits: function(amount) {
                 var days, hours, mins, secs;
 
                 amount = amount / 1000;
@@ -2232,12 +2363,17 @@ window.LIB_DIV_DEBUG = false;
              * @returns {number} dates.diff
              *
              * @example
-             * axl.date.diffTime(new Date, new Date(new Date() - 51811));
+             * axl.date.diff(new Date, new Date(new Date() - 51811));
              * // {ms: 811, secs: 51, mins: 0, hours: 0, days: 0, weeks: 0, diff: 51811}
              */
-            diffTime: function(t1, t2) {
-                if(!core.is(t1, 'date')) { t1 = new Date(t1); };
-                if(!core.is(t2, 'date')) { t2 = new Date(t2); };
+            diff: function(t1, t2) {
+                if (!core.is(t1, 'date')) {
+                    t1 = new Date(t1);
+                }
+
+                if (!core.is(t2, 'date')) {
+                    t2 = new Date(t2);
+                }
 
                 var diff = t1.getTime() - t2.getTime(),
                     ddiff = diff;
@@ -2277,9 +2413,9 @@ window.LIB_DIV_DEBUG = false;
              * @param {Date} date 날짜
              * @returns {number}
              * @example
-             * axl.date.weekOfYear(new Date); // 2 // 2013-01-05를 기준으로 했을 때
+             * axl.date.weekOfYear(new Date); // 2 // 2015-01-05를 기준으로 했을 때
              */
-            weekOfYear : (function() {
+            weekOfYear: (function() {
                 var ms1d = 1000 * 60 * 60 * 24,
                     ms7d = 7 * ms1d;
 
@@ -2297,11 +2433,13 @@ window.LIB_DIV_DEBUG = false;
              * @param {number} y 년도
              * @returns {boolean}
              * @example
-             * axl.date.isLeapYear(2013); // false
+             * axl.date.isLeapYear(2014); // false
              */
-            isLeapYear: function ( y ) {
-                if ( toString.call( y ) === '[object Date]' ) { y = y.getUTCFullYear(); }
-                return (( y % 4 === 0 ) && ( y % 100 !== 0 )) || ( y % 400 === 0 );
+            isLeapYear: function(y) {
+                if (toString.call(y) === '[object Date]') {
+                    y = y.getUTCFullYear();
+                }
+                return ((y % 4 === 0) && (y % 100 !== 0)) || (y % 400 === 0);
             },
 
             /**
@@ -2311,8 +2449,8 @@ window.LIB_DIV_DEBUG = false;
              * @param {number} value 가감 크기
              * @returns {Date} 가감된 날짜의 Date객체
              * @example
-             * // 2013-06-10에서 y(년도)를 -4 한 값을 계산
-             * var d = axl.date.add(new Date(2013, 5, 10), 'y', -4); // 2010-06-10
+             * // 2014-06-10에서 y(년도)를 -4 한 값을 계산
+             * var d = axl.date.add(new Date(2014, 5, 10), 'y', -4); // 2010-06-10
              */
             add: function(date, interval, value) {
                 var d = new Date(date.getTime());
@@ -2320,7 +2458,7 @@ window.LIB_DIV_DEBUG = false;
                     return d;
                 }
 
-                switch(interval) {
+                switch (interval) {
                     case "ms":
                         d.setMilliseconds(d.getMilliseconds() + value);
                         break;
@@ -2346,6 +2484,14 @@ window.LIB_DIV_DEBUG = false;
                 return d;
             },
 
+            max: function(a, b) {
+                return new Date(Math.max(this.parse(a), this.parse(b)));
+            },
+
+            min: function(a, b) {
+                return new Date(Math.min(this.parse(a), this.parse(b)));
+            },
+
             /**
              * 시분초 normalize화 처리
              * @param {number} h 시
@@ -2369,26 +2515,25 @@ window.LIB_DIV_DEBUG = false;
 
                 var d = 0;
 
-                if(ms > 1000) {
+                if (ms > 1000) {
                     s += Math.floor(ms / 1000);
                     ms = ms % 1000;
                 }
 
-                if(s > 60) {
+                if (s > 60) {
                     M += Math.floor(s / 60);
                     s = s % 60;
                 }
 
-                if(M > 60) {
+                if (M > 60) {
                     h += Math.floor(M / 60);
                     M = M % 60;
                 }
 
-                if(h > 24) {
+                if (h > 24) {
                     d += Math.floor(h / 24);
                     h = h % 24;
                 }
-
 
                 return {
                     day: d,
@@ -2405,7 +2550,7 @@ window.LIB_DIV_DEBUG = false;
      * @namespace
      * @name axl.uri
      */
-    core.addon('uri', /** @lends axl.uri */{
+    core.addon('uri', /** @lends axl.uri */ {
 
         /**
          * 주어진 url에 쿼리스츠링을 조합
@@ -2418,7 +2563,7 @@ window.LIB_DIV_DEBUG = false;
          * axl.uri.addParam("board.do", {"a":1, "b": 2, "c": {"d": 4}}); // "board.do?a=1&b=2&c[d]=4"
          * axl.uri.addParam("board.do?id=123", {"a":1, "b": 2, "c": {"d": 4}}); // "board.do?id=123&a=1&b=2&c[d]=4"
          */
-        addParam: function (url, string) {
+        addParam: function(url, string) {
             if (core.is(string, 'object')) {
                 string = core.object.toQueryString(string);
             }
@@ -2438,11 +2583,13 @@ window.LIB_DIV_DEBUG = false;
          * @example
          * axl.uri.parseQuery("a=1&b=2"); // {"a": 1, "b": 2}
          */
-        parseQuery: function (query) {
+        parseQuery: function(query) {
             if (!query) {
                 return {};
             }
-            if (query.length > 0 && query.charAt(0) === '?') { query = query.substr(1); }
+            if (query.length > 0 && query.charAt(0) === '?') {
+                query = query.substr(1);
+            }
 
             var params = (query + '').split('&'),
                 obj = {},
@@ -2482,13 +2629,16 @@ window.LIB_DIV_DEBUG = false;
                 }
             };
 
-            return function (str) {
+            return function(str) {
                 if (str.length > 2 && str[0] === '/' && str[1] === '/') {
                     str = window.location.protocol + str;
                 }
                 var m = o.parser[o.strictMode ? "strict" : "loose"].exec(str),
-                    uri = {}, i = 14;
-                while (i--) { uri[o.key[i]] = m[i] || ""; }
+                    uri = {},
+                    i = 14;
+                while (i--) {
+                    uri[o.key[i]] = m[i] || "";
+                }
                 return uri;
             };
         })(),
@@ -2502,7 +2652,7 @@ window.LIB_DIV_DEBUG = false;
          * @example
          * axl.uri.removeHash("list.do#comment"); // "list.do"
          */
-        removeHash: function (url) {
+        removeHash: function(url) {
             return url ? url.replace(/#.*$/, '') : url;
         }
     });
@@ -2519,31 +2669,31 @@ window.LIB_DIV_DEBUG = false;
             _prefixes = ['Webkit', 'Moz', 'O', 'ms', ''],
             _style = _tmpDiv.style,
             _noReg = /^([0-9]+)[px]+$/,
-            _vendor = (function () {
+            _vendor = (function() {
                 var vendors = ['t', 'webkitT', 'MozT', 'msT', 'OT'],
                     transform,
                     i = 0,
                     l = vendors.length;
 
-                for ( ; i < l; i++ ) {
+                for (; i < l; i++) {
                     transform = vendors[i] + 'ransform';
-                    if ( transform in _style ) return vendors[i].substr(0, vendors[i].length-1);
+                    if (transform in _style) return vendors[i].substr(0, vendors[i].length - 1);
                 }
 
                 return false;
             })(),
-            string  = core.string;
+            string = core.string;
 
-        function prefixStyle(name, isHippen) {
-            if ( _vendor === false ) return name;
-            if ( _vendor === '' ) return name;
-            if(isHippen){
-                return '-' + _vendor.toLowerCase()+'-'+name[0].toLowerCase()+name.substr(1);
+        function prefixStyle(name, isHyppen) {
+            if (_vendor === false) return isHyppen ? name.toLowerCase() : name;
+            if (_vendor === '') return isHyppen ? name.toLowerCase() : name;
+            if (isHyppen) {
+                return '-' + _vendor.toLowerCase() + '-' + name[0].toLowerCase() + string.dasherize(name.substr(1));
             }
             return _vendor + string.capitalize(name);
         }
 
-        return /** @lends axl.css3 */{
+        return /** @lends axl.css3 */ {
             /**
              * css3 지원여부
              * @var {boolean}
@@ -2611,9 +2761,11 @@ window.LIB_DIV_DEBUG = false;
              * @example
              * if(axl.css3.has('transform')) { ...
              */
-            has: function (name) {
+            has: function(name) {
                 var a = _prefixes.length;
-                if (name in _style) { return true; }
+                if (name in _style) {
+                    return true;
+                }
                 name = string.capitalize(name);
                 while (a--) {
                     if (_prefixes[a] + name in _style) {
@@ -2622,6 +2774,85 @@ window.LIB_DIV_DEBUG = false;
                 }
                 return false;
             },
+
+            position: (function() {
+                var support = _vendor !== false;
+                var transform = prefixStyle('transform');
+                return support ? function($el) {
+                    var matrix = window.getComputedStyle($el[0], null),
+                        x, y;
+
+                    matrix = matrix[transform].split(')')[0].split(', ');
+                    x = +(matrix[12] || matrix[4] || 0);
+                    y = +(matrix[13] || matrix[5] || 0);
+                    return {
+                        x: x,
+                        y: y
+                    };
+                } : function($el) {
+                    var matrix = $el[0].style,
+                        x, y;
+                    x = +matrix.left.replace(/[^-\d.]/g, '');
+                    y = +matrix.top.replace(/[^-\d.]/g, '');
+                    return {
+                        x: x,
+                        y: y
+                    };
+                };
+            })(),
+
+            transform: prefixStyle('transform'),
+            transitionTimingFunction: prefixStyle('transitionTimingFunction'),
+            transitionDuration: prefixStyle('transitionDuration'),
+            transitionDelay: prefixStyle('transitionDelay'),
+            transformOrigin: prefixStyle('transformOrigin'),
+            transition: prefixStyle('transition'),
+            transitionEnd: 'transitionend webkitTransitionEnd MSTransitionEnd',
+            move: function($el, x, y, dur, cb) {
+                $el.css(this.transitionDuration, dur + 's');
+                $el.css(this.transform, 'translate(' + (x | 0) + 'px, ' + (y | 0) + 'px) translateZ(0px)');
+                if (!$el.data('bindedEnd') && cb) {
+                    $el.data('bindedEnd', true).on(this.transitionEnd, function() {
+                        cb.call($el[0]);
+                    });
+                }
+            },
+
+            /*move: function() {
+             var transitionEnd = prefixStyle('TransitionEnd', true);
+             return function ($el, opts) {
+             opts || (opts = {});
+             var left, top, pos;
+             pos  = this.position($el);
+             if (typeof opts.left === 'string' && /^[+-]=/.test(opts.left)) {
+             left = pos.x + parseInt(opts.left.replace('=', ''), 10);
+             } else {
+             left = opts.left;
+             }
+             ('maxLeft' in opts) && (left = Math.min(opts.maxLeft, left));
+             ('minLeft' in opts) && (left = Math.max(opts.minLeft, left));
+             if (typeof opts.top === 'string' && /^[+-]=/.test(opts.top)) {
+             top = pos.y + parseInt(opts.top.replace('=', ''), 10);
+             } else {
+             top = opts.top;
+             }
+             ('maxTop' in opts) && (top = Math.min(opts.maxTop, top));
+             ('minTop' in opts) && (top = Math.max(opts.minTop, top));
+
+             this.transition($el, opts.style||'all', opts.duration||0, opts.easeing||'ease-in-out');
+             this.transform($el, left, top);
+             if (!$el.data('bindedEnd') && opts.complete) {
+             $el.data('bindedEnd', true).on(transitionEnd, function(){
+             opts.complete.call($el[0]);
+             });
+             }
+             return {
+             offEnd: function() {
+             $el.removeData('bindedEnd').off(transitionEnd);
+             }
+             };
+             };
+             }(),*/
 
             /**
              * 주어진 css명 앞에 현재 브라우저에 해당하는 벤더prefix를 붙여준다.
@@ -2636,10 +2867,73 @@ window.LIB_DIV_DEBUG = false;
         };
     });
     /////////////////////////////////////////////////////////////////////////////////////////////////
+
     /**
      * @namespace
-     * @name axl.Cookie
+     * @name axl.dom
      */
+    core.addon('dom', {
+            // 캐럿 위치 반환
+            getCaretPos: function(el) {
+                if (core.is(el.selectionStart, 'number')) {
+                    return {
+                        begin: el.selectionStart,
+                        end: el.selectionEnd
+                    };
+                }
+
+                var range = document.selection.createRange();
+                if (range && range.parentElement() === el) {
+                    var inputRange = el.createTextRange(),
+                        endRange = el.createTextRange(),
+                        length = el.value.length;
+                    inputRange.moveToBookmark(range.getBookmark());
+                    endRange.collapse(false);
+
+                    if (inputRange.compareEndPoints('StartToEnd', endRange) > -1) {
+                        return {
+                            begin: length,
+                            end: length
+                        };
+                    }
+
+                    return {
+                        begin: -inputRange.moveStart('character', -length),
+                        end: -inputRange.moveEnd('character', -length)
+                    };
+                }
+
+                return {
+                    begin: 0,
+                    end: 0
+                };
+            },
+            // 캐럿 위치 설정
+            setCaretPos: function(el, pos) {
+                if (!core.is(pos, 'object')) {
+                    pos = {
+                        begin: pos,
+                        end: pos
+                    };
+                }
+
+                if (el.setSelectionRange) {
+                    //el.focus();
+                    el.setSelectionRange(pos.begin, pos.end);
+                } else if (el.createTextRange) {
+                    var range = el.createTextRange();
+                    range.collapse(true);
+                    range.moveEnd('character', pos.end);
+                    range.moveStart('character', pos.begin);
+                    range.select();
+                }
+            }
+        })
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+        /**
+         * @namespace
+         * @name axl.Cookie
+         */
     core.addon('Cookie', /** @lends axl.Cookie */ {
         defaults: {
             // domain: location.host,
@@ -2657,15 +2951,15 @@ window.LIB_DIV_DEBUG = false;
          * @param {string} [options.domain] 쿠키의 유효 도메인
          * @param {boolean} [options.secure] https에서만 쿠키 설정이 가능하도록 하는 속성
          * @example
-         * axl.Cookie.set('userid', 'common');
+         * axl.Cookie.set('userid', 'axl');
          * // or
          * axl.Cookie.set({
-         *              'userid': 'common',
+         *              'userid': 'axl',
          *              'name': '바이널'
          *              });
          */
-        set: function (name, value, options) {
-            if(!core.is(name, 'string')) {
+        set: function(name, value, options) {
+            if (!core.is(name, 'string')) {
                 core.each(name, function(val, key) {
                     this.set(key, value, value);
                 }.bind(this));
@@ -2688,9 +2982,9 @@ window.LIB_DIV_DEBUG = false;
          * @param {string} name 쿠키명
          * @return  {string} 쿠키값
          * @example
-         * axl.Cookie.get('userid'); // 'common'
+         * axl.Cookie.get('userid'); // 'axl'
          */
-        get: function (name) {
+        get: function(name) {
             var j, g, h, f;
             j = ";" + doc.cookie.replace(/ /g, "") + ";";
             g = ";" + name + "=";
@@ -2713,8 +3007,8 @@ window.LIB_DIV_DEBUG = false;
          * // or
          * core.Cookie.remove(['userid', 'name']);
          */
-        remove: function (name) {
-            if(core.is(name, 'string')) {
+        remove: function(name) {
+            if (core.is(name, 'string')) {
                 doc.cookie = name + "=;expires=Fri, 31 Dec 1987 23:59:59 GMT;";
             } else {
                 core.each(name, function(val, key) {
@@ -2739,7 +3033,7 @@ window.LIB_DIV_DEBUG = false;
             var value = this.get(name),
                 values = value ? value.split(sep) : [];
 
-            if(!core.array.include(values, val)) {
+            if (!core.array.include(values, val)) {
                 values.push(val);
             }
 
@@ -2771,8 +3065,7 @@ window.LIB_DIV_DEBUG = false;
     /////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-
-    core.addon(/** @lends common */ {
+    core.addon( /** @lends axl */ {
         /**
          * 현재 페이지의 호스트주소를 반환
          * @returns {string}
@@ -2823,7 +3116,7 @@ window.LIB_DIV_DEBUG = false;
          *     alert('구버전을 사용하고 있습니다.');
          * }
          */
-        browser: (function () {
+        browser: (function() {
             // 아 정리하고 싶당..
             var detect = {},
                 win = context,
@@ -2832,49 +3125,53 @@ window.LIB_DIV_DEBUG = false;
                 lua = ua.toLowerCase(),
                 match;
 
-            detect.isMobile = typeof orientation !== 'undefined';
+            detect.placeholder = supportPlaceholder;
+            detect.isStrict = (typeof context == 'undefined');
+
+            detect.isMobile = isMobile;
             detect.isRetina = 'devicePixelRatio' in window && window.devicePixelRatio > 1;
             detect.isAndroid = lua.indexOf('android') !== -1;
-            detect.isOpera = win.opera && win.opera.buildNumber;
+            detect.isOpera = !!(win.opera && win.opera.buildNumber);
             detect.isWebKit = /WebKit/.test(ua);
             detect.isTouch = !!('ontouchstart' in window);
 
-            match = /(msie) ([\w.]+)/.exec(lua) || /(trident)(?:.*rv.?([\w.]+))?/.exec(lua) || ['',null,-1];
+            match = /(msie) ([\w.]+)/.exec(lua) || /(trident)(?:.*rv.?([\w.]+))?/.exec(lua) || ['', null, -1];
             detect.isIE = !detect.isWebKit && !detect.isOpera && match[1] !== null;
-            detect.version = parseInt(match[2], 10);
+            detect.version = detect.ieVersion = parseInt(match[2], 10);
             detect.isOldIE = detect.isIE && detect.version < 9;
 
-            detect.isWin = (na.appVersion.indexOf("Win")!=-1);
+            detect.isWin = (na.appVersion.indexOf("Win") != -1);
             detect.isMac = (ua.indexOf('Mac') !== -1);
-            detect.isLinux = (na.appVersion.indexOf("Linux")!=-1);
-            detect.is64Bit = (lua.indexOf('wow64') > -1 || (na.platform==='Win64' && lua.indexOf('x64') > -1));
+            detect.isLinux = (na.appVersion.indexOf("Linux") != -1);
+            detect.is64Bit = (lua.indexOf('wow64') > -1 || (na.platform === 'Win64' && lua.indexOf('x64') > -1));
 
             detect.isChrome = (ua.indexOf('Chrome') !== -1);
-            detect.isGecko = (ua.indexOf('Firefox') !==-1);
+            detect.isGecko = (ua.indexOf('Firefox') !== -1);
             detect.isAir = ((/adobeair/i).test(ua));
             detect.isIOS = /(iPad|iPhone)/.test(ua);
             detect.isSafari = !detect.isChrome && (/Safari/).test(ua);
             detect.isIETri4 = (detect.isIE && ua.indexOf('Trident/4.0') !== -1);
 
-            detect.msPointer = na.msPointerEnabled && na.msMaxTouchPoints && !win.PointerEvent;
-            detect.pointer = (win.PointerEvent && na.pointerEnabled && na.maxTouchPoints) || detect.msPointer;
+            detect.msPointer = !!(na.msPointerEnabled && na.msMaxTouchPoints && !win.PointerEvent);
+            detect.pointer = !!((win.PointerEvent && na.pointerEnabled && na.maxTouchPoints) || detect.msPointer);
 
-
-            if(detect.isAndroid) {
-                detect.androidVersion = +function () {
+            if (detect.isAndroid) {
+                detect.androidVersion = function() {
                     var v = ua.match(/[a|A]ndroid[^\d]*(\d+).?(\d+)?.?(\d+)?/);
-                    return [parseInt(v[1], 10), parseInt(v[2] || 0, 10), parseInt(v[3] || 0, 10)];
+                    if (!v) {
+                        return -1;
+                    }
+                    return [parseInt(v[1] | 0, 10), parseInt(v[2] | 0, 10), parseInt(v[3] | 0, 10)];
                 }();
-            } else if(detect.isIOS) {
-                detect.iosVersion = +function () {
+            } else if (detect.isIOS) {
+                detect.iosVersion = function() {
                     var v = ua.match(/OS (\d+)_?(\d+)?_?(\d+)?/);
-                    return [parseInt(v[1], 10), parseInt(v[2] || 0, 10), parseInt(v[3] || 0, 10)];
+                    return [parseInt(v[1] | 0, 10), parseInt(v[2] | 0, 10), parseInt(v[3] | 0, 10)];
                 }();
             }
 
             return detect;
         }()),
-
 
 
         /**
@@ -2887,19 +3184,20 @@ window.LIB_DIV_DEBUG = false;
          * // 리사이징 중일 때는 #box의 크기를 변경하지 않다가,
          * // 리사이징이 끝나고 0.5초가 지난 후에 #box사이즈를 변경하고자 할 경우에 사용.
          * $(window).on('resize', axl.delayRun(function(){
-		 *		$('#box').css('width', $(window).width());
-		 *  }, 500));
+         *
+        $('#box').css('width', $(window).width());
+         *  }, 500));
          */
-        delayRun: function (fn, time, scope) {
+        delayRun: function(fn, time, scope) {
             time || (time = 250);
             var timeout = null;
-            return function () {
+            return function() {
                 if (timeout) {
                     clearTimeout(timeout);
                 }
                 var args = arguments,
                     me = this;
-                timeout = setTimeout(function () {
+                timeout = setTimeout(function() {
                     fn.apply(scope || me, args);
                     timeout = null;
                 }, time);
@@ -2916,10 +3214,10 @@ window.LIB_DIV_DEBUG = false;
          * axl.toArray('abcd"); // ["a", "b", "c", "d"]
          * axl.toArray(arguments);  // arguments를 객체를 array로 변환하여 Array에서 지원하는 유틸함수(slice, reverse ...)를 쓸수 있다.
          */
-        toArray: function (value) {
+        toArray: function(value) {
             try {
                 return arraySlice.apply(value, arraySlice.call(arguments, 1));
-            } catch (e){}
+            } catch (e) {}
 
             var ret = [];
             try {
@@ -2935,11 +3233,11 @@ window.LIB_DIV_DEBUG = false;
          *
          * @return {string}
          */
-        getUniqId: function (len) {
+        getUniqId: function(len) {
             len = len || 32;
             var rdmString = "";
-            for( ; rdmString.length < len; rdmString  += Math.random().toString(36).substr(2));
-            return  rdmString.substr(0, len);
+            for (; rdmString.length < len; rdmString += Math.random().toString(36).substr(2));
+            return rdmString.substr(0, len);
         },
 
         /**
@@ -2967,226 +3265,308 @@ window.LIB_DIV_DEBUG = false;
          * var html = tmpl({name: 'Axl rose'}); // &lt;span>Axl rose&lt;/span>
          * $('div').html(html);
          */
-        template: function (str, data) {
-            var src = 'var __src = [], each='+LIB_NAME+'.each, escapeHTML='+LIB_NAME+'.string.escapeHTML; with(value||{}) { __src.push("';
+        template: function(str, data) {
+            var src = 'var __src = [], each=' + LIB_NAME + '.each, escapeHTML=' + LIB_NAME + '.string.escapeHTML; with(value||{}) { __src.push("';
             str = $.trim(str);
             src += str
                 .replace(/\r|\n|\t/g, " ")
-                .replace(/\{\{(.*?)\}\}/g, function(a, b) { return '{{' + b.replace(/"/g, '\t') + '}}'; })
-                .replace(/"/g, '\\"')
-                .replace(/\{\{each ([a-z]+) in ([a-z]+)\}\}(.+)\{\{\/each\}\}/g, function(str, item, items, conts) {
-                    return '{{each(value["'+items+'"], function(item){ }}' + conts + ' {{ }); }}';
+                .replace(/\{\{(.*?)\}\}/g, function(a, b) {
+                    return '{{' + b.replace(/"/g, '\t') + '}}';
                 })
-                .replace(/\{\{(.*?)\}\}/g, function(a, b) { return '{{' + b.replace(/\t/g, '"') + '}}'; })
+                .replace(/"/g, '\\"')
+                .replace(/\{\{each ([a-z]+) in ([a-zA-Z0-9\.]+)\}\}(.+)\{\{\/each\}\}/g, function(str, item, items, conts) {
+                    return '{{each(value.' + items + ', function(item){ }}' + conts + ' {{ }); }}';
+                })
+                .replace(/\{\{(.*?)\}\}/g, function(a, b) {
+                    return '{{' + b.replace(/\t/g, '"') + '}}';
+                })
 
-                .replace(/\{\{=(.+?)\}\}/g, '", $1, "')
+            .replace(/\{\{=(.+?)\}\}/g, '", $1, "')
                 .replace(/\{\{-(.+?)\}\}/g, '", escapeHTML($1), "')
-                .replace(/(\{\{|\}\})/g, function(a, b) { return b === '{{' ? '");' : '__src.push("'});
+                .replace(/(\{\{|\}\})/g, function(a, b) {
+                    return b === '{{' ? '");' : '__src.push("'
+                });
 
-            src+='"); };  console.log(__src);return __src.join("");';
+            //src+='"); };  console.log(__src);return __src.join("");';
+            src += '"); }; return __src.join("");';
             var f = new Function('value', 'data', src);
-            console.log(src);
-            if ( data ) {
-                return f( data );
+            if (data) {
+                return f(data);
             }
             return f;
-        },
-
-        /**
-         * js파일을 동적으로 로딩
-         * @function
-         * @name importJs
-         * @param {Array} scriptList 로딩할 js파일 리스트
-         * @param {Function} callback 주어진 js파일들의 로딩이 모두 완료가 되었을 때 실행할 콜백함수
-         * @return {Deferred} 지연객체
-         * @example
-         * axl.importJs([
-         *     '/ui/tab.js'
-         * ]).done(function(){
-         *     new axl.ui.Tab('#tab');
-         * });
-         *
-         *
-         * axl.importJs([
-         *     '/ui/tab.js'
-         * ], function(){
-         *     new axl.ui.Tab('#tab');
-         * });
-         */
-        importJs: (function () {
-            // benchmark: https://github.com/eancc/seque-loadjs/blob/master/seque-loadjs.js
-
-            var loadedjs = {},
-                isChecked = false;
-
-            return function(scriptList, cb) {
-                scriptList = [].concat(scriptList);
-
-                var args = arraySlice.call(arguments),
-                    callbackArgs = args.slice(2),
-                    len = scriptList.length,
-                    loadedLen = 0,
-                    defer = $.Deferred();
-
-                for(var i = -1, item; item = scriptList[++i]; ){
-                    if(item.indexOf('.js') < 0) {
-                        scriptList[i] += '.js';
-                    }
-                }
-
-                // 이미 포함된 스크립트를 검색
-                if(!isChecked) {
-                    $('script').each(function() {
-                        loadedjs[$(this).attr('src')] = true;
-                    });
-                    isChecked = true;
-                }
-
-                function callback() {
-                    if(cb) {
-                        cb.apply(null, callbackArgs);
-                    }
-                    defer.resolve.apply(null, callbackArgs);
-                };
-
-                function deepCallbacks(incallback, func, args) {
-                    if (func) {
-                        func.apply(null, args);
-                    }
-                    incallback();
-                }
-
-                //
-                function loadScripts() {
-                    if (loadedLen < len) {
-                        loadScript(scriptList[loadedLen++], loadScripts);
-                    } else if (callback) {
-                        callback.apply(null, callbackArgs);
-                    }
-                }
-                //////////
-
-                // load
-                function loadScript(scriptName, incallback) {
-
-                    if (scriptName instanceof Array) {
-                        incallback = deepCallbacks(incallback, scriptName[1], scriptName.slice(2));
-                        scriptName = scriptName[0];
-                    }
-                    //캐쉬
-                    if (scriptName && !loadedjs[scriptName]) {
-                        loadedjs[scriptName] = true;
-
-                        var body = doc.getElementsByTagName('body')[0],
-                            script = doc.createElement('script');
-
-                        script.type = 'text/javascript';
-                        body.appendChild(script);
-                        if (script.readyState) {
-                            script.onreadystatechange = function() {
-                                if (script.readyState === "loaded" || script.readyState === "complete") {
-                                    script.onreadystatechange = null;
-                                    incallback();
-                                }
-                            };
-                        } else {
-                            script.onload = incallback;
-                        }
-
-                        script.src = (core.importJs.baseUrl||'')+scriptName;
-                    } else if (incallback) {
-                        incallback();
-                    }
-                }
-                ////////////
-
-                loadScripts();
-                return defer.promise();
-            };
-
-        })(),
-
-        /**
-         * css 파일 로딩
-         * @param {string} href
-         * @param {string} id
-         * @example
-         * axl.importCss('/css/tab.css');
-         */
-        importCss: function (href, id) {
-            var $head = $('head');
-            if($head.find('>link[href="' + href + '"]').size()) { return; }
-
-            var link = doc.createElement('link');
-            core.extend(link, {
-                id: id || 'style_'+(new Data).getTime(),
-                rel: 'stylesheet',
-                type: 'text/javascript',
-                href: href
-            });
-            $head.appendChild(link);
         }
     });
 
+    /**
+     * axl.importJs
+     */
+    (function() {
+        // benchmark: https://github.com/malko/l.js/blob/master/l.js
+
+        var isA = function(a, b) {
+                return a instanceof(b || Array);
+            },
+            doc = document,
+            aliases = {},
+            bd = doc.getElementsByTagName("body")[0] || doc.documentElement,
+            appendElmt = function(type, attrs, cb) {
+                var e = doc.createElement(type),
+                    i;
+                if (cb && isA(cb, Function)) {
+                    if (e.readyState) {
+                        e.onreadystatechange = function() {
+                            if (e.readyState === "loaded" || e.readyState === "complete") {
+                                e.onreadystatechange = null;
+                                cb();
+                            }
+                        };
+                    } else {
+                        e.onload = cb;
+                    }
+                }
+                for (i in attrs) {
+                    attrs[i] && (e.setAttribute(i, attrs[i]));
+                }
+                bd.appendChild(e);
+            },
+            load = function(url, cb) {
+                if (isA(url)) {
+                    for (var i = 0; i < url.length; i++) {
+                        loader.load(url[i]);
+                    }
+                    cb && url.push(cb);
+                    return loader.load.apply(loader, url);
+                }
+                if (url.match(/\.css\b/)) {
+                    return loader.loadcss(url, cb);
+                }
+                return loader.loadjs(url, cb);
+            },
+            loaded = {},
+            loader = {
+                urlParse: function(pUrl, type) {
+                    var parts = {},
+                        url, ver,
+                        fn = type === 'js' ? core.importJs : core.importCss;
+
+                    url = pUrl.replace(/\?(.*)$/g, function(m, a) {
+                        if (a && a.indexOf('ver=') >= 0) {
+                            parts.ver = a.match(/[\?|&]?ver=([a-z0-9]*)/)[1];
+                        }
+                        return '';
+                    });
+                    aliases[url] && (url = aliases[url]);
+                    ver = parts.ver || fn.ver;
+                    if (url.toLowerCase().indexOf('.' + type) < 0) {
+                        url += '.' + type; // 확장자 추가
+                    }
+                    if (url.substr(0, 1) !== '/') {
+                        url = fn.baseUrl + url;
+                    }
+                    parts.u = url;
+                    parts.full = url + (ver ? '?ver=' + ver : '');
+                    return parts;
+                },
+                loadjs: function(url, cb) {
+                    var parts = loader.urlParse(url, 'js');
+                    url = parts.u;
+                    if (loaded[url] === true) {
+                        cb && cb();
+                        return loader;
+                    } else if (loaded[url] !== undefined) {
+                        if (cb) {
+                            loaded[url] = (function(ocb, cb) {
+                                return function() {
+                                    ocb && ocb();
+                                    cb && cb();
+                                };
+                            })(loaded[url], cb);
+                        }
+                        return loader;
+                    }
+                    loaded[url] = (function(cb) {
+                        return function() {
+                            loaded[url] = true;
+                            cb && cb();
+                        };
+                    })(cb);
+                    cb = function() {
+                        loaded[url]();
+                    };
+                    // 스크립트 태그를 사용하지 않고 실행시킬 것인지
+                    if (core.importJs.isEval) {
+                        $.ajax({
+                            url: parts.full,
+                            cache: true
+                        }).done(function(jsstring) {
+                            eval(jsstring);
+                            cb();
+                        });
+                    } else {
+                        appendElmt('script', {
+                            type: 'text/javascript',
+                            'data-import': 'true',
+                            src: parts.full
+                        }, cb);
+                    }
+                    return loader;
+                },
+                loadcss: function(url, cb) {
+                    var parts = loader.urlParse(url, 'css');
+                    url = parts.u;
+                    loaded[url] || appendElmt('link', {
+                        'type': 'text/css',
+                        'rel': 'stylesheet',
+                        'data-import': 'true',
+                        'href': parts.full
+                    });
+                    loaded[url] = true;
+                    cb && cb();
+                    return loader;
+                },
+                load: function() {
+                    var argv = arguments,
+                        argc = argv.length;
+                    if (argc === 1 && isA(argv[0], Function)) {
+                        argv[0]();
+                        return loader;
+                    }
+                    load.call(loader, argv[0], argc <= 1 ? undefined : function() {
+                        loader.load.apply(loader, [].slice.call(argv, 1));
+                    });
+                    return loader;
+                }
+            };
+
+        // 이미 존재하는 파일정보를 추출
+        var i, l, scripts, links, url;
+        scripts = doc.getElementsByTagName("script");
+        for (i = 0, l = scripts.length; i < l; i++) {
+            (url = scripts[i].getAttribute('src')) && (loaded[url.replace(/\?.*$/, '')] = true);
+        }
+        links = doc.getElementsByTagName('link');
+        for (i = 0, l = links.length; i < l; i++) {
+            (links[i].rel === 'stylesheet' || links[i].type === 'text/css') && (loaded[links[i].getAttribute('href').replace(/\?.*$/, '')] = true);
+        }
+
+        var importResource = function(type) {
+            return function(files, cb) {
+                var defer = $.Deferred();
+                //files = suffix(files, type);
+                loader.load(files, function() {
+                    defer.resolve();
+                    if ($.isReady) {
+                        cb && cb();
+                    } else {
+                        cb && $(function() {
+                            cb();
+                        });
+                    }
+                });
+                return defer.promise();
+            };
+        };
+        core.importJs = importResource('js');
+        core.importCss = importResource('css');
+        core.importJs.baseUrl = core.importCss.baseUrl = '';
+        core.importJs.ver = core.importCss.ver = '';
+        core.importJs.isEval = false;
+        core.importJs.addAliases = core.importCss.addAliases = function(a) {
+            if (typeof arguments[0] === 'string') {
+                aliases[arguments[0]] = arguments[1];
+            } else {
+                for (var i in a) {
+                    aliases[i] = isA(a[i]) ? a[i].slice(0) : a[i];
+                }
+            }
+        };
+        ////////////////////////////////////////////////////
+    })();
 
     /**
-     * 루트클래스로서, axl.Base나 axl.Class를 이용해서 클래스를 구현할 경우 axl.Base를 상속받게 된다.
+     * 루트클래스로서, axl.BaseClass나 axl.Class를 이용해서 클래스를 구현할 경우 axl.BaseClass를 상속받게 된다.
      * @class
-     * @name axl.Base
+     * @name axl.BaseClass
      * @example
-     * var Person = axl.Base.extend({  // 또는 var Person = axl.Class({ 으로 구현해도 동일하다.
-	*	$singleton: true, // 싱글톤 여부
-	*	$statics: { // 클래스 속성 및 함수
-	*		live: function() {} // Person.live(); 으로 호출
-	*	},
-	*	$mixins: [Animal, Robot], // 특정 클래스에서 메소드들을 빌려오고자 할 때 해당 클래스를 지정(다중으로도 가능),
-	*	initialize: function(name) {
-	*		this.name = name;
-	*	},
-	*	say: function(job) {
-	*		alert("I'm Person: " + job);
-	*	},
-	*	run: function() {
-	*		alert("i'm running...");
-	*	}
-	*`});
-     *
-	 * // Person에서 상속받아 Man클래스를 구현하는 경우
-     * var Man = Person.extend({
-	*	initialize: function(name, age) {
-	*		this.supr(name);  // Person(부모클래스)의 initialize메소드를 호출 or this.suprMethod('initialize', name);
-	*		this.age = age;
-	*	},
-	*	// say를 오버라이딩함
-	*	say: function(job) {
-	*		this.suprMethod('say', 'programer'); // 부모클래스의 say 메소드 호출 - 첫번째인자는 메소드명, 두번째부터는 해당 메소드로 전달될 인자
+     * var Person = axl.BaseClass.extend({  // 또는 var Person = axl.Class({ 으로 구현해도 동일하다.
+    *
+    $singleton: true, // 싱글톤 여부
+    *
+    $statics: { // 클래스 속성 및 함수
+    *
+    live: function() {} // Person.live(); 으로 호출
+    *
+    },
+    *
+    $mixins: [Animal, Robot], // 특정 클래스에서 메소드들을 빌려오고자 할 때 해당 클래스를 지정(다중으로도 가능),
+    *
+    initialize: function(name) {
+    *
+    this.name = name;
+    *
+    },
+    *
+    say: function(job) {
+    *
+    alert("I'm Person: " + job);
+    *
+    },
+    *
+    run: function() {
+    *
+    alert("i'm running...");
+    *
+    }
+    *`});
+         *
+     * // Person에서 상속받아 Man클래스를 구현하는 경우
+         * var Man = Person.extend({
+    *
+    initialize: function(name, age) {
+    *
+    this.supr(name);  // Person(부모클래스)의 initialize메소드를 호출 or this.suprMethod('initialize', name);
+    *
+    this.age = age;
+    *
+    },
+    *
+    // say를 오버라이딩함
+    *
+    say: function(job) {
+    *
+    this.suprMethod('say', 'programer'); // 부모클래스의 say 메소드 호출 - 첫번째인자는 메소드명, 두번째부터는 해당 메소드로 전달될 인자
 
-	*		alert("I'm Man: "+ job);
-	*	}
-	* });
-     * var man = new Man('kim', 20);
-     * man.say('freeman');  // 결과: alert("I'm Person: programer"); alert("I'm Man: freeman");
-     * man.run(); // 결과: alert("i'm running...");
-     */
-    (function () {
-        var F = function(){},
+    *
+    alert("I'm Man: "+ job);
+    *
+    }
+    * });
+         * var man = new Man('kim', 20);
+         * man.say('freeman');  // 결과: alert("I'm Person: programer"); alert("I'm Man: freeman");
+         * man.run(); // 결과: alert("i'm running...");
+         */
+    (function() {
+        var F = function() {},
             ignoreNames = ['superclass', 'members', 'statics'];
 
         function array_indexOf(arr, value) {
-            if(Array.prototype.indexOf) {
+            if (Array.prototype.indexOf) {
                 return Array.prototype.indexOf.call(arr, value);
             } else {
-                for(var i = -1, item; item = arr[++i]; ){
-                    if(item == value) { return true; }
+                for (var i = -1, item; item = arr[++i];) {
+                    if (item == value) {
+                        return i;
+                    }
                 }
-                return false;
+                return -1;
             }
         }
 
         // 부모클래스의 함수에 접근할 수 있도록 .supr 속성에 부모함수를 래핑하여 설정
         function wrap(k, fn, supr) {
-            return function () {
-                var tmp = this.supr, ret;
+            return function() {
+                var tmp = this.supr,
+                    ret;
 
                 this.supr = supr.prototype[k];
                 ret = undefined;
@@ -3219,7 +3599,7 @@ window.LIB_DIV_DEBUG = false;
             mixins = attr.$mixins || false;
             hooks = attr.$hooks || false;
 
-            !attr.initialize && (attr.initialize = supr.prototype.initialize || function () {});
+            !attr.initialize && (attr.initialize = supr.prototype.initialize || function() {});
 
             function ctor() {
                 if (singleton && instance) {
@@ -3232,15 +3612,17 @@ window.LIB_DIV_DEBUG = false;
                     me = this,
                     ctr = me.constructor;
 
-                if(ctr.hooks && ctr.hooks.init && ctr.hooks.init.length){
-                    each(ctr.hooks.init, function(fn) {
+                if (ctr.hooks) {
+                    // 페이지상에서 한번만 실행
+                    ctr.hooks.init && each(ctr.hooks.init, function(fn) {
                         fn.call(me);
                     });
                     delete ctr.hooks.init;
+                    // 생성때마다 실행
+                    ctr.hooks.create && each(ctr.hooks.create, function(fn) {
+                        fn.call(me);
+                    });
                 }
-                ctr.hooks && each(ctr.hooks.create, function(fn) {
-                    fn.call(me);
-                });
                 //////////////////////////////////////////////
 
                 if (me.initialize) {
@@ -3250,23 +3632,25 @@ window.LIB_DIV_DEBUG = false;
                 }
             }
 
-            function Class() {
-                if(!(this instanceof Class)) { return Class; }
+            function TypeClass() {
+                if (!(this instanceof TypeClass)) {
+                    return TypeClass;
+                }
                 ctor.apply(this, arguments);
             }
 
             F.prototype = supr.prototype;
-            Class.prototype = new F;
-            Class.prototype.constructor = Class;
-            Class.superclass = supr.prototype;
+            TypeClass.prototype = new F;
+            TypeClass.prototype.constructor = TypeClass;
+            TypeClass.superclass = supr.prototype;
             /**
              * 해당 클래스에서 상속된 새로운 자식클래스를 생성해주는 함수
              * @function
-             * @name axl.Base.extend
+             * @name axl.BaseClass.extend
              * @param {Object} memthods 메소드모음
-             * @return {axl.Base} 새로운 클래스
+             * @return {axl.BaseClass} 새로운 클래스
              * @example
-             * var Child = axl.Base.extend({
+             * var Child = axl.BaseClass.extend({
              *     show: function(){
              *         alert('hello');
              *     }
@@ -3274,15 +3658,15 @@ window.LIB_DIV_DEBUG = false;
              *
              * new Child().show();
              */
-            Class.extend = classExtend;
+            TypeClass.extend = classExtend;
             /**
              * 해당 클래스의 객체가 생성될 때 hook를 등록하는 클래스함수
              * @function
-             * @name axl.Base.hooks
+             * @name axl.BaseClass.hooks
              * @param {string} name 훅 이름('init' 는 처음에 한번만 실행, 'create' 는 객체가 생성될 때마다 실행)
              * @param {function} func 실행할 훅 함수
              * @example
-             * var Child = axl.Base.extend({
+             * var Child = axl.BaseClass.extend({
              *     show: function(){
              *         alert('hello');
              *     }
@@ -3297,16 +3681,18 @@ window.LIB_DIV_DEBUG = false;
              * new Child(); // alert('초기화'); alert('객체생성');
              * new Child(); // alert('객체생성');
              */
-            Class.hooks = function(name, func) {
-                if(name != 'init' && name != 'create') { return; }
-                Class.hooks[name].push(func);
+            TypeClass.hooks = function(name, func) {
+                if (name != 'init' && name != 'create') {
+                    return;
+                }
+                TypeClass.hooks[name].push(func);
             };
-            extend(true, Class.hooks, {
-                create:[],
-                init:[]
+            extend(true, TypeClass.hooks, {
+                create: [],
+                init: []
             }, supr.hooks);
             hooks && each(hooks, function(fn, name) {
-                Class.hooks(name, fn);
+                TypeClass.hooks(name, fn);
             });
 
 
@@ -3314,10 +3700,10 @@ window.LIB_DIV_DEBUG = false;
                 /**
                  * 싱클톤 클래스의 객체를 반환
                  * @function
-                 * @name axl.Base.getInstance
-                 * @return {axl.Base}
+                 * @name axl.BaseClass.getInstance
+                 * @return {axl.BaseClass}
                  * @example
-                 * var Child = axl.Base.extend({
+                 * var Child = axl.BaseClass.extend({
                  *    $singleton: true,
                  *    show: function(){
                  *        alert('hello');
@@ -3326,15 +3712,23 @@ window.LIB_DIV_DEBUG = false;
                  * Child.getInstance().show();
                  * Child.getInstance().show();
                  */
-                Class.getInstance = function() {
+                TypeClass.getInstance = function() {
                     var arg = arguments,
                         len = arg.length;
                     if (!instance) {
-                        switch(true){
-                            case !len: instance = new Class; break;
-                            case len === 1: instance = new Class(arg[0]); break;
-                            case len === 2: instance = new Class(arg[0], arg[1]); break;
-                            default: instance = new Class(arg[0], arg[1], arg[2]); break;
+                        switch (true) {
+                            case !len:
+                                instance = new TypeClass;
+                                break;
+                            case len === 1:
+                                instance = new TypeClass(arg[0]);
+                                break;
+                            case len === 2:
+                                instance = new TypeClass(arg[0], arg[1]);
+                                break;
+                            default:
+                                instance = new TypeClass(arg[0], arg[1], arg[2]);
+                                break;
                         }
                     }
                     return instance;
@@ -3344,10 +3738,10 @@ window.LIB_DIV_DEBUG = false;
             /**
              * 메소드내부에서 부모클레스의 함수를 호출하고자 할 때 사용
              * @function
-             * @name axl.Base#suprMethod
+             * @name axl.BaseClass#suprMethod
              * @return {*} 해당 부모함수의 반환값
              * @example
-             * var Parent = axl.Base.extend({
+             * var Parent = axl.BaseClass.extend({
              *     show: function(){
              *         alert('parent.show');
              *     }
@@ -3366,36 +3760,38 @@ window.LIB_DIV_DEBUG = false;
              * child.show(); // alert('parent.show'); alert('child.show');
              * child.display(); // alert('parent.show');
              */
-            Class.prototype.suprMethod = function (name) {
+            TypeClass.prototype.suprMethod = function(name) {
                 var args = arraySlice.call(arguments, 1);
                 return supr.prototype[name].apply(this, args);
             };
 
-            Class.mixins = function (o) {
+            TypeClass.mixins = function(o) {
                 if (!o.push) {
                     o = [o];
                 }
                 var proto = this.prototype;
-                each(o, function (mixObj, i) {
-                    if(!mixObj){ return; }
-                    each(mixObj, function (fn, key) {
-                        if(key === 'build' && Class.hooks) {
-                            Class.hooks.init.push(fn)
+                each(o, function(mixObj, i) {
+                    if (!mixObj) {
+                        return;
+                    }
+                    each(mixObj, function(fn, key) {
+                        if (key === 'build' && TypeClass.hooks) {
+                            TypeClass.hooks.init.push(fn)
                         } else {
                             proto[key] = fn;
                         }
                     });
                 });
             };
-            mixins && Class.mixins.call(Class, mixins);
+            mixins && TypeClass.mixins.call(TypeClass, mixins);
 
             /**
              * 이미 존재하는 클래스에 메소드 추가
              * @function
-             * @name axl.Base.members
+             * @name axl.BaseClass.members
              * @param {Object} methods 메소드 모음 객체
              * @example
-             * var Parent = axl.Base.extend({});
+             * var Parent = axl.BaseClass.extend({});
              * Parent.members({
              *     show: function(){
              *         alert('hello');
@@ -3403,18 +3799,18 @@ window.LIB_DIV_DEBUG = false;
              * });
              * new Parent().show();
              */
-            Class.members = function (o) {
+            TypeClass.members = function(o) {
                 inherits(this.prototype, o, supr);
             };
-            attr && Class.members.call(Class, attr);
+            attr && TypeClass.members.call(TypeClass, attr);
 
             /**
              * 이미 존재하는 클래스에 정적메소드 추가
              * @function
-             * @name axl.Base.members
+             * @name axl.BaseClass.members
              * @param {Object} methods 메소드 모음 객체
              * @example
-             * var Parent = axl.Base.extend({});
+             * var Parent = axl.BaseClass.extend({});
              * Parent.statics({
              *     show: function(){
              *         alert('hello');
@@ -3422,39 +3818,39 @@ window.LIB_DIV_DEBUG = false;
              * });
              * Parent.show();
              */
-            Class.statics = function (o) {
+            TypeClass.statics = function(o) {
                 o = o || {};
                 for (var k in o) {
                     if (array_indexOf(ignoreNames, k) < 0) {
                         this[k] = o[k];
                     }
                 }
-                return Class;
+                return TypeClass;
             };
-            Class.statics.call(Class, supr);
-            statics && Class.statics.call(Class, statics);
+            TypeClass.statics.call(TypeClass, supr);
+            statics && TypeClass.statics.call(TypeClass, statics);
 
-            return Class;
+            return TypeClass;
         }
 
-        var Base = function(){ };
-        Base.prototype.initialize = function(){ /*throw new Error("Base 클래스로 객체를 생성 할 수 없습니다");*/ };
-        Base.prototype.release = function(){};
-        Base.prototype.proxy = function(fn) {
+        var BaseClass = function() {};
+        BaseClass.prototype.initialize = function() { /*throw new Error("Base 클래스로 객체를 생성 할 수 없습니다");*/ };
+        BaseClass.prototype.release = function() {};
+        BaseClass.prototype.proxy = function(fn) {
             var me = this;
-            if(typeof fn === 'string') {
+            if (typeof fn === 'string') {
                 fn = me[fn];
             }
             return function() {
                 return fn.apply(me, arguments);
             };
         }
-        Base.extend = classExtend;
+        BaseClass.extend = classExtend;
 
         /**
-         * 클래스를 생성해주는 함수(axl.Base.extend 별칭)
+         * 클래스를 생성해주는 함수(axl.BaseClass.extend 별칭)
          * @param {Object} attr 메소드 모음 객체
-         * @returns {axl.Base} 새로운 객체
+         * @returns {axl.BaseClass} 새로운 객체
          * @example
          * var Parent = axl.Class({
          *     show: function(){
@@ -3470,11 +3866,13 @@ window.LIB_DIV_DEBUG = false;
          * new Child().show();
          * new Child().run();
          */
-        core.Class = function(attr){ return classExtend.apply(this, [attr, true]); };
-        return core.Base = Base;
+        core.Class = function(attr) {
+            return classExtend.apply(this, [attr, true]);
+        };
+        return core.BaseClass = BaseClass;
     })();
 
-    core.addon('Env', /** @lends axl.Env */{
+    core.addon('Env', /** @lends axl.Env */ {
         configs: {},
 
         /**
@@ -3486,7 +3884,7 @@ window.LIB_DIV_DEBUG = false;
          * @example
          * axl.Env.get('siteTitle'); // '바이널'
          */
-        get: function (name, def) {
+        get: function(name, def) {
             var root = this.configs,
                 names = name.split('.'),
                 pair = root;
@@ -3508,7 +3906,7 @@ window.LIB_DIV_DEBUG = false;
          * @example
          * axl.Env.set('siteTitle', '바이널');
          */
-        set: function (name, value) {
+        set: function(name, value) {
             var root = this.configs,
                 names = name.split('.'),
                 len = names.length,
@@ -3523,7 +3921,7 @@ window.LIB_DIV_DEBUG = false;
     });
 
 
-    core.addon('Listener', function () {
+    core.addon('Listener', function() {
         /**
          * 이벤트 리스너로서, 일반 객체에 이벤트 기능을 붙이고자 할경우에 사용
          * @class
@@ -3533,7 +3931,7 @@ window.LIB_DIV_DEBUG = false;
          * axl.Listener.build(obj);
          * obj.on('clickitem', function(){
          *   alert(0);
-		 * });
+         * });
          * obj.trigger('clickitem');
          */
         var Listener = /** @lends axl.Listener# */ {
@@ -3541,13 +3939,13 @@ window.LIB_DIV_DEBUG = false;
              * obj에 이벤트 기능 적용하기
              * @param {Object} obj 이벤트를 적용하고자 하는 객체
              */
-            build: function(obj){
+            build: function(obj) {
                 axl.extend(obj, axl.Listener).init();
             },
             /**
              * UI모듈이 작성될 때 내부적으로 호출되는 초기화 함수
              */
-            init: function () {
+            init: function() {
                 this._listeners = $(this);
             },
 
@@ -3557,7 +3955,7 @@ window.LIB_DIV_DEBUG = false;
              * @param {string} [selector] 타겟
              * @param {eventCallback} [cb] 핸들러
              */
-            on: function () {
+            on: function() {
                 var lsn = this._listeners;
                 lsn.on.apply(lsn, arguments);
                 return this;
@@ -3569,7 +3967,7 @@ window.LIB_DIV_DEBUG = false;
              * @param {string} [selector] 타겟
              * @param {eventCallback} [cb] 핸들러
              */
-            once: function () {
+            once: function() {
                 var lsn = this._listeners;
                 lsn.once.apply(lsn, arguments);
                 return this;
@@ -3580,7 +3978,7 @@ window.LIB_DIV_DEBUG = false;
              * @param {string} name 삭제할 이벤트명
              * @param {Function} [cb] 삭제할 핸들러. 이 인자가 없을 경우 name에 등록된 모든 핸들러를 삭제.
              */
-            off: function () {
+            off: function() {
                 var lsn = this._listeners;
                 lsn.off.apply(lsn, arguments);
                 return this;
@@ -3591,7 +3989,7 @@ window.LIB_DIV_DEBUG = false;
              * @param {string} name 발생시킬 이벤트명
              * @param {*} [data] 데이타
              */
-            trigger: function () {
+            trigger: function() {
                 var lsn = this._listeners;
                 lsn.trigger.apply(lsn, arguments);
                 return this;
@@ -3609,17 +4007,18 @@ window.LIB_DIV_DEBUG = false;
      * @example
      * // 옵저버 등록
      * axl.PubSub.on('customevent', function() {
-	 *	 alert('안녕하세요');
-	 * });
+     *
+     alert('안녕하세요');
+     * });
      *
      * // 등록된 옵저버 실행
      * axl.PubSub.trigger('customevent');
      */
-    core.addon('PubSub', function () {
+    core.addon('PubSub', function() {
 
         var PubSub = $(window);
 
-        var tmp = /** @lends axl.PubSub */{
+        var tmp = /** @lends axl.PubSub */ {
             /**
              * 이벤트 바인딩
              * @function
@@ -3637,7 +4036,7 @@ window.LIB_DIV_DEBUG = false;
              * @param {Function} [handler] 핸들러
              * @return {axl.PubSub}
              */
-            off: function (name, handler) {
+            off: function(name, handler) {
                 return this;
             },
 
@@ -3647,7 +4046,7 @@ window.LIB_DIV_DEBUG = false;
              * @param {Object} [data] 핸들러
              * @return {axl.PubSub}
              */
-            trigger: function (name, data) {
+            trigger: function(name, data) {
                 return this;
             }
         };
@@ -3660,35 +4059,43 @@ window.LIB_DIV_DEBUG = false;
 
 /*!
  * @author axl.ui.js
- * @email comahead@gmail.com
- * @create 2013-12-02
+ * @email comahead@vi-nyl.com
+ * @create 2014-12-02
  * @license MIT License
  */
-(function ($, core) {
+(function($, core) {
     "use strict";
+    if (core._initViewClass) {
+        return;
+    }
+    core._initViewClass = true;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    var arraySlice = Array.prototype.slice;		// axl.ui.View
-
+    var arraySlice = Array.prototype.slice;
+    // axl.ui.View
     var ui = core.ui = function(name, supr, attr) {
+        if (core.ui[name]) {
+            return core.ui[name];
+        }
+
         var bindName, Klass;
 
-        if(!attr) {
+        if (!attr) {
             attr = supr;
             supr = null;
         }
-        if(typeof supr === 'string'){
+        if (typeof supr === 'string') {
             supr = ui[supr];
-        } else if(attr.$extend) {
+        } else if (attr.$extend) {
             supr = attr.$extend
-        } else if(supr && supr.superclass) {
+        } else if (supr && supr.superclass) {
             // supr = supr;
         } else {
             supr = ui.View;
         }
 
-        if(core.is(attr, 'function')) {
-            if(!core.is(attr = attr(supr), 'function')) {
+        if (core.is(attr, 'function')) {
+            if (!core.is(attr = attr(supr), 'function')) {
                 bindName = attr.bindjQuery;
                 Klass = supr.extend(attr);
             } else {
@@ -3703,7 +4110,7 @@ window.LIB_DIV_DEBUG = false;
         //core.addon('ui.' + name, Klass);
         ui[name] = Klass;
         if (bindName) {
-            ui.bindjQuery(Klass, bindName);
+            ui.bindjQuery(Klass, bindName, 'sc');
         }
         return Klass;
     };
@@ -3721,12 +4128,29 @@ window.LIB_DIV_DEBUG = false;
         return inst;
     }
 
+    // 삭제된 엘리먼트에 빌드된 모듈을 메모리에서 해제
+    ui.uiGarbageClear = function() {
+        if (!ui.View) {
+            return;
+        }
+        for (var i = ui.View._instances.length - 1, view; i >= 0; i--) {
+            view = ui.View._instances[i];
+            if (view.$el && !$.contains(document, view.$el[0])) {
+                try {
+                    view.release();
+                    ui.View._instances[i] = view = null;
+                    ui.View._instances.splice(i, 1);
+                } catch (e) {}
+            }
+        }
+    };
+
     /**
      * 모든 UI요소 클래스의 최상위 클래스로써, UI클래스를 작성함에 있어서 편리한 기능을 제공해준다.
      * @class
      * @name axl.ui.View
      */
-    var View = ui.View = core.Base.extend(/** @lends axl.ui.View# */{
+    var View = ui.View = core.BaseClass.extend( /** @lends axl.ui.View# */ {
         $statics: {
             _instances: [] // 모든 인스턴스를 갖고 있는다..
         },
@@ -3736,7 +4160,7 @@ window.LIB_DIV_DEBUG = false;
          * @param {Object} options 옵션값
          * @return {Object|boolean} false 가 반환되면, 이미 해당 엘리먼트에 해당 모듈이 빌드되어 있거나 disabled 상태임을 의미한다.
          */
-        initialize: function (el, options) {
+        initialize: function(el, options) {
             options || (options = {});
 
             var me = this,
@@ -3753,8 +4177,7 @@ window.LIB_DIV_DEBUG = false;
             moduleName = me.moduleName = core.string.toFirstLower(me.name);
             me.$el = el instanceof jQuery ? el : $(el);
 
-            // disabled상태면 false 반환
-            if (me.$el.hasClass('disabled') || me.$el.attr('data-readony') === 'true' || me.$el.attr('data-disabled') === 'true') {
+            if (!$.contains(document, me.$el[0])) {
                 return false;
             }
 
@@ -3765,20 +4188,24 @@ window.LIB_DIV_DEBUG = false;
                 } catch (e) {}
                 me.$el.removeData('ui_' + moduleName);
             } else {
-                if (me.$el.data('ui_' + moduleName)) {    // 이미 빌드된거면 false 반환 - 중복 빌드 방지
+                if (me.$el.data('ui_' + moduleName)) { // 이미 빌드된거면 false 반환 - 중복 빌드 방지
                     return false;
                 }
                 me.$el.data('ui_' + moduleName, this);
             }
 
             // TODO
-            // View._instances.push(me);
+            View._instances.push(me);
             me.el = me.$el[0]; // 원래 엘리먼트도 변수에 설정
             me.options = $.extend(true, {}, me.constructor.superclass.defaults, me.defaults, me.$el.data(), options); // 옵션 병합
             me.cid = moduleName + '_' + core.nextSeq(); // 객체 고유 키
             me.ui = {};
-            me.subViews = {}; // 하위 컨트롤를 관리하기 위함
             me.eventNamespace = '.' + me.cid;
+            me.state = {
+                disabled: false,
+                readonly: false,
+                visible: true
+            };
 
             me.updateSelectors();
             me._bindOptionEvents();
@@ -3788,13 +4215,14 @@ window.LIB_DIV_DEBUG = false;
          * 옵션으로 넘어온 이벤트들을 바인딩함
          * @private
          */
-        _bindOptionEvents: function () {
+        _bindOptionEvents: function() {
             var me = this,
                 eventPattern = /^([a-z]+) ?([^$]*)$/i;
 
             // events 속성 처리
             // events: {
-            //	'click ul>li.item': 'onItemClick', //=> this.$el.on('click', 'ul>li.item', this.onItemClick); 으로 변환
+            //
+            'click ul>li.item': 'onItemClick', //=> this.$el.on('click', 'ul>li.item', this.onItemClick); 으로 변환
             // }
             me.options.events = core.extend({},
                 execObject(me.events, me),
@@ -3807,7 +4235,7 @@ window.LIB_DIV_DEBUG = false;
                 var name = RegExp.$1,
                     selector = RegExp.$2,
                     args = [name],
-                    func = core.is(value, 'function') ? value : (isFn(me[value]) ? me[value] : core.emptyFn);
+                    func = core.is(value, 'function') ? value : (core.is(me[value], 'function') ? me[value] : core.emptyFn);
 
                 if (selector) {
                     args[args.length] = $.trim(selector);
@@ -3840,14 +4268,14 @@ window.LIB_DIV_DEBUG = false;
          * // 객체가 생성된 다음에 DOM이 동적으로 변경되었다면
          * tab.updateSelectors(); // 를 호출해줌으로써 다시 찾은 다음 멤버변수에 셋팅해준다.
          */
-        updateSelectors: function () {
+        updateSelectors: function() {
             var me = this;
             // selectors 속성 처리
             me.selectors = core.extend({},
                 execObject(me.constructor.superclass.selectors, me),
                 execObject(me.selectors, me),
                 execObject(me.options.selectors, me));
-            core.each(me.selectors, function (value, key) {
+            core.each(me.selectors, function(value, key) {
                 if (typeof value === 'string') {
                     me['$' + key] = me.$el.find(value);
                 } else if (value instanceof jQuery) {
@@ -3855,7 +4283,7 @@ window.LIB_DIV_DEBUG = false;
                 } else {
                     me['$' + key] = $(value);
                 }
-                me.ui[key] = me['$'+key];
+                me.ui[key] = me['$' + key];
             });
 
             return me;
@@ -3869,31 +4297,32 @@ window.LIB_DIV_DEBUG = false;
          * @example
          * var $btn = this.$('button');
          */
-        $: function (selector, parent) {
+        $: function(selector, parent) {
             return this.$el.find.apply(this.$el, arguments);
         },
 
         /**
          * 파괴자
          */
-        release: function () {
+        release: function() {
             var me = this;
 
+            me.triggerHandler('release');
             me.$el.off(me.eventNamespace);
-            me.$el.removeData('ui_'+me.moduleName);
+            me.$el.removeData('ui_' + me.moduleName);
+            $(window).off('.' + me.cid).off(me.getEN());
+            $(document).off('.' + me.cid).off(me.getEN());
 
-            // me.subviews에 등록된 자식들의 파괴자 호출
-            core.each(me.subViews, function(item, key) {
+            // me에 등록된 엘리먼트들의 연결고리를 해제(메모리 해제대상)
+            core.each(me, function(item, key) {
                 if (key.substr(0, 1) === '$') {
-                    item.off(me.eventNamespace);
-                } else {
-                    item.release && item.release();
+                    me[key] = null;
+                    delete me[key];
                 }
-                delete me.subViews[key];
             });
+            me.el = null;
 
-            core.array.remove(core.ui.View._instances, me);
-            return me;
+            core.ui.View._instance = core.array.remove(core.ui.View._instances, me);
         },
 
         /**
@@ -3920,7 +4349,10 @@ window.LIB_DIV_DEBUG = false;
              * @property {string} name 옵션명
              * @property {*} value 옵션명
              */
-            this.triggerHandler('optionchange', {name: name, value: value});
+            this.triggerHandler('optionchange', {
+                name: name,
+                value: value
+            });
             return this;
         },
 
@@ -3963,19 +4395,20 @@ window.LIB_DIV_DEBUG = false;
          * @return {string} 네임스페이스가 붙어진 이벤트명
          */
         _normalizeEventNamespace: function(en) {
-            if (en instanceof $.Event && en.type.indexOf('.') === -1){
+            if (en instanceof $.Event && en.type.indexOf('.') === -1) {
                 en.type = en.type + this.eventNamespace;
                 return en;
             }
 
             var me = this,
-                m = (en || "").split( /\s/ );
+                m = (en || "").split(/\s/);
             if (!m || !m.length) {
                 return en;
             }
 
-            var name, tmp = [], i;
-            for(i = -1; name = m[++i]; ) {
+            var name, tmp = [],
+                i;
+            for (i = -1; name = m[++i];) {
                 if (name.indexOf('.') === -1) {
                     tmp.push(name + me.eventNamespace);
                 } else {
@@ -3993,11 +4426,11 @@ window.LIB_DIV_DEBUG = false;
          * var en = tab.getEventNamespace('click mousedown');
          */
         getEventNamespace: function(en) {
-            if(en) {
+            if (en) {
                 var pairs = en.split(' '),
                     tmp = [];
-                for(var i = -1, pair; pair = pairs[++i]; ) {
-                    tmp.push(pair+this.eventNamespace);
+                for (var i = -1, pair; pair = pairs[++i];) {
+                    tmp.push(pair + this.eventNamespace);
                 }
                 return tmp.join(' ');
             }
@@ -4010,8 +4443,30 @@ window.LIB_DIV_DEBUG = false;
          * @example
          * var en = tab.getEN('click mousedown');
          */
-        getEN: function () {
+        getEN: function() {
             return this.getEventNamespace.apply(this, arguments);
+        },
+
+        _trigger: function() {
+            var args = arraySlice.call(arguments),
+                prefix = this.moduleName.toLowerCase();
+            if (typeof args[0] === 'string') {
+                args[0] = prefix + args[0];
+            } else {
+                args[0].type = prefix + args[0].type;
+            }
+            return this.$el.trigger.apply(this.$el, args);
+        },
+
+        _triggerHandler: function() {
+            var args = arraySlice.call(arguments),
+                prefix = this.moduleName.toLowerCase();
+            if (typeof args[0] === 'string') {
+                args[0] = prefix + args[0];
+            } else {
+                args[0].type = prefix + args[0].type;
+            }
+            return this.$el.triggerHandler.apply(this.$el, args);
         },
 
         /**
@@ -4103,7 +4558,7 @@ window.LIB_DIV_DEBUG = false;
 
         /**
          * 해당 엘리먼트에 빌드된 클래스 인스턴스를 반환
-         * @return {Class} 해당 인스턴스
+         * @return {Klass} 해당 인스턴스
          * @example
          * var tab = $('div').Tabs('instance');
          */
@@ -4122,13 +4577,46 @@ window.LIB_DIV_DEBUG = false;
             return this.$el;
         },
 
-        show: function(){},
-        hide: function(){},
-        disabled: function(){
-            this.$el.disabled();
+        toggle: function(flag) {
+            if (arguments.length === 0) {
+                flag = !flag;
+            }
+            this.state.visible = flag;
+            this.$el.toggle(flag);
         },
-        enabled: function(){
+        show: function() {
+            this.toggle(true);
+        },
+        hide: function() {
+            this.toggle(false);
+        },
+        disabled: function(flag) {
+            if (typeof flag === 'undefined') {
+                flag = true;
+            }
+            this.state.disabled = flag;
+            this.$el.disabled(flag);
+        },
+        enabled: function() {
+            this.state.disabled = false;
             this.$el.disabled(false);
+        },
+        readonly: function(flag) {
+            if (typeof flag === 'undefined') {
+                flag = true;
+            }
+            this.state.readonly = flag;
+            this.$el.readonly(flag);
+        },
+        getState: function(name) {
+            return this.state[name];
+        },
+        setState: function(name, flag) {
+            this.state[name] = flag;
+            this.triggerHandler('statechange', {
+                name: name,
+                value: flag
+            });
         }
     });
 
@@ -4151,22 +4639,23 @@ window.LIB_DIV_DEBUG = false;
      * });
      * axl.ui.bindjQuery(Slider, 'slider');
      * // 실제 사용시
-     * $('#slider').slider({count: 10});
+     * $('#slider').scSlider({count: 10});
      *
      * // 객체 가져오기 : instance 키워드 사용
-     * var slider = $('#slider').slider('instance');
-     * slider.move(2); // $('#slider').slider('move', 2); 와 동일
+     * var slider = $('#slider').scSlider('instance');
+     * slider.move(2); // $('#slider').scSlider('move', 2); 와 동일
      *
      * // 객체 해제하기 : release 키워드 사용
-     * $('#slider').slider('release');
+     * $('#slider').scSlider('release');
      *
      * // 옵션 변경하기
      * $('#slider').option('effect', 'fade'); // 이때 optionchange 라는 이벤트가 발생된다.
      */
-    ui.bindjQuery = function (Klass, name) {
-        var old = $.fn[name];
+    ui.bindjQuery = function(Klass, name, prefix) {
+        var pluginName = prefix ? prefix + name.substr(0, 1).toUpperCase() + name.substr(1) : name,
+            old = $.fn[pluginName];
 
-        $.fn[name] = function (options) {
+        $.fn[pluginName] = function(options) {
             var a = arguments,
                 args = arraySlice.call(a, 1),
                 me = this,
@@ -4175,33 +4664,35 @@ window.LIB_DIV_DEBUG = false;
             this.each(function() {
                 var $this = $(this),
                     methodValue,
-                    instance = $this.data('ui_'+name);
+                    instance = $this.data('ui_' + name);
 
-                if(instance && options === 'release') {
-                    try { instance.release(); } catch(e){}
-                    $this.removeData('ui_'+name);
+                if (instance && options === 'release') {
+                    try {
+                        instance.release();
+                    } catch (e) {}
+                    $this.removeData('ui_' + name);
                     return;
                 }
 
-                if ( !instance || (a.length === 1 && typeof options !== 'string')) {
-                    instance && (instance.release(), $this.removeData('ui_'+name));
-                    $this.data('ui_'+name, (instance = new Klass(this, core.extend({}, $this.data(), options), me)));
+                if (!instance || (a.length === 1 && typeof options !== 'string')) {
+                    instance && (instance.release(), $this.removeData('ui_' + name));
+                    $this.data('ui_' + name, (instance = new Klass(this, core.extend({}, $this.data(), options), me)));
                 }
 
-                if(options === 'instance'){
+                if (options === 'instance') {
                     returnValue = instance;
                     return false;
                 }
 
                 if (typeof options === 'string' && core.is(instance[options], 'function')) {
-                    if(options[0] === '_') {
+                    if (options.substr(0, 1) === '_') {
                         throw new Error('[bindjQuery] private 메소드는 호출할 수 없습니다.');
                     }
 
                     try {
                         methodValue = instance[options].apply(instance, args);
-                    } catch(e) {
-                        console.error('[name.'+options+' error] ' + e);
+                    } catch (e) {
+                        console.error('[' + name + '.' + options + ' error] ' + e);
                     }
 
                     if (methodValue !== instance && methodValue !== undefined) {
@@ -4214,8 +4705,8 @@ window.LIB_DIV_DEBUG = false;
         };
 
         // 기존의 모듈로 복구
-        $.fn[name].noConflict = function() {
-            $.fn[name] = old;
+        $.fn[pluginName].noConflict = function() {
+            $.fn[pluginName] = old;
             return this;
         };
     }
@@ -4288,6 +4779,9 @@ window.LIB_DIV_DEBUG = false;
 
 (function($, core) {
     "use strict";
+    if (core.util) {
+        return;
+    }
 
     var doc = document;
 
@@ -4297,7 +4791,7 @@ window.LIB_DIV_DEBUG = false;
      */
     core.addon('util', function() {
 
-        return /** @lends axl.util */{
+        return /** @lends axl.util */ {
 
 
             /**
@@ -4307,9 +4801,9 @@ window.LIB_DIV_DEBUG = false;
              * @example
              * axl.util.png24('#thumbnail');
              */
-            png24: function ( selector ) {
+            png24: function(selector) {
                 var $target;
-                if ( typeof (selector) == 'string') {
+                if (typeof(selector) == 'string') {
                     $target = $(selector + ' img');
                 } else {
                     $target = selector.find(' img');
@@ -4327,13 +4821,13 @@ window.LIB_DIV_DEBUG = false;
              * ie하위버전에서 페이지에 존재하는 모든 png 이미지가 정상적으로 출력되도록 AlphaImageLoader필터를 적용시켜 주는 함수
              * png Fix
              */
-            pngFix: function () {
+            pngFix: function() {
                 var s, bg;
-                $('img[@src*=".png"]', doc.body).each(function () {
+                $('img[@src*=".png"]', doc.body).each(function() {
                     this.css('filter', 'progid:DXImageTransform.Microsoft.AlphaImageLoader(src=\'' + this.src + '\', sizingMethod=\'\')');
                     this.src = '/resource/images/core/blank.gif';
                 });
-                $('.pngfix', document.body).each(function () {
+                $('.pngfix', document.body).each(function() {
                     var $this = $(this);
 
                     s = $this.css('background-image');
@@ -4348,8 +4842,8 @@ window.LIB_DIV_DEBUG = false;
             /**
              * 페이지에 존재하는 플래쉬의 wmode모드를 opaque로 변경
              */
-            wmode: function () {
-                $('object').each(function () {
+            wmode: function() {
+                $('object').each(function() {
                     var $this;
                     if (this.classid.toLowerCase() === 'clsid:d27cdb6e-ae6d-11cf-96b8-444553540000' || this.type.toLowerCase() === 'application/x-shockwave-flash') {
                         if (!this.wmode || this.wmode.toLowerCase() === 'window') {
@@ -4363,7 +4857,7 @@ window.LIB_DIV_DEBUG = false;
                         }
                     }
                 });
-                $('embed[type="application/x-shockwave-flash"]').each(function () {
+                $('embed[type="application/x-shockwave-flash"]').each(function() {
                     var $this = $(this),
                         wm = $this.attr('wmode');
                     if (!wm || wm.toLowerCase() === 'window') {
@@ -4380,38 +4874,133 @@ window.LIB_DIV_DEBUG = false;
             /**
              * 팝업을 띄우는 함수. (axl.openPopup으로도 사용가능)
              * @param {string} url 주소
-             * @param {number=} width 너비.
+             * @param {number=} width 너비. 또는 옵션
              * @param {number=} height 높이.
-             * @param {opts=} 팝업 창 모양 제어 옵션.
+             * @param {opts=} 팝업 창 모양 제어 옵션.(커스텀옵션: name(팝업이름), align(=center, 부모창의 가운데에 띄울것인가),
              * @example
-             * axl.openPopup('http://google.com', 500, 400, {scrollbars: 'no'});
+             * axl.openPopup('http://google.com', 500, 400, {name: 'notice', align: null, scrollbars: 'no'});
+             * //or
+             * axl.openPopup('http://google.com', {name: 'notice', width: 500, height: 400, scrollbars: 'no'});
              */
-            openPopup: function (url, width, height, opts) {
-                opts = extend({
-
-                }, opts);
-                width = width || 600;
-                height = height || 400;
-                //var winCoords = axl.util.popupCoords(width, height),
-                var target = opts.target || '',
-                    feature = 'app_, ',
-                    tmp = [];
-
-                delete opts.name;
-                for(var key in opts) {
-                    tmp.push(key + '=' + opts[ key ]);
+            openPopup: function(url, width, height, opts) {
+                if (arguments.length === 2 && core.is(width, 'json')) {
+                    opts = width;
+                    width = opts.width || 600;
+                    height = opts.height || 400;
                 }
+
+                opts = $.extend({
+                    name: 'popupWin',
+                    width: width || 600,
+                    height: height || 400,
+                    align: 'center',
+                    resizable: 'no',
+                    scrollbars: 'no'
+                }, opts);
+
+                var target = opts.target || opts.name || 'popupWin',
+                    feature = 'app_, ',
+                    tmp = [],
+                    winCoords;
+
+                if (opts.align === 'center') {
+                    winCoords = core.util.popupCoords(opts.width, opts.height);
+                    opts.left = winCoords.left;
+                    opts.top = winCoords.top;
+                }
+                delete opts.name;
+                delete opts.target;
+                delete opts.align;
+
                 core.browser.isSafari && tmp.push('location=yes');
-                tmp.push('height='+height);
-                tmp.push('width='+width);
-                /* + ', top=' + winCoords.top + ', left=' + winCoords.left;*/
+                core.each(opts, function(val, key) {
+                    tmp.push(key + '=' + val);
+                });
                 feature += tmp.join(', ');
 
-                window.open(
-                    url,
-                    target,
-                    feature
-                );
+                var popupWin = window.open('', target, feature);
+                if (!popupWin || popupWin.outerWidth === 0 || popupWin.outerHeight === 0) {
+                    alert("팝업 차단 기능이 설정되어 있습니다\n\n차단 기능을 해제(팝업허용) 한 후 다시 이용해 주세요.");
+                    return false;
+                }
+
+                if (popupWin.location.href === 'about:blank') {
+                    popupWin.location.href = url;
+                }
+
+                return popupWin;
+            },
+
+            /**
+             * 팝업을 띄운 후에 주어진 콜백함수를 호출
+             * @param {string} url 주소
+             * @param {Object} feature 팝업 모양 (커스텀옵션: name(팝업이름), align(=center: 부모창의 가운데에 띄울것인가),
+             * @param {Function} (Optional) callback 띄워진 후에 실행할 콜백함수
+             * @example
+             * axl.util.openPopupAndExec('http://google.com', {name: 'notice', width: 500, height:400, align: 'nw'}, function(popup){
+             *     alert('팝업이 정상적으로 띄워졌습니다.');
+             *     popup.close(); // 열자마자 닫아버림....:-b
+             * });
+             */
+            openPopupAndExec: function(url, feature, callback) {
+                feature || (feature = {});
+
+                var popupWin;
+
+                if ((popupWin = this.openPopup(url, feature.width, feature.height, feature)) === false) {
+                    return;
+                }
+                if (!callback) {
+                    return;
+                }
+
+                var limit = 0, // 5초 이내에 팝업이 로딩안되면 콜백함수 무시해버림
+                    fn = function() {
+                        if (limit++ > 50) {
+                            return;
+                        }
+                        if (!popupWin.document.body) {
+                            setTimeout(fn, 100);
+                            return;
+                        }
+                        callback && callback(popupWin);
+                        popupWin.focus();
+                    };
+
+                if (!popupWin.document.body) {
+                    setTimeout(fn, 100);
+                } else {
+                    fn();
+                }
+            },
+
+
+            /**
+             * 컨텐츠 사이즈에 맞게 창사이즈를 조절
+             * @example
+             * axl.util.resizeToContent(); // 팝업에서만 사용
+             */
+            resizeToContent: function() {
+                var innerX, innerY,
+                    pageX, pageY,
+                    win = window,
+                    doc = win.document;
+
+                if (win.innerHeight) {
+                    innerX = win.innerWidth;
+                    innerY = win.innerHeight;
+                } else if (doc.documentElement && doc.documentElement.clientHeight) {
+                    innerX = doc.documentElement.clientWidth;
+                    innerY = doc.documentElement.clientHeight;
+                } else if (doc.body) {
+                    innerX = doc.body.clientWidth;
+                    innerY = doc.body.clientHeight;
+                }
+
+                pageX = doc.body.offsetWidth;
+                pageY = doc.body.offsetHeight;
+
+                win.resizeBy(pageX - innerX, pageY - innerY);
             },
 
             /**
@@ -4420,15 +5009,17 @@ window.LIB_DIV_DEBUG = false;
              * @param {number} h 높이.
              * @return {Object} {left: 값, top: 값}
              */
-            popupCoords: function (w, h) {
-                var wLeft = window.screenLeft ? window.screenLeft : window.screenX,
-                    wTop = window.screenTop ? window.screenTop : window.screenY,
-                    wWidth = window.outerWidth ? window.outerWidth : document.documentElement.clientWidth,
-                    wHeight = window.outerHeight ? window.outerHeight : document.documentElement.clientHeight;
+            popupCoords: function(w, h) {
+                var dualScreenLeft = 'screenLeft' in window ? window.screenLeft : screen.left,
+                    dualScreenTop = 'screenTop' in window ? window.screenTop : screen.top,
+                    width = window.innerWidth || document.documentElement.clientWidth || screen.width,
+                    height = window.innerHeight || document.documentElement.clientHeight || screen.height,
+                    left = ((width / 2) - (w / 2)) + dualScreenLeft,
+                    top = ((height / 2) - (h / 2)) + dualScreenTop;
 
                 return {
-                    left: wLeft + (wWidth / 2) - (w / 2),
-                    top: wTop + (wHeight / 2) - (h / 2) - 25
+                    left: left,
+                    top: top
                 };
             },
 
@@ -4452,8 +5043,8 @@ window.LIB_DIV_DEBUG = false;
                         return;
                     }
                     var $target;
-                    if($target = $(this).data('target')) {
-                        $target.css('background', 'url('+this.src+')');
+                    if ($target = $(this).data('target')) {
+                        $target.css('background', 'url(' + this.src + ')');
                     }
 
                     len--;
@@ -4462,12 +5053,12 @@ window.LIB_DIV_DEBUG = false;
                     }
                 }
 
-                if(!len){
+                if (!len) {
                     def.resolve();
                 } else {
                     $imgs.each(function(i) {
                         var $img = $imgs.eq(i);
-                        if(!$img.is('img')) {
+                        if (!$img.is('img')) {
                             $img = $('<img>').data({
                                 'target': $img[0],
                                 'src': $img.attr('data-src')
@@ -4499,8 +5090,8 @@ window.LIB_DIV_DEBUG = false;
              *     alert('모든 이미지 로딩 완료');
              * });
              */
-            waitImageLoad: function(imgs, allowError){
-                if(core.is(imgs, 'string')){
+            waitImageLoad: function(imgs, allowError) {
+                if (core.is(imgs, 'string')) {
                     imgs = $(imgs);
                 }
                 var me = this,
@@ -4508,19 +5099,19 @@ window.LIB_DIV_DEBUG = false;
                     count = imgs.length,
                     loaded = function() {
                         count -= 1;
-                        if(count <= 0){
-                            defer.resolve();
+                        if (count <= 0) {
+                            defer.resolve(imgs);
                         }
                     };
 
-                if(count === 0) {
+                if (count === 0) {
                     defer.resolve();
                 } else {
-                    $imgs.each(function(i) {
-                        if(this.complete){
+                    imgs.each(function(i) {
+                        if (this.complete) {
                             loaded();
                         } else {
-                            $imgs.eq(i).one('load' + (allowError === false?'' : ' error'), loaded);
+                            imgs.eq(i).one('load' + (allowError === false ? '' : ' error'), loaded);
                         }
                     });
                 }
@@ -4569,7 +5160,7 @@ window.LIB_DIV_DEBUG = false;
              * @example
              * alert(axl.util.getWinHeight());
              */
-            getWinWidth : function() {
+            getWinWidth: function() {
                 var w = 0;
                 if (self.innerWidth) {
                     w = self.innerWidth;
@@ -4587,7 +5178,7 @@ window.LIB_DIV_DEBUG = false;
              * @example
              * alert(axl.util.getWinHeight());
              */
-            getWinHeight : function() {
+            getWinHeight: function() {
                 var w = 0;
                 if (self.innerHeight) {
                     w = self.innerHeight;
@@ -4599,50 +5190,6 @@ window.LIB_DIV_DEBUG = false;
                 return w;
             },
 
-
-            /**
-             * @function scroll top animate
-             * @param {number} y target y
-             * @param {Object} data 옵션
-             * @param {number} data.triggerY
-             * @param {number} data.duration
-             * @param {Function} data.triggerCallback
-             * @param {Function} data.completeCallback 완료 후 호출될 콜백함수
-             * @example
-             * axl.util.scrollTopAnimate(0, {
-             *     complete: function() {
-             *         alert('완료');
-             *     },
-             *     step: function(){
-             *     }
-             * });
-             */
-            scrollTopAnimate: function( y, data ){
-                var $body = $("body");
-                var duration = ( data == undefined || data.duration == undefined  ) ? 200 : data.duration;
-
-                var isTrigger = false;
-                var triggerFuncExe = function(){
-                    if( data && data.triggerY != undefined && data.triggerY != "" && $body.scrollTop() < data.triggerY && !isTrigger){
-                        isTrigger = true;
-                        if( data && data.step ){
-                            data.step();
-                        }
-                    }
-                }
-
-                $body.stop().animate({scrollTop:y}, {duration:duration,
-                    step:function(){
-                        triggerFuncExe();
-                    }, complete:function(){
-                        triggerFuncExe();
-                        if( data && data.complete ){
-                            data.complete();
-                        }
-                    }, ease: "easeOutQuad"
-                });
-            },
-
             /**
              * 주어진 요소의 사이즈 & 위치를 반환
              * @param {Element} elem
@@ -4652,31 +5199,40 @@ window.LIB_DIV_DEBUG = false;
              * var dims = axl.util.getDimensions('#box');
              * console.log(dims.left, dims.top, dims.width, dims.height);
              */
-            getDimensions: function( elem ) {
-                if(core.is(elem, 'string')){
+            getDimensions: function(elem) {
+                if (core.is(elem, 'string')) {
                     elem = $(elem);
                 }
 
                 var el = elem[0];
-                if ( el.nodeType === 9 ) {
+                if (el.nodeType === 9) {
                     return {
                         width: elem.width(),
                         height: elem.height(),
-                        offset: { top: 0, left: 0 }
+                        offset: {
+                            top: 0,
+                            left: 0
+                        }
                     };
                 }
-                if ( $.isWindow( el ) ) {
+                if ($.isWindow(el)) {
                     return {
                         width: elem.width(),
                         height: elem.height(),
-                        offset: { top: elem.scrollTop(), left: elem.scrollLeft() }
+                        offset: {
+                            top: elem.scrollTop(),
+                            left: elem.scrollLeft()
+                        }
                     };
                 }
-                if ( el.preventDefault ) {
+                if (el.preventDefault) {
                     return {
                         width: 0,
                         height: 0,
-                        offset: { top: el.pageY, left: el.pageX }
+                        offset: {
+                            top: el.pageY,
+                            left: el.pageX
+                        }
                     };
                 }
                 return {
@@ -4687,155 +5243,175 @@ window.LIB_DIV_DEBUG = false;
             },
 
             /**
-             * 전체선택 기능 빌드
-             * @param {Element} el
-             */
-            bindCheckAll: function(el) {
-                var $con = $(el);
-
-                // 전체 선택
-                $con.on('click.globalui', ' input:checkbox:enabled', function (e) {
-                    var $el = $(this),
-                        $checkes = $con.find('input:checkbox:enabled:not(.ui_notcheck)'),
-                        $checkAll = $checkes.filter('.ui_checkall'),
-                        $others = $checkes.not('.ui_checkall');
-
-                    if($el.hasClass('ui_checkall')) {
-                        $others.prop('checked', this.checked);
-                    } else {
-                        $checkAll.prop('checked', $others.not(':checked').size() === 0);
-                    }
-                    $checkAll.triggerHandler('checkallchanged');
-                });
-
-            },
-
-
-            /**
-             * 컨텐츠 사이즈에 맞게 창사이즈를 조절
+             * 휠이벤트의 deltaY 추출(위로: 1, 아래로: -1)
+             * @param {jQuery#Event}
+             * @return {Number} deltaY
              * @example
-             * axl.util.resizeToContent(); // 팝업에서만 사용
-             */
-            resizeToContent: function() {
-                var innerX, innerY,
-                    pageX, pageY,
-                    win = window,
-                    doc = win.document;
-
-                if (win.innerHeight) {
-                    innerX = win.innerWidth;
-                    innerY = win.innerHeight;
-                } else if (doc.documentElement && doc.documentElement.clientHeight) {
-                    innerX = doc.documentElement.clientWidth;
-                    innerY = doc.documentElement.clientHeight;
-                } else if (doc.body) {
-                    innerX = doc.body.clientWidth;
-                    innerY = doc.body.clientHeight;
-                }
-
-                pageX = doc.body.offsetWidth;
-                pageY = doc.body.offsetHeight;
-
-                win.resizeBy(pageX - innerX, pageY - innerY);
-            },
-
-            /**
-             * 팝업을 띄운 후에 주어진 콜백함수를 호출
-             * @param {string} url
-             * @param {Object} feature
-             * @param {Function} callback
-             * @example
-             * axl.util.openPopupAndExec('http://google.com', '', function(){
-             *     alert('팝업이 정상적으로 띄워졌습니다.');
+             * $el.on('mousewheel DOMMouseScroll wheel', function (e) {
+             *     var deltaY = axl.util.getDeltaY(e);
              * });
              */
-            openPopupAndExec: function(url, feature, callback) {
-                feature = $.extend(feature,  {
-                    name: 'popupWin',
-                    width: 600,
-                    height: 531,
-                    align: 'center',
-                    resizable: 'no',
-                    scrollbars: 'no'
-                });
-                var f = [];
-                core.each(feature, function(val, key){
-                    f.push(key + '=' + val);
-                });
+            getDeltaY: function(e) {
+                return this.getWheelDelta(e).y;
+            },
+            /**
+             * 휠이벤트의 deltaX 추출(우: 1, 좌: -1)
+             * @param {jQuery#Event}
+             * @example
+             * $el.on('mousewheel DOMMouseScroll wheel', function (e) {
+             *     var deltaX = axl.util.getDeltaX(e);
+             * });
+             */
+            getDeltaX: function(e) {
+                return this.getWheelDelta(e).x;
+            },
+            /**
+             * 휠이벤트의 deltaX, deltaY 추출(상: 1, 하: -1, 우: 1, 좌: -1)
+             * @param {jQuery#Event}
+             * @return {JSON} {x:Number, y:Numberx}
+             * @example
+             * $el.on('mousewheel DOMMouseScroll wheel', function (e) {
+             *     var delta = axl.util.getWheelDelta(e);
+             *     // delta.x;
+             *     // delta.y;
+             * });
+             */
+            getWheelDelta: function(e) {
+                var wheelDeltaX, wheelDeltaY;
 
-                var popupWin = window.open('', feature.name, f.join(','));
-                if (!popupWin || popupWin.outerWidth === 0 || popupWin.outerHeight === 0) {
-                    alert("팝업 차단 기능이 설정되어있습니다\n\n차단 기능을 해제(팝업허용) 한 후 다시 이용해 주십시오.");
-                    return;
-                }
-
-                if (popupWin.location.href === 'about:blank') {
-                    popupWin.location.href = url;
-                }
-
-                var limit = 0,
-                    fn = function() {
-                        if (limit++ > 50) {
-                            return;
-                        }
-                        if (!popupWin.document.body) {
-                            setTimeout(fn, 100);
-                            return;
-                        }
-                        callback && callback(popupWin);
-                        popupWin.focus();
-                    };
-
-                if (!popupWin.document.body) {
-                    setTimeout(fn, 100);
+                e = e.originalEvent || e;
+                if ('deltaX' in e) {
+                    if (e.deltaMode === 1) {
+                        wheelDeltaX = -e.deltaX;
+                        wheelDeltaY = -e.deltaY;
+                    } else {
+                        wheelDeltaX = -e.deltaX;
+                        wheelDeltaY = -e.deltaY;
+                    }
+                } else if ('wheelDeltaX' in e) {
+                    wheelDeltaX = e.wheelDeltaX;
+                    wheelDeltaY = e.wheelDeltaY;
+                } else if ('wheelDelta' in e) {
+                    wheelDeltaX = wheelDeltaY = e.wheelDelta;
+                } else if ('detail' in e) {
+                    wheelDeltaX = wheelDeltaY = -e.detail;
                 } else {
-                    fn();
+                    wheelDeltaX = wheelDeltaY = 0;
                 }
+                return {
+                    x: wheelDeltaX === 0 ? 0 : (wheelDeltaX > 0 ? 1 : -1),
+                    y: wheelDeltaY === 0 ? 0 : (wheelDeltaY > 0 ? 1 : -1)
+                };
+            },
+            /**
+             * 두 포인터의 간격을 계산
+             * @param {{x: (*|Number|number), y: (*|number|Number)}} a
+             * @param {{x: (*|Number|number), y: (*|number|Number)}} b
+             * @returns {{x: number, y: number}}
+             */
+            getDiff: function(a, b) {
+                return {
+                    x: a.x - b.x,
+                    y: a.y - b.y
+                };
+            },
+
+            /**
+             * 이벤트의 좌표 추출
+             * @param ev 이벤트 객체
+             * @param type
+             * @returns {{x: (*|Number|number), y: (*|number|Number)}}
+             */
+            getEventPoint: function(ev, type) {
+                var e = ev.originalEvent || ev;
+                if (type === 'end' || ev.type === 'touchend') {
+                    e = e.changedTouches && e.changedTouches[0] || e;
+                } else {
+                    e = e.touches && e.touches[0] || e;
+                }
+                return {
+                    x: e.pageX || e.clientX,
+                    y: e.pageY || e.clientY
+                };
+            },
+
+            /**
+             * 두 포인터간의 각도 계산
+             * @param {{x: (*|Number|number), y: (*|number|Number)}} startPoint 시작점
+             * @param {{x: (*|Number|number), y: (*|number|Number)}} endPoint 끝점
+             * @returns {number} 각도
+             */
+            getAngle: function(startPoint, endPoint) {
+                var x = startPoint.x - endPoint.x;
+                var y = endPoint.y - startPoint.y;
+                var r = Math.atan2(y, x); //radians
+                var angle = Math.round(r * 180 / Math.PI); //degrees
+
+                if (angle < 0) {
+                    angle = 360 - Math.abs(angle);
+                }
+
+                return angle;
+            },
+
+            /**
+             * 시작점과 끝점을 비교해서 이동한 방향을 반환
+             * @param {{x: (*|Number|number), y: (*|number|Number)}} startPoint 시작점
+             * @param {{x: (*|Number|number), y: (*|number|Number)}} endPoint 끝점
+             * @param {String} direction
+             * @returns {*} left, right, down, up
+             */
+            getDirection: function(startPoint, endPoint, direction) {
+                var angle,
+                    isHoriz = !direction || direction === 'horizontal' || direction === 'both',
+                    isVert = !direction || direction === 'vertical' || direction === 'both';
+
+                if (isHoriz != isVert) {
+                    if (isHoriz) {
+                        if (startPoint.x > endPoint.x) {
+                            return 'left';
+                        } else {
+                            return 'right';
+                        }
+                    } else {
+                        if (startPoint.y > endPoint.y) {
+                            return 'down';
+                        } else {
+                            return 'up';
+                        }
+                    }
+                }
+
+                angle = this.getAngle(startPoint, endPoint);
+                if ((angle <= 45) && (angle >= 0)) {
+                    return 'left';
+                } else if ((angle <= 360) && (angle >= 315)) {
+                    return 'left';
+                } else if ((angle >= 135) && (angle <= 225)) {
+                    return 'right';
+                } else if ((angle > 45) && (angle < 135)) {
+                    return 'down';
+                } else {
+                    return 'up';
+                }
+            },
+            /**
+             * 어떤 요소의 자식들의 총 너비를 구하는 함수
+             * @param {jQuery|NodeCollection} items 자식요소들
+             * @returns {number}
+             */
+            getItemsWidth: function(items) {
+                var width = 0;
+                $(items).each(function() {
+                    width += $(this).width();
+                });
+                return width;
             }
         };
     });
 
-})(jQuery, window[LIB_NAME]);
-
-
-(function($, core) {
-    "use strict";
-
-    core.s = core.string;
-    core.d = core.date;
-    core.n = core.number;
-    core.a = core.array;
-    core.o = core.object;
-    core.u = core.uri;
-    core.b = core.browser;
-
-    /**
-     * 모듈 생성 함수 및 네임스페이스
-     * @namespace
-     * @name axl.module
-     * @example
-     * var Geolocation = axl.Base.extend({...});
-     * axl.module('Geolocation', Geolocation);
-     *
-     * //or
-     * axl.module('Geolocation', {
-     *     initialize: function(){}
-     * });
-     *
-     * axl.module.Geolocation().getInstance()...
-     */
-    axl.module = function(name, obj) {
-        if(!obj){ return; }
-        if(!obj.superclass) {
-            console.log(name);
-            obj = axl.Base.extend(obj);
-        }
-        this.module[name] = obj;
-    };
-
-
     var $win = $(window);
-    $win.on(function(){
+    $win.on(function() {
         var bindGlobalEvent = function(type) {
             var data = {};
             return function() {
@@ -4844,7 +5420,7 @@ window.LIB_DIV_DEBUG = false;
                     data[type + 'Start'] = true;
                 }
                 data[type + 'Timer'] && clearTimeout(data[type + 'Timer']);
-                data[type + 'Timer'] = setTimeout(function () {
+                data[type + 'Timer'] = setTimeout(function() {
                     $win.triggerHandler(type + 'end');
                     data[type + 'Start'] = false;
                 }, 200);
@@ -4882,9 +5458,767 @@ window.LIB_DIV_DEBUG = false;
         };
     }());
 
+    core.s = core.string;
+    core.d = core.date;
+    core.n = core.number;
+    core.a = core.array;
+    core.o = core.object;
+    core.u = core.uri;
+    core.b = core.browser;
 
-    $.fn.buildUIControls = function(){
+    /**
+     * 모듈 생성 함수 및 네임스페이스
+     * @namespace
+     * @name axl.module
+     * @example
+     * var Geolocation = axl.BaseClass.extend({...});
+     * axl.module('Geolocation', Geolocation);
+     *
+     * //or
+     * axl.module('Geolocation', {
+     *     initialize: function(){}
+     * });
+     *
+     * axl.module.Geolocation().getInstance()...
+     */
+    core.module = function(name, obj) {
+        if (!obj) {
+            return;
+        }
+        if (!obj.superclass) {
+            obj = core.BaseClass.extend(obj);
+        }
+        this.module[name] = obj;
+    };
+
+})(jQuery, window[LIB_NAME]);
+//// 여기까지는 프레임웍 소스입니다. //////////////////////////////////////////////////////////////////
+
+
+// 현재 사이트 전용 글로벌 작업들을 처리하는 익명 함수
+(function($, core) {
+    "use strict";
+    if (core._initGlobalUI) {
+        return;
+    }
+    core._initGlobalUI = true;
+
+    var $win = $(window);
+
+    // 디바이스이면 날짜 형식을 변경
+    if (core.browser.isMobile) {
+        core.date.FORMAT = 'yyyy-MM-dd';
+    }
+
+    // import 관련 옵션
+    core.importJs.baseUrl = JS_DIR; // 기본 js 디렉토리
+    core.importJs.ver = '20150406'; // 버전
+    core.importJs.addAliases({ // 단축명 추가, 자주 사용되는 것만
+
+    });
+
+    // 상수 정의
+    core.consts = {
+        MOBILE_SIZE: 768, // 모바일사이즈 기준
+        M_HEADER_HEIGHT: 44, // 모바일사이즈일 때 헤더 사이즈
+        P_HEADER_HEIGHT: 56 // pc사이즈일 때 헤더 사이즈
+    };
+
+    /**
+     * 현재 창 사이즈가 모바일 사이즈인지 여부
+     * @function
+     * @name axl.isMobileSize
+     **/
+    core.isMobileSize = function(w) {
+        if (w === undefined) {
+            w = $win.width();
+        }
+        return w <= core.consts.MOBILE_SIZE;
+    };
+
+
+    !core.browser.placeholder && (function() {
+        var oldVal = $.fn.val;
+        /**
+         * value값의 앞뒤 스페이스문자 또는 old ie인경우에 placeholder를 제거하여 실제 값만 반환
+         * @function
+         * @name $#val
+         * @return {string} 문자열
+         */
+        $.fn.val = function() {
+            if (arguments.length === 0) {
+                if (this.attr('placeholder') && this.get(0).value === this.attr('placeholder')) {
+                    return '';
+                }
+            }
+            return oldVal.apply(this, [].slice.call(arguments, 0));
+        };
+    })();
+
+    /**
+     * 포맷을 제거한 값을 추출
+     * @function
+     * @name $#unformat
+     **/
+    $.fn.realVal = $.fn.unformat = core.browser.placeholder ? function() {
+        var module, val = this.val();
+        if (val && (module = this.data('ui_formatInput'))) {
+            val = module.clean();
+        }
+        return val;
+    } : function() {
+        var module, val = this.val();
+        if (val === this.attr('placeholder')) {
+            val = '';
+        }
+        if (val && (module = this.data('ui_formatInput'))) {
+            val = module.clean();
+        }
+        return val;
+    };
+
+    /**
+     * 주어진 값을 해당요소의 data-format속성에 따라 포맷화해서 value에 설정
+     * @function
+     * @name $#format
+     **/
+    $.fn.format = function(val) {
+        var module;
+
+        this.val(val);
+        if (module = this.data('ui_formatInput')) {
+            module.update();
+        }
         return this;
     };
+
+    /**
+     * 체크여부를 지정할 때, changed 이벤트를 발생시킨다.(연결된 label에 on클래스를 토글링하고자 할 때 사용)
+     * @function
+     * @name $#checked
+     * @param {boolean} checked 체크여부
+     * @param {boolean} isTrigger 버블링 여부
+     * @returns {jQuery}
+     * @fires $#changed
+     * @example
+     * // 먼저 checkedchanged 이벤트 바인딩
+     * $('input:checkbox').on('checkedchanged', function(e) {
+     * $(this).parent()[this.checked ? 'addClass' : 'removeClass']('on'); });
+     * ..
+     * // checked 값을 변경
+     * $('input:checkbox').checked(true); // 해당체크박스의 부모에 on클래스가 추가된다.
+     * $('input:checkbox').checked(true, false); // 두번째 인자에 false를 넘기면 이벤트를 발생안시키고 UI만 갱신한다.
+     */
+    $.fn.checked = function(checked, isTrigger) {
+        return this.each(function() {
+            if (this.type !== 'checkbox' && this.type !== 'radio') {
+                return;
+            }
+            if (this.disabled) {
+                $(this).parent().addClass('disabled');
+                return;
+            }
+            if (checked === null) { // 클릭에 의한거면
+                checked = !this.checked;
+            }
+
+            this.checked = checked;
+            if (checked) {
+                this.setAttribute('checked', 'checked');
+            } else {
+                this.removeAttribute('checked');
+            }
+
+            var $el = $(this),
+                isRadio = this.type === 'radio',
+                text = checked ? '선택됨' : '미선택됨',
+                $a = $el.parent().removeClass('disabled').find('a');
+
+            text = this.disabled ? '선택불가' : text;
+            if (isRadio) {
+                $('input[name="' + $el.attr('name') + '"]', this.form).not(this).each(function() {
+                    var txt = this.disabled ? '선택불가' : (this.checked ? '선택됨' : '미선택됨');
+                    this.removeAttribute('checked');
+                    $(this).parent().toggleClass('disabled', this.disabled)
+                        .find('a').removeClass('check').find('span:eq(2)').text(txt);
+                });
+            }
+            $a.toggleClass('check', checked).find('span').eq(2).html(text);
+            if (isTrigger !== false) {
+                /**
+                 * @event $#changed
+                 * @type {Object}
+                 * @peoperty {boolean} checked - 체크 여부
+                 */
+                var e = $.Event('checkedchanged');
+                $el.trigger(e, [checked]);
+                $el.trigger('change');
+            }
+        });
+    };
+
+    /**
+     * disabled 및 flag에 따라 클래스 토글
+     * @function
+     * @name $#disabled
+     * @param {boolean} flag
+     * @returns {*}
+     */
+    $.fn.disabled = function(flag) {
+        if (arguments.length === 0) {
+            flag = true;
+        }
+        if (this.is('a')) {
+            // 링크 비활성화. 원래 a는 비활성화 안되는데...;;;;
+            if (flag) {
+                this.attr('tabindex', -1);
+            } else {
+                this.removeAttr('tabindex');
+            }
+        } else if (this.is(':checkbox, :radio')) {
+            // 체크박스, 라디오
+            if (flag) {
+                this.prop('checked', false).removeAttr('checked');
+            }
+            this.parent()
+                .find('a').attr('tabindex', flag ? '-1' : '')
+                .toggleClass('check_disabled disabled', flag).toggleClass('check', this.prop('checked'))
+                .find('.hide span:last').text(flag ? '선택불가' : (this.prop('checked') ? '선택됨' : '미선택됨'));
+        } else if (this.is('select')) {
+            // 셀렉트박스
+            this.scSelectbox('disabled', flag);
+        } else if (this.is('input')) {
+            // 인풋박스, 달력
+            this.siblings('button').prop('disabled', flag);
+        }
+        return this.prop('disabled', flag).toggleClass('disabled', flag);
+    };
+
+    /**
+     * readonly 및 flag에 따라 클래스 토글
+     * @function
+     * @name $#readonly
+     * @param {boolean} flag
+     * @returns {*}
+     */
+    $.fn.readonly = function(flag) {
+        if (arguments.length === 0) {
+            flag = true;
+        }
+        return this.prop('readonly', flag).toggleClass('read', flag);
+    };
+
+    /**
+     * dateVal 현재 달력이 디바이스와 pc가 동작방식이 완전히 다른데, 이에 신경쓰지 않고 값을 설정하거나 추출할 수 있도록 함수제공
+     * @function
+     * @name $#dateVal
+     * @param {String=} (Optional) value
+     * @returns {*}
+     */
+    $.fn.dateVal = (function() {
+        var oldVal = $.fn.val;
+        return function() {
+            var ret = oldVal.apply(this, [].slice.call(arguments, 0));
+            if (arguments.length === 1 && this[0].type === 'date') {
+                this.triggerHandler('change'); //label에 반영
+            }
+            return ret;
+        };
+    })();
+
+    /**
+     * module 해당 요소에 빌드된 모듈들 중에 주어진 이름에 해당하는 모듈을 반환
+     * @function
+     * @name $#module
+     * @param {String} name 모듈명
+     * @returns {*}
+     * @example
+     * var cal = $('#cal01').module('calendar');
+     * cal.setMinDate('2015-12-12');
+     */
+    $.fn.module = function(name) {
+        return this.data('ui_' + name) || this.data(name);
+    };
+
+    // 해상도별 사이즈 기준이 변하는 시점에 changemediasize라는 이벤트를 별도로 발생시킨다.
+    $win.on('resize.changemediasize', (function() {
+        var sizes = [{
+                mode: 'w376',
+                min: 0,
+                max: 376
+            }, {
+                mode: 'w768',
+                min: 376,
+                max: 768
+            }, {
+                mode: 'w1024',
+                min: 768,
+                max: 1024
+            }, {
+                mode: 'w1280',
+                min: 1024,
+                max: 1280
+            }, {
+                mode: 'wide',
+                min: 1280,
+                max: 100000
+            }],
+            prevMode = '',
+            f,
+            $body = $('body');
+
+        f = function(force) {
+            var w = $win.width(),
+                isUnresponse;
+            if ($body.size() === 0) {
+                $body = $('body');
+            }
+            // 팝업이거나 pc전용 페이지인 경우 changemediasize 이벤트를 날리지 않는다.
+            if ($body.hasClass('pop_body') || $body.hasClass('pc_body')) {
+                isUnresponse = true;
+            }
+            if (force === true) {
+                prevMode = null;
+            }
+            document.title = w + ' - ' + document.title.replace(/^[0-9\- ]*/, '');
+            for (var i = 0, size; size = sizes[i]; i++) {
+                if (w > size.min && w <= size.max && prevMode != size.mode) {
+                    size.width = w;
+                    if (!isUnresponse) {
+                        // 반응형일 때만 body에 클래스 토글
+                        switch (size.mode) {
+                            case 'wide': // > 1280
+                                $body.removeClass('w376 w768 w1024 w1280');
+                                break;
+                            case 'w1280':
+                                // 창크기가 1279 ~ 1024 사이일 경우 창크기로 고정
+                                $body.addClass('w1280').removeClass('w376 w768 w1024');
+                                break;
+                            case 'w1024':
+                                // 창크기가 1203 ~ 768 사이일 경우 창크기로 고정
+                                $body.addClass('w1024').removeClass('w376 w768 w1280');
+                                break;
+                            case 'w768':
+                                // 창크기가 767 이하일 경우 모바일 화면
+                                $body.addClass('w768').removeClass('w376 w1024 w1280');
+                                break;
+                            case 'w376':
+                                // 창크기가 376 이하일 경우 모바일 화면
+                                $body.addClass('w376 w768').removeClass('w1024 w1280');
+                                break;
+                        }
+                    }
+                    prevMode = size.mode;
+                    core.ui.mediaInfo = size;
+                    console.log('changemediasize');
+                    $win.trigger('changemediasize', false);
+                    break;
+                }
+            }
+        };
+        // 사용자가 직접 trigger하는거랑 구분하기 위해 두번째 인자를 사용
+        $win.on('changemediasize', function(e, data) {
+            // 바로 윗함수에서 날린거는 무시
+            if (data !== false) {
+                f(true);
+            }
+        });
+        // 초기에 한번 실행
+        $(function() {
+            //setTimeout(function () {
+            f();
+            //}, 0);
+        });
+        return f;
+    })());
+
+
+    // 특정노드에 UI모듈이 빌드된 상태에서 ajax 에 의해,
+    // 교체되거나 삭제됐을 때 주기적으로 이를 체크하여
+    // 메모리해제, 글로벌이벤트 언바인딩, 인터벌 중지 등을 처리해준다.
+    setInterval(function() {
+        core.ui.uiGarbageClear();
+    }, 60000);
+
+
+
+    /**
+     * @namespace
+     * @name axl.GlobalUIs
+     * @description 페이지 이벤트 바인딩
+     * @example
+     * axl.GlobalUIs.init();
+     */
+    core.addon('GlobalUIs', function() {
+        var $doc = $(document);
+
+        var GlobalUIs = /** @lends axl.GlobalUIs# */ {
+            init: function() {
+                var me = this;
+
+                if (me._inited) {
+                    return;
+                }
+                me._inited = true;
+                me.isPopup = $('body').hasClass('pop_body');
+
+                me._inputBox();
+                me._radioAndCheckbox();
+                me._button();
+                me._skipNaviFocus();
+                me._hover();
+
+                if (!me.isPopup) {
+                    me._header();
+                    me._commonMenu();
+                    me._footer();
+                }
+            },
+
+            _get: function(name, selector) {
+                var me = this;
+
+                return me['$' + name] || (me['$' + name] = $(selector));
+            },
+
+            /**
+             * document에 INPUT BOX 관련 이벤트 바인딩
+             *
+             */
+            _inputBox: function() {
+                var timer;
+
+                function isDisable($el) {
+                    return $el.prop('readonly') || $el.prop('disabled');
+                }
+
+                // sjsx로 바뀌는 부분에 들어있는 요소들에 이벤트를 거는거는 메모리릭 문제가 있어서
+                // delegate로 변경함
+                $doc.on('focusin.globalui focusout.globalui', '.ui_inputbox', function(e) {
+                    var $wrap = $(this),
+                        $inp = $wrap.find('input'),
+                        $btn = $wrap.find('button'),
+                        isNotEmpty = $inp.val() !== '';
+
+                    if (isNotEmpty && e.type === 'focusin') {
+                        if (timer) {
+                            clearTimeout(timer);
+                            timer = null;
+                        }
+                        if (isDisable($inp)) {
+                            return;
+                        }
+                        $btn.show();
+                        $inp.addClass('input_pad');
+                        if (!core.browser.placeholder) {
+                            $inp.val($inp.val());
+                        }
+                    } else if (e.type === 'focusout') {
+                        timer = setTimeout(function() {
+                            $btn.hide();
+                            $inp.removeClass('input_pad');
+                            if (!core.browser.placeholder && $inp.val()) {
+                                $inp.val($inp.val());
+                            }
+                        }, 200);
+                    }
+                }).on('keyup.globalui', '.ui_inputbox input', function(e) {
+                    var $inp = $(this),
+                        $btn = $inp.siblings('button');
+
+                    if (isDisable($inp)) {
+                        return;
+                    }
+                    var isNotEmpty = $inp.val() !== '';
+
+                    $btn.toggle(isNotEmpty);
+                    $inp.toggleClass('input_pad', isNotEmpty);
+                }).on('click.globalui', '.ui_inputbox button', function(e) {
+                    e.preventDefault();
+                    $(this).siblings('input').val('').data('original', '').trigger('change').focus();
+                });
+            },
+
+            /**
+             * document에 체크박스 & 라디오
+             *
+             */
+            _radioAndCheckbox: function() {
+                var me = this;
+
+                // 스킨형 라디오박스, 체크박스
+                $doc.on('click.globalui keydown.globalui', '.ui_checkbox, .ui_radiobox', function(e) {
+                    // 네이티브처럼 클릭 혹은 스페이스키를 누르면 체크가 되도록..
+                    var valid = (e.type === 'click' || (e.type === 'keydown' && e.keyCode === 32));
+                    if (valid) {
+                        e.preventDefault();
+
+                        var $el = $(this),
+                            $input;
+                        if ($el.hasClass('ui_checkbox')) {
+                            $input = $el.find('input:checkbox:enabled');
+                        } else {
+                            $input = $el.find('input:radio:enabled:not(:checked)');
+                        }
+                        $input.checked(null);
+                    }
+                }).on('reset', 'form', function() {
+                    var frm = this;
+                    setTimeout(function() {
+                        $(':radio, :checkbox', frm).checked(null, false);
+                    });
+                });
+            },
+
+            /**
+             * document에 Element에 Hover 이벤트 바인딩
+             *
+             */
+            _hover: function() {
+                var me = this;
+
+                // button, li, input, textarea 호버시 활성화
+                $doc.on('mouseenter.globalui mouseleave.globalui focusin.globalui focusout.globalui',
+                    'textarea:not([readonly]):enabled, :text:not([readonly]):enabled, :password:not([readonly]):enabled',
+                    function(e) {
+                        switch (e.type) {
+                            case 'mouseenter':
+                            case 'mouseleave':
+                                $(this).toggleClass('active', e.type === 'mouseenter');
+                                break;
+                            case 'focusin':
+                            case 'focusout':
+                                $(this).toggleClass('on', e.type === 'focusin');
+                                break;
+                        }
+                    }).on('mouseenter.globalui mouseleave.globalui focusin.globalui focusout.globalui',
+                    'button:not(:disabled), li:not(.disabled)',
+                    function(e) {
+                        var $el = $(this);
+
+                        switch (e.type) {
+                            case 'mouseenter':
+                            case 'focusin':
+                                if (!$el.hasClass('on')) {
+                                    $el.addClass('active');
+                                }
+                                break;
+                            default:
+                                $el.removeClass('active');
+                                break;
+                        }
+                    });
+            },
+
+            /**
+             * 하단 '무엇을 도와드릴까요' Fixed 기능
+             *
+             */
+            _commonMenu: function() {
+                var me = this,
+                    $axlMenu = me._get('commonMenu', '.ui_common_menu'),
+                    $axlMenuContent = $axlMenu.find('.ui_common_menu_content');
+
+                var showaxlMenu = function() {
+                    $axlMenuContent.show().find('.ui_close').focus();
+
+                    // 공통메뉴 닫기
+                    $axlMenuContent.off().on('click', '.ui_close', function(e) {
+                        e.preventDefault();
+
+                        $axlMenu.find('.ui_common_menu_btn').focus();
+                        hideaxlMenu();
+                    });
+                };
+
+                var hideaxlMenu = function() {
+                    $axlMenuContent.off().hide();
+                };
+
+                // 공통메뉴 열기 및 top버튼 바인딩
+                $axlMenu.on('click', 'a', function(e) {
+                    e.preventDefault();
+
+                    var $el = $(this);
+                    if ($el.hasClass('ui_common_menu_btn')) {
+                        showaxlMenu();
+                    } else if ($el.hasClass('ui_go_top')) {
+                        $(window).scrollTop(1);
+                    }
+                });
+            },
+
+            /**
+             *GNB
+             *
+             */
+            _gnb: function() {
+                $('.ui_skip_navi').on('click', function() {
+                    // IE에서는 본문바로가기를 눌렀을 경우 스크립트로 클래스를 삽입하지 않으면 링크 이동 후 스크롤링 이벤트가 작동. 크롬에서는 문제 없으나 따로 버전 체크는 하지 않음.
+                    if ($(window).height() < $(document).height()) {
+                        $('#htop').addClass('fixed').removeClass('dp_menu').css({
+                            'position': '',
+                            'top': ''
+                        });
+                        $('.main_sec, .main, .subm').addClass('fixed');
+                    }
+                });
+
+                // 전체메뉴 빌드
+                axl.importJs([
+                    'modules/allmenu'
+                ], function() {
+                    window.allMenu = new axl.ui.AllMenu($('.ui_all_menu'));
+                });
+            },
+
+            /**
+             * 각종 기능 버튼. 프린트/닫기
+             *
+             */
+            _button: function() {
+                var me = this;
+
+                $doc.on('click.globaluibutton', '.ui_print, .ui_close, .ui_popup', function(e) {
+                    e.preventDefault();
+                    var $el = $(this),
+                        target;
+                    switch (true) {
+                        case $el.hasClass('ui_print'): // 인쇄 버튼
+                            window.print();
+                            break;
+                        case $el.hasClass('ui_close'): // 닫기버튼
+                            if (me.isPopup) { // 팝업 닫기
+                                window.self.close();
+                            } else if (target = $el.attr('data-target')) { // data-target에 저정한 요소를 hide
+                                if ($(target).hide().size()) {
+                                    e.stopPropagation();
+                                }
+                            } else if (target = $el.attr('data-closest')) { // 지정된 부모를 hide
+                                if (!target) {
+                                    target = '.ui_modal_layer';
+                                }
+                                if ($el.closest(target).hide().size()) {
+                                    e.stopPropagation();
+                                }
+                            }
+                            break;
+                    }
+                }).on('click.globaluibutton', '.ui_toggle_button', function(e) {
+                    // 토글 버튼. (자막보기 처럼 버튼에 연결된 요소를 토글하고자 할 경우 사용)
+                    var $btn = $(this),
+                        $target = $($btn.attr('data-target')),
+                        on = $btn.hasClass('on'),
+                        effect = $btn.attr('data-effect') || 'slide';
+
+                    if ($target.length === 0) {
+                        return;
+                    }
+                    $target.stop()[on ? 'slideUp' : 'slideDown']('fast', function() {
+                        $btn.toggleClass('on', !on).find('.hide').text(on ? '열기' : '닫기');
+                    });
+                });
+
+                if (!core.browser.isMobile) {
+                    $doc.on('click.globaluibutton', '.f_tel', function(e) {
+                        e.preventDefault();
+                    });
+                }
+            },
+
+            _header: function() {
+                var me = this,
+                    top = 0,
+                    $htop = me.$htop || (me.$htop = $('#htop')),
+                    $skipNavi = me.$skipNavi || (me.$skipNavi = $('.skip')),
+                    $mainSec = me.$mainSec || (me.$mainSec = $('.main_sec, .main, .subm')),
+                    $commonMenu = me.$axlMenu || (me.$axlMenu = $('.ui_common_menu')),
+                    $goTop = me.$goTop || (me.$goTop = $('.ui_go_top')),
+                    $fixedSubHeader;
+
+                var getFixedSubHeader = function() {
+                    if (!$fixedSubHeader || $fixedSubHeader.size() === 0) {
+                        $fixedSubHeader = $('.ui_fixed_header')
+                    }
+                    return $fixedSubHeader;
+                };
+
+                // 헤더고정(fixed <-> static)
+                $win.on('scroll.globalheader', function(e) {
+                    if (core.isTouch) {
+                        setTimeout(function() {
+                            e.preventDefault();
+                        }, 0);
+                    }
+                    var scrollTop = $win.scrollTop(),
+                        skipNaviHeight = 18;
+
+                    if (window.allMenu && window.allMenu.menuOpended && window.allMenu.menuMode === 'pc') {
+                        // pc사이즈에서 메뉴가 열려져 있을 때
+                        if (scrollTop < $htop.offset().top) {
+                            top = (scrollTop > skipNaviHeight) ? 0 : skipNaviHeight - scrollTop;
+                            $htop.removeClass('fixed').css({
+                                'position': 'absolute',
+                                'top': scrollTop + top
+                            });
+                        }
+                    } else {
+                        var bNavi = (parseInt(scrollTop, 10) >= skipNaviHeight);
+
+                        $htop.toggleClass('fixed', bNavi);
+                        $mainSec.toggleClass('fixed', bNavi);
+                        // 페이지 소속 헤더 고정
+                        if ($fixedSubHeader = getFixedSubHeader()) {
+                            $fixedSubHeader.toggleClass('fixed', bNavi);
+                        }
+                        $commonMenu.toggleClass('scroll', bNavi);
+                        $goTop.toggle(bNavi);
+                    }
+                });
+
+
+                // 사용자정보 영역
+                var $userInfo = $htop.find('.ui_user_info');
+                $userInfo.scDropdown({
+                    activeClass: 'expn'
+                });
+
+                me._gnb();
+            },
+
+            /**
+             * Footer용 스크립트
+             *
+             */
+            _footer: function() {
+                var me = this,
+                    $footer = $('#footer');
+
+                if ($footer.size() > 0) {
+                    core.importJs([
+                        'modules/footer'
+                    ], function() {
+                        $footer.scFooter();
+                    });
+                }
+            },
+
+            /**
+             * 스킵네비게이션으로 이동했을 때, 해당 영역에 포커싱이 가도록..
+             */
+            _skipNaviFocus: function() {
+                $('#skip_nav').on('click', 'a', function(e) {
+                    $($(this).attr('href')).attr('tabindex', 0).focus();
+                });
+            }
+        };
+
+        return GlobalUIs;
+    });
+
+    $(function() {
+        core.GlobalUIs.init();
+    });
+
 
 })(jQuery, window[LIB_NAME]);
