@@ -1,287 +1,361 @@
 /*!
- * @author ResponseCarousel
- * @email comahead@gmail.com
- * @create 2013-03-06
- * @license MIT License
+ * @mdule axl.ui.ResponseCarousel
+ * @author comahead@vi-nyl.com(김승일 책임)
  */
-(function (ctx, $, core, undefined) {
+(function($, core) {
     "use strict";
 
+    if (core.ui.ResponseCarousel) {
+        return;
+    }
+
+    var $win = $(window),
+        $doc = $(document),
+        css3 = core.css3;
+
+    /**
+     * 반응형 Carousel
+     */
     var ResponseCarousel = core.ui('ResponseCarousel', {
         bindjQuery: 'responseCarousel',
         defaults: {
-            maxItemWidth: 200,
-            minItemWidth: 150,
-            startIndex: 0,
-            response: true,
-            interval: 3000,
-            duration: 500,
-            activeClass: 'active',
-            autoPlay: true
+            autoPlay: false, // 자동 스라이드 여부
+            interval: 5000, // 자동 슬라이드 간격
+            duration: 300, // 애니메이션 시간
+            addHeight: 110 //
         },
         selectors: {
-            items: '.ui_item',
-            indicators: '.ui_indicator',
-            indicatorsWrapper: '.ui_indicators_wrap',
-            wrapper: '.ui_wrapper',
-            wrapperOuter: '.ui_wrapper_outer',
-			controls: '.ui_control'
-        },
-        events: {
-            'click .ui_indicator': function(e) {
-                e.preventDefault();
-
-                var me = this;
-                var index = $(e.currentTarget).index();
-                me.moveByIndex(index);
-            },
-            'click .ui_control': function(e) {
-                e.preventDefault();
-                var me = this,
-                    $this = $(e.currentTarget);
-                if($this.hasClass('ui_pause')){
-                    me._toggleButton(me.isAutoPlay = false);
-                    me.stop();
-                } else if($this.hasClass('ui_play')){
-                    me._toggleButton(me.isAutoPlay = true);
-                    me.start();
-                } else if($this.hasClass('ui_prev')) {
-                    me.prevItem();
-                } else if($this.hasClass('ui_next')) {
-                    me.nextItem();
-                }
-            }
+            con: '.banner_list', // 컨테이너
+            items: '.banner_list>li', // 아이템
+            indiCon: '.bnr_control' // 인디케이터 박스
         },
         initialize: function(el, options) {
             var me = this;
-            if(me.supr(el, options) === false) { return; }
-
-            if(me.$items.length === 0){ me.return; }
-
-            me._init();
-            if(me.options.response) {
-                $(window).on('resizeend', function () {
-                    me.update();
-                    if(me.isAutoPlay) {
-                        me.start();
-                    }
-                });
+            if (me.supr(el, options) === false) {
+                return;
             }
-            me.update();
-            me._autoPlay();
-        },
 
-        _autoPlay: function(){
-            var me = this;
-            if(!me.isOverWrap){ return; }
+            me.pageIndex = 0; // 현재 페이지 인덱스
+            me.totalPage = 0; // 총 페이지 수
+            me.totalCount = me.$items.length; // 총 갯수
+            me.perCount = 0;
 
-            if(me.options.autoPlay) {
-                me.start();
-                me._toggleButton(me.isAutoPlay = true);
+            me.$items.eq(0).find('img').onImgLoaded(function() {
 
-                // 롤링영역에 마우스가 오버됐거나 포커스가 들어오면 롤링을 일시 중지 시킨다.
-                me.$el.on('mouseenter focusin mouseleave focusout', function(e){
-                    switch(e.type) {
-                        case 'mouseenter':
-                        case 'focusin':
-                            me.stop();
-                            break;
-                        default:
-                            me.isAutoPlay && me.start();
-                            break;
-                    }
+                me.isImgLoaded = true;
+                me.perCount = me._perCount();
+                me._bindEvents();
+                me._refresh();
+                me._createIndicator();
+
+                me.$el.css({
+                    position: 'relative'
                 });
-            }
-        },
-
-        _init: function() {
-            var me = this;
-
-            me.count = me.$items.length;
-            me.index = me.options.startIndex;
-            me.itemIndex = 0;
-            me.rate = me.$el.width() / me.$el.height();
-            me.isOverWrap = true;
-
-            me.$wrapper.css({
-                position: 'absolute',
-                left: 0,
-                top: 0
+                me.$con.css({
+                    'left': 0,
+                    'position': 'absolute'
+                });
+                me.$items.each(function(i) {
+                    $(this).attr('data-index', i);
+                });
+                me.$con.css('visibility', '');
+                me._hideOuter();
+                me.options.autoPlay && me.play();
             });
-            me.indicateTmpl = me.$indicatorsWrapper.html();
+
         },
-
-        _makeIndicator: function(){
-            var me = this;
-
-            if(!me.isOverWrap){ return; }
-            var pages = Math.ceil(me.count / me.perCount);
-            var html = '';
-
-            for(var i = 0; i < pages; i++) {
-                html += me.indicateTmpl;
-            }
-            me.$indicatorsWrapper.html(html);
-            me.updateSelectors();
-        },
-
-        _limit: function(i, min, max) {
-            if(i < min) { return min; }
-            else if(i > max) { return max; }
-            return i;
-        },
-
-        moveByIndex: function(index, ani) {
-            var me = this;
-            if(!me.isOverWrap){ return; }
-
-            me.index = me._limit(index, 0, me.maxIndex);
-            me.itemIndex = me._limit(Math.floor(me.index * me.perCount), 0, me.maxItemIndex);
-            me.moveLeft(me.itemIndex * me.itemWidth * -1, ani);
-            console.log(me.index, me.itemIndex, me.maxItemIndex);
-        },
-
-        moveByItemIndex: function(itemIndex, ani) {
-            var me = this;
-            if(!me.isOverWrap){ return; }
-
-            me.itemIndex = me._limit(itemIndex, 0, me.maxItemIndex);
-            me.index = me.itemIndex === me.maxItemIndex ? me.maxIndex : Math.floor(me.itemIndex / me.perCount);
-            me.moveLeft(me.itemIndex * me.itemWidth * -1, ani);
-        },
-
-        update: function() {
-            this.stop();
-
+        _bindEvents: function() {
             var me = this,
-                wrapperOuterWidth = Math.round(me.$wrapperOuter.width()),
-                wrapperWidth = Math.round(me.$wrapper.width()),
-                per, itemWidth, fullWidth;
+                changemediasizeCallback;
 
-            if(me.wrapOuterWidth === wrapperOuterWidth){ return; }
-
-            per = Math.floor(wrapperOuterWidth / me.options.maxItemWidth);
-            itemWidth = Math.round(wrapperOuterWidth / per);
-            fullWidth = me.count * itemWidth;
-
-            if(wrapperOuterWidth > fullWidth) {
-                me.$items.css('width', wrapperOuterWidth / me.count);
-                me.$wrapper.css({'left': 0, 'width': '100%'});
-                me.$controls.hide();
-                me.isOverWrap = false;
-                return;
-            }
-            else { me.$controls.show(); }
-
-            me.isOverWrap = true;
-            me.wrapOuterWidth = wrapperOuterWidth;
-            me.perCount = per;
-            me.itemWidth = itemWidth;
-            me.maxIndex = Math.ceil(me.count / per) - 1;
-            me.maxItemIndex = me.count - me.perCount;
-            me.fullWidth = fullWidth;
-
-            me.$items.css('width', itemWidth);
-            me.$wrapper.css({
-                'width': fullWidth,
-                'height': ''//wrapperOuterWidth * me.rate
+            // 인디케이터 재계산
+            $win.on('changemediasize.' + me.cid, changemediasizeCallback = function(e) {
+                var data = core.ui.mediaInfo;
+                me.perCount = me._perCount(data.mode);
+                me._createIndicator();
             });
-            me._makeIndicator();
-            me.moveByItemIndex(me.itemIndex, false);
-        },
+            changemediasizeCallback();
 
-        moveLeft: function(left, ani){
-            var me = this;
-            if(!me.isOverWrap){ return; }
-
-            if(ani === false) {
-                me.$wrapper.stop().css('left', left);
-                me._activeIndicator();
-                me.isAnimating = false;
-                return;
-            }
-
-            if(me.isAnimating) { return; }
-            me.isAnimating = true;
-
-            left = me._limit(left, me.wrapOuterWidth - me.fullWidth, 0);
-            me.$wrapper.stop().animate({
-                left: left
-            }, me.options.duration, function() {
-                me._activeIndicator();
-                me.isAnimating = false;
+            // UI 재배치
+            $win.on('resize.' + me.cid, function() {
+                me._refresh();
+            }).on('resizeend.' + me.cid, function(e) {
+                me._refresh();
+                me._createIndicator();
+                me.moveIndex(Math.min(me.pageIndex, me.totalPage - 1), false);
             });
 
-        },
-        _activeIndicator: function(){
-            var me = this;
+            // 인디케이터 클릭시 해당 페이지로 슬라이딩
+            me.$indiCon.on('click', 'a', function(e) {
+                e.preventDefault();
+                var index = $(this).parent().index();
+                me.moveIndex(index);
+            });
 
-            me.$indicators.removeClass(me.options.activeClass).eq(me.index).addClass(me.options.activeClass);
-        },
-        start: function(){
-            var me = this;
-            clearInterval(me.timer), me.timer = null;
-            if(!me.isOverWrap){ return; }
+            var isAutoPlay;
+            // hate IE
+            me.on('mousedown selectstart', function(e) {
+                e.preventDefault();
+            });
+            // 자동 재생 모드일 때, 마우스가 올라오면 일시적으로 정지 시키고 나가면 원복시킨다.
+            me.options.autoPlay && me.on('mouseenter touchstart mouseleave touchend touchcancel', function(e) {
+                switch (e.type) {
+                    case 'mouseenter':
+                    case 'touchstart':
+                        if (me.playTimer) {
+                            isAutoPlay = true;
+                            me.stop();
+                        } else {
+                            isAutoPlay = false;
+                        }
+                        break;
+                    case 'mouseleave':
+                    case 'touchstart':
+                    case 'touchend':
+                        if (isAutoPlay === true) {
+                            me.play();
+                        }
+                        break;
+                }
+            });
 
-            me.timer = setInterval(function() {
-                me.next();
-            }, me.options.interval); // 3초마다 롤링
+            var startLeft, currLeft, prevX, isEast;
+            // 스와이핑 바인딩
+            me.$con.swipeGesture().on('swipegesturestart swipegesturemove swipegestureend swipegesturecancel', function(e, data) {
+                switch (e.type) {
+                    case 'swipegesturestart':
+                        startLeft = css3.position(me.$con).x; //parseInt(me.$con.css('left'), 10);
+                        prevX = data.x;
+                        break;
+                    case 'swipegesturemove':
+                        var limit = me.conWidth - me.totalWidth;
+                        currLeft = (startLeft + data.diff.x);
+                        if (currLeft > 0) {
+                            currLeft = currLeft / 3;
+                        } else if (currLeft < limit) {
+                            currLeft = currLeft + Math.abs(limit);
+                            currLeft = limit + (currLeft / 3);
+                        }
+                        isEast = data.x < prevX;
+                        prevX = data.x;
+                        me.move(currLeft, false);
+                        break;
+                    case 'swipegestureend':
+                    case 'swipegesturecancel':
+                        var index;
+                        if (isEast /*data.direction === 'left'*/ ) {
+                            index = Math.ceil(Math.abs(currLeft) / me.conWidth);
+                            me.moveIndex(index);
+                        } else /*if (data.direction === 'right')*/ {
+                            index = Math.floor(Math.abs(currLeft) / me.conWidth);
+                            me.moveIndex(index);
+                        }
+                        /* else {
+                                                    me.moveIndex(me.pageIndex);
+                                                }*/
+                        break;
+                }
+            });
         },
         /**
-         * 롤링 중지
+         * 인디케이터 생성
+         * @private
          */
-        stop: function(){
-            var me = this;
-            clearInterval(me.timer); me.timer = null;
-        },
-        prev: function() {
+        _createIndicator: function() {
             var me = this,
-                index;
-            if(!me.isOverWrap){ return; }
+                html = '';
 
-            if(me.index <= 0) { index = me.maxIndex; }
-            else { index = me.index - 1; }
-
-            me.moveByIndex(index);
+            for (var i = 0; i < me.totalPage; i++) {
+                html += '<span class="' + (i === me.pageIndex ? 'on' : '') + '">' +
+                    '<a href="#"><span class="hide">' + (i === me.pageIndex ? '현재페이지' : '') + '</span>' + (i + 1) + '</a></span>';
+            }
+            me.$indiCon.html(html);
         },
+        /**
+         * 재생
+         */
+        play: function() {
+            var me = this;
+
+            if (me.playTimer) {
+                return;
+            }
+            me.playTimer = setInterval(function() {
+                me.next();
+            }, me.options.interval);
+        },
+        /**
+         * 정지
+         */
+        stop: function() {
+            var me = this;
+            clearInterval(me.playTimer);
+            me.playTimer = null;
+        },
+        /**
+         * 다음
+         */
         next: function() {
             var me = this,
-                index;
-            if(!me.isOverWrap){ return; }
-
-            if(me.index >= me.maxIndex) { index = 0; }
-            else { index = me.index + 1; }
-            me.moveByIndex(index);
+                index = me.pageIndex + 1;
+            if (index >= me.totalPage) {
+                index = 0;
+            }
+            me.moveIndex(index);
         },
-        prevItem: function(){
+        /**
+         * 이전
+         */
+        prev: function() {
             var me = this,
-                itemIndex;
-            if(!me.isOverWrap){ return; }
-
-            if(me.itemIndex <= 0) { itemIndex = me.maxItemIndex; }
-            else { itemIndex = me.itemIndex - 1; }
-
-            me.moveByItemIndex(itemIndex);
+                index = me.pageIndex - 1;
+            if (index < 0) {
+                index = me.totalPage - 1;
+            }
+            me.moveIndex(index);
         },
-        nextItem: function(){
-            var me = this,
-                itemIndex;
-            if(!me.isOverWrap){ return; }
-
-            if(me.itemIndex >= me.maxItemIndex) { itemIndex = 0; }
-            else { itemIndex = me.itemIndex + 1; }
-
-            me.moveByItemIndex(itemIndex);
-        },
-        _toggleButton: function(status) {
+        /**
+         * 페이지 이동
+         * @param newIndex 이동할 페이지 인덱스
+         * @param isAni 애니메이션 동작 여부
+         */
+        moveIndex: function(newIndex, isAni) {
             var me = this;
 
-            if(status) {
-                me.$('.ui_play').attr('title', '배너 멈춤').replaceClass('ui_play', 'ui_pause').text('■');
-            } else {
-                me.$('.ui_pause').attr('title', '배너 시작').replaceClass('ui_pause', 'ui_play').text('▶');
+            if (
+                /*me.isAnimate
+                                 || */
+                me.conWidth > me.totalWidth) {
+                me.move(0, false);
+                return;
             }
-        }
-    })
 
-})(window, jQuery, window[LIB_NAME]);
+            if (newIndex < 0) {
+                newIndex = 0;
+            }
+            if (newIndex >= me.totalPage) {
+                newIndex = me.totalPage - 1;
+            }
+
+            me.pageIndex = newIndex;
+            var newLeft = newIndex * (me.itemWidth * me.perCount);
+            if (newLeft > me.totalWidth - me.conWidth) {
+                newLeft = me.totalWidth - me.conWidth;
+            }
+
+            me.isAnimate = true;
+            ////me.$items.css('display', '');
+            me.move(-newLeft, isAni);
+        },
+
+        /**
+         * 슬라이딩
+         * @function
+         * @param newLeft 이동할 위치
+         * @param isAni 애니메이션 동작 여부
+         */
+        move: css3.support ? function(newLeft, isAni) {
+            var me = this;
+            css3.move(me.$con, newLeft, 0, isAni !== false ? me.options.duration / 1000 : 0, function() {
+                me._transitionEnd();
+            });
+        } : function(newLeft, isAni) {
+            var me = this;
+            if (isAni !== false) {
+                me.$con.stop().animate({
+                    left: newLeft
+                }, me.options.duration, function() {
+                    me._transitionEnd();
+                });
+            } else {
+                me.$con.stop().css('left', newLeft);
+            }
+
+        },
+        /**
+         * 슬라이드가 끝났을 때 실행
+         * @private
+         */
+        _transitionEnd: function() {
+            var me = this;
+
+            me.isAnimate = false;
+            //me._hideOuter(-newLeft);
+            me.$indiCon.children().removeClass('on').find('span.hide').html('').end()
+                .eq(me.pageIndex).addClass('on').find('span.hide').html('현재 페이지');
+        },
+        /**
+         * 가시영역 밖에 포커스가 안가도록 하기 위해 숨김
+         * @param conLeft
+         * @private
+         */
+        _hideOuter: function(conLeft) {
+            return;
+
+            var me = this;
+            if (!conLeft) {
+                conLeft = parseInt(me.$con.css('left'), 10);
+            }
+            conLeft = Math.abs(conLeft);
+            me.$items.filter(function() {
+                var $el = $(this),
+                    left = parseInt($el.css('left'), 10) - conLeft;
+                return !(left >= 0 && left < me.conWidth);
+            }).css('display', 'none');
+        },
+        /**
+         * 해상도에 따라 몇개 표시할지 계산
+         * @returns {number}
+         * @private
+         */
+        _perCount: function() {
+            var me = this;
+
+            me.$items.eq(0).css('width', '');
+
+            return Math.round(me.$el.width() / me.$items.eq(0).width());
+        },
+        /**
+         * 현재 UI들의 치수를 다시 계산
+         * @private
+         */
+        _refresh: function() {
+            var me = this;
+
+            if (!me.isImgLoaded) {
+                return;
+            }
+
+            me.conWidth = me.$el.width();
+            me.itemWidth = Math.floor(me.conWidth / me.perCount);
+            me.itemHeight = me.$items.eq(0).height();
+            me.totalPage = Math.ceil(me.totalCount / me.perCount);
+            me.totalWidth = (me.itemWidth * me.totalCount);
+
+            me.$items.stop().css('width', me.itemWidth).each(function(i) {
+                var left = (me.itemWidth) * i;
+                me.$items.eq(i).css('left', left); // + me.conWidth);
+            });
+
+            me.$el.css({
+                height: me.itemHeight + me.options.addHeight
+            });
+        },
+        release: function() {
+            var me = this;
+
+            $win.off('.' + me.cid);
+            me.$indiCon.off();
+            me.$con.off();
+            me.stop();
+            me.supr();
+        }
+    });
+
+
+    if (typeof define === "function" && define.amd) {
+        define([], function() {
+            return ResponseCarousel;
+        });
+    }
+})(jQuery, window[LIB_NAME]);
