@@ -85,14 +85,14 @@
             });
 
             // 포커스를 벗어나면 닫히도록
-            var $wrapper = me.$el.parent().on('focusin focusout', function(e) {
+            var $wrapper = me.$el.parent().parent().on('focusin focusout', 'a, input', function(e) {
                 clearTimeout(timer);
                 if (e.type === 'focusout') {
                     timer = setTimeout(function() {
                         me.close();
-                    });
+                    }, 100);
                 }
-            }).parent();
+            });
 
             // 키보드 방향키 바인딩
             !core.browser.isTouch && me.$el.on('keydown', function(e) {
