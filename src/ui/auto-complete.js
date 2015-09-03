@@ -141,25 +141,25 @@
         // 활성화
         _selectItem: function(dir) {
             var me = this,
-                index = me.currIndex,
-                $items, $item;
+                $items = me.$listbox.children(),
+                index = $items.index($items.filter('.active')),
+                $item;
 
             if (dir === 'up') {
-                me.currIndex -= 1;
-                if (me.currIndex < 0) {
-                    me.currIndex = me.itemCount - 1;
+                index -= 1;
+                if (index < 0) {
+                    index = me.itemCount - 1;
                 }
             } else {
-                me.currIndex += 1;
-                if (me.currIndex >= me.itemCount) {
-                    me.currIndex = 0;
+                index += 1;
+                if (index >= me.itemCount) {
+                    index = 0;
                 }
             }
 
-            $items = me.$listbox.children();
-            $item = $items.eq(index);
 
-            $items.find('a.active').removeClass('active');
+            $items.filter('a.active').removeClass('active');
+            $item = $items.eq(index);
             $item.children().addClass('active'); // 활성화
             me.$scroller.scrollTop($item.position().top - 50); // 활성화된 항목의 위치가 가운데 오게 강제스크롤
             me.$el.val($item.text()); // 인풋에 삽입
