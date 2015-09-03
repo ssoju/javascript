@@ -1,7 +1,7 @@
 
-official site(http://framework.hanulo.com/index.html)
+official site: http://framework.hanulo.com/index.html
 
-email(comahead@gmail.com)
+email: comahead@gmail.com
 
 framework core: https://github.com/ssoju/javascript/blob/master/src/axl.js
 
