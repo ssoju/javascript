@@ -1,7 +1,7 @@
 /**
  * Created by 김승일책임(comahead@vi-nyl.com) on 2015-08-27
  * @module
- * @description 주소찾기 자동완성 모듈
+ * @description 주소찾기 자동완성 모듈(30분만에 후딱 만든..)
  */
 (function($, core) {
     "use strict";
