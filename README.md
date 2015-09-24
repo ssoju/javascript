@@ -7,6 +7,12 @@ framework core: https://github.com/ssoju/javascript/blob/master/src/axl.js
 
 ui modules by framework: https://github.com/ssoju/javascript/tree/master/src/ui
 
+chat sample: https://github.com/ssoju/javascript-chat
+
+contract sample: https://github.com/ssoju/javascript-contacts
+
+react sample: https://github.com/ssoju/reactjs
+
 memory release code: 
 ```javascript
     ...
