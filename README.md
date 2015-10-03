@@ -30,7 +30,7 @@ create Class:
            
            me.el = el;
            me.$el = $(el);
-           me.options = ax.extend({}, me.defaults, options);
+           me.options = axl.extend({}, me.defaults, options);
            
            axl.each(me.selectors, function (item, key) {
               me['$' + key] = me.$el.find(item);    
