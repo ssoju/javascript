@@ -38,7 +38,7 @@ create Class:
            
            axl.each(me.events, function (item, key) {
               var pairs = item.split(' ');
-              me.$el.on(pairs[0], pairs[1], key);
+              me.$el.on(pairs[0], pairs[1], typeof key === 'string' ? me[key] : key);
            });
            
            axl.each(['trigger', 'triggerHandler', 'on', 'off'], function (item, key) {
