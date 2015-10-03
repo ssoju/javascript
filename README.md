@@ -13,6 +13,104 @@ contract sample: https://github.com/ssoju/javascript-contacts
 
 react sample: https://github.com/ssoju/reactjs
 
+create Class: 
+```javascript
+    ...
+    var View = axl.BaseClass.extend({
+        defaults: {},
+        selectors: {},
+        events: {},
+        initialize: function (el, oprions) {
+           var me = this;
+           
+           if (!axl.dom.contains(document, el)) { return false; }
+           
+           me.uid = axl.getUniqueId();
+           me.moduleName = 'view';
+           
+           me.el = el;
+           me.$el = $(el);
+           me.options = ax.extend({}, me.defaults, options);
+           
+           axl.each(me.selectors, function (item, key) {
+              me['$' + key] = me.$el.find(item);    
+           });
+           
+           axl.each(me.events, function (item, key) {
+              var pairs = item.split(' ');
+              me.$el.on(pairs[0], pairs[1], key);
+           });
+           
+           axl.each(['trigger', 'triggerHandler', 'on', 'off'], function (item, key) {
+              me[key] = function () {
+                 $.fn[key].apply(me.$el, [].slice.call(arguments, 0));
+              };
+           });
+        },
+        release: function () {
+           var me = this;
+           
+           me.$el.off().removeData();
+           $(document).off('.'+me.uid);
+           $(window).off('.'+me.uid);
+        }
+    });
+    
+    
+    var Carousel = View.extend({
+        defaults: {
+            autoPlay: true
+        },
+        selectors: {
+            btnNext: '.btn-next',
+            btnPrev: '.btn-prev',
+            btnIndicators: '.btn-indocator'
+        },
+        events: {
+            'click .btn-prev': 'prev',
+            'click .btn-next': 'next'
+        },
+        initialize: function (el, options) {
+            var me = this;
+            if (me.supr(el, options) === false){ return; }
+            
+            me._bindEvent();
+            if (me.options.autoPlay === true) {
+                me.timer = setInterval(function (){
+                    me.next();
+                }, 1000);
+            }
+        },
+        _bindEvent: function () {
+            var me = this;
+            
+            me.on('mouseenter mouseleave', function (e) {
+                me[e.type === 'mouseenter' ? 'stop' : 'play']();
+            });
+            
+        },
+        prev: function () {
+        `   ...
+        },
+        next: function () {
+        `   ...
+        },
+        play: function () {
+        `   ...
+        },
+        stop: function () {
+        `   ...
+        }
+    });
+    
+    var carousel = new Carousel($('#carousel'), {
+        autoPlay: false
+    });
+    carousel.play();
+    
+    ...
+```
+
 memory release code: 
 ```javascript
     ...
