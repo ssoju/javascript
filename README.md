@@ -100,6 +100,11 @@ create Class:
         },
         stop: function () {
         `   ...
+        },
+        release: function () {
+            var me = this;
+            clearInterval(me.timer);
+            me.supr();
         }
     });
     
