@@ -11,7 +11,9 @@ chat sample: https://github.com/ssoju/javascript-chat
 
 contract sample: https://github.com/ssoju/javascript-contacts
 
-react sample: https://github.com/ssoju/reactjs
+reactjs sample: https://github.com/ssoju/reactjs
+
+angularjs sample: https://github.com/ssoju/angular-comment
 
 create Class: 
 ```javascript
