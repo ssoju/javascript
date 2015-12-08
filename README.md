@@ -17,7 +17,49 @@ angularjs sample: https://github.com/ssoju/angular-comment
 
 create Class: 
 ```javascript
-    ...
+    // 1. 부모클래스
+    var ParentClass = axl.BaseClass.extend({
+        ...
+    });
+    
+    // or
+    var ParentClass = axl.Class({
+        ...
+    });
+
+    // 2. 자식클래스
+    var ChildClass = ParentClass.extend({
+        ...,
+        open: function (flag){
+            this.supr(flag); // ParentClass.prototype.open 호출
+            ...
+        }
+    });
+    
+    // or
+    var ChildClass = axl.Class({
+        $extend: ParentClass,
+        ...,
+        open: function (flag){
+            this.supr(flag); // ParentClass.prototype.open 호출
+            ...
+        }
+    });    
+    
+    
+    var parent = new ParentClass();
+    var child = new ChildClass();
+    
+    parent instanceof ParentClass; // true
+    child instanceof ParentClass; // true
+    child instanceof ChildClass;  // true
+    
+    
+    
+    
+    
+    
+    
     var View = axl.BaseClass.extend({
         defaults: {},
         selectors: {},
