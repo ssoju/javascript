@@ -1,20 +1,21 @@
 
-## email: comahead@gmail.com
+- email: comahead@gmail.com
 
-## framework core: https://github.com/ssoju/javascript/blob/master/src/axl.js
+- framework core: https://github.com/ssoju/javascript/blob/master/src/axl.js
 
-## ui modules by framework: https://github.com/ssoju/javascript/tree/master/src/ui
+- ui modules by framework: https://github.com/ssoju/javascript/tree/master/src/ui
 
-## chat sample: https://github.com/ssoju/javascript-chat
+- chat sample: https://github.com/ssoju/javascript-chat
 
-## contract sample: https://github.com/ssoju/javascript-contacts
+- contract sample: https://github.com/ssoju/javascript-contacts
 
-## reactjs sample: https://github.com/ssoju/reactjs
+- reactjs sample: https://github.com/ssoju/reactjs
 
-## angularjs sample: https://github.com/ssoju/angular-comment
+- angularjs sample: https://github.com/ssoju/angular-comment
 
-### 자바스크립트 UI 프레임웍 사용법
-#### axljs framework: 
+* 자바스크립트 UI 프레임웍 사용법 *
+** axljs framework: **
+
 ```javascript
     // 1. 부모클래스
     var ParentClass = axl.BaseClass.extend({
