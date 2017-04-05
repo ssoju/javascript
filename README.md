@@ -1,6 +1,4 @@
 
-official site: http://framework.hanulo.com/index.html
-
 email: comahead@gmail.com
 
 framework core: https://github.com/ssoju/javascript/blob/master/src/axl.js
@@ -15,7 +13,8 @@ reactjs sample: https://github.com/ssoju/reactjs
 
 angularjs sample: https://github.com/ssoju/angular-comment
 
-create Class: 
+6년 전에 제가 만든 자바스크립트 UI 프레임웍 사용법
+axljs framework: 
 ```javascript
     // 1. 부모클래스
     var ParentClass = axl.BaseClass.extend({
