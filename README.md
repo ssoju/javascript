@@ -13,8 +13,8 @@
 
 - angularjs sample: https://github.com/ssoju/angular-comment
 
-* 자바스크립트 UI 프레임웍 사용법 *
-** axljs framework: **
+*자바스크립트 UI 프레임웍 사용법*
+**axljs framework:**
 
 ```javascript
     // 1. 부모클래스
