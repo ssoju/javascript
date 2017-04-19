@@ -1,5 +1,5 @@
 
-- email: comahead@gmail.com
+## email: comahead@gmail.com
 
 *자바스크립트 UI 프레임웍*
 
