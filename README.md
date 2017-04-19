@@ -5,16 +5,29 @@
 
 - ui modules by framework: https://github.com/ssoju/javascript/tree/master/src/ui
 
-- chat sample: https://github.com/ssoju/javascript-chat
+- chat sample(study): https://github.com/ssoju/javascript-chat
 
-- contract sample: https://github.com/ssoju/javascript-contacts
+- contract: https://github.com/ssoju/javascript-contacts
 
-- reactjs sample: https://github.com/ssoju/reactjs
+- reactjs sample(study): https://github.com/ssoju/reactjs
 
-- angularjs sample: https://github.com/ssoju/angular-comment
+- angularjs sample(study): https://github.com/ssoju/angular-comment
 
-*자바스크립트 UI 프레임웍 사용법 -*
-**axljs framework:**
+*자바스크립트 UI 프레임웍*
+
+*사용 예*
+- http://www.melon.com/resource/script/web/common/melonweb_comm.js
+- http://www.melon.com/resource/script/web/smartradio/melonweb_smartradio.js
+- http://www.melon.com/resource/script/web/common/melonweb_masonryui.js
+- http://store.emart.com/js/common/common.js
+- http://store.emart.com/js/common/both-timeline.js
+- http://emartapp.emart.com/js/pages/mmu/mmu1.js
+- http://emartapp.emart.com/js/pages/mef/mef1.js
+- http://store.emart.com/js/pages/smu/mediaelement-player.js
+- http://store.emart.com/js/pages/sef/sef1_2_1_1.js
+- https://static12.samsungcard.com/js/personal/scui.js
+
+*axljs framework 사용법*
 
 ```javascript
     // 1. 부모클래스
