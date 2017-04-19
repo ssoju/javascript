@@ -1,19 +1,10 @@
 
 - email: comahead@gmail.com
 
-- framework core: https://github.com/ssoju/javascript/blob/master/src/axl.js
-
-- ui modules by framework: https://github.com/ssoju/javascript/tree/master/src/ui
-
-- chat sample(study): https://github.com/ssoju/javascript-chat
-
-- contract: https://github.com/ssoju/javascript-contacts
-
-- reactjs sample(study): https://github.com/ssoju/reactjs
-
-- angularjs sample(study): https://github.com/ssoju/angular-comment
-
 *자바스크립트 UI 프레임웍*
+
+- framework core: https://github.com/ssoju/javascript/blob/master/src/axl.js
+- ui modules by framework: https://github.com/ssoju/javascript/tree/master/src/ui
 
 *사용 예*
 - http://www.melon.com/resource/script/web/common/melonweb_comm.js
