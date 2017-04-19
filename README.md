@@ -6,7 +6,7 @@
 - framework core: https://github.com/ssoju/javascript/blob/master/src/axl.js
 - ui modules by framework: https://github.com/ssoju/javascript/tree/master/src/ui
 
-*사용 예*
+*실제 사용된 사이트*
 - http://www.melon.com/resource/script/web/common/melonweb_comm.js
 - http://www.melon.com/resource/script/web/smartradio/melonweb_smartradio.js
 - http://www.melon.com/resource/script/web/common/melonweb_masonryui.js
