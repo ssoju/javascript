@@ -1,13 +1,8 @@
 /*!
  * @author 김승일
  * @email comahead@vi-nyl.com
+ * @date 2012-03-23
  * @description 멜론 프레임웍
- */
-/*!
- * 로거 참조 주소(MELON.WEBSVC.Logger)
- * js-logger - http://github.com/jonnyreeves/js-logger
- * Jonny Reeves, http://jonnyreeves.co.uk/
- * js-logger may be freely distributed under the MIT license.
  */
  (function (context, $, undefined) {
   "use strict";
