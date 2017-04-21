@@ -1,6 +1,7 @@
 /*!
  * @author 김승일
  * @email comahead@vi-nyl.com
+ * @date 2012-02-03
  * @description 멜론 프레임웍
  */
 ;(function($, WEBSVC, PBPGN, undefined) {
