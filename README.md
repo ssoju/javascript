@@ -65,6 +65,7 @@
     
     
     var View = axl.BaseClass.extend({
+        $mixins: [axl.mixins.Event, axl.mixins.ViewUtil, axl.mixins.Animate],
         defaults: {},
         selectors: {},
         events: {},
