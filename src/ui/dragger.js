@@ -47,22 +47,23 @@
         },
         bindEvents: function () {
             var me = this;
-            me.$el.on('mousedown', me._eventMouseDown.bind(me));
-            core.$doc.on('mousemove', me._eventMouseMove.bind(me));
-            core.$doc.on('mouseup', me._eventMouseUp.bind(me));
-            me.$el.on('touchstart', me._eventTouchStart.bind(me));
-            me.$el.on('touchmove', me._eventTouchMove.bind(me));
-            me.$el.on('touchend', me._eventTouchEnd.bind(me));
-            me.$el.on('click', me._preventClickWhenDrag.bind(me));
+            me.$el.on('mousedown', me._handleMouseDown = me._eventMouseDown.bind(me));
+            core.$doc.on('mousemove', me._handleMouseMove = me._eventMouseMove.bind(me));
+            core.$doc.on('mouseup', me._handleMouseUp = me._eventMouseUp.bind(me));
+            me.$el.on('touchstart', me._handleTouchStart = me._eventTouchStart.bind(me));
+            me.$el.on('touchmove', me._handleTouchMove = me._eventTouchMove.bind(me));
+            me.$el.on('touchend', me._handleTopuchEnd = me._eventTouchEnd.bind(me));
+            me.$el.on('click', me._handleClick = me._preventClickWhenDrag.bind(me));
         },
         unbindEvents: function () {
-            me.$el.off('mousedown', me._eventMouseDown.bind(me));
-            core.$doc.off('mousemove', me._eventMouseMove.bind(me));
-            core.$doc.off('mouseup', me._eventMouseUp.bind(me));
-            me.$el.off('touchstart', me._eventTouchStart.bind(me));
-            me.$el.off('touchmove', me._eventTouchMove.bind(me));
-            me.$el.off('touchend', me._eventTouchEnd.bind(me));
-            me.$el.off('click', me._preventClickWhenDrag.bind(me));
+            var me = this;
+            me.$el.off('mousedown', me._handleMouseDown);
+            core.$doc.off('mousemove', me._handleMouseMove);
+            core.$doc.off('mouseup', me._handleMouseUp);
+            me.$el.off('touchstart', me._handleTouchStart);
+            me.$el.off('touchmove', me._handleTouchMove);
+            me.$el.off('touchend', me._handleTopuchEnd);
+            me.$el.off('click', me._handleClick);
         },
         setBounds: function (newBounds) {
             $.extend(this.bounds, newBounds);
