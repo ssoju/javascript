@@ -179,7 +179,8 @@
                             }
                         }
                     }).on('touchend.gesture touchcancel.gesture', function (endEvent) {
-
+                        me.$el.off('touchmove.gesture');
+                        
                         if (isSwipe && touchStart) {
                             var touch = getTouchCoords(endEvent);
                             touch.diff = getDiff(touch, touchStart)
