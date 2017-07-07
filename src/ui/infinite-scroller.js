@@ -1,7 +1,7 @@
 /**
  * @authror: 김승일
  * @email: comahead@vinylc.com
- * @created: 2015-08-29
+ * @created: 2012-08-29
  * @escription: 무한스크롤러 모듈
  */
 (function($, core, undefined) {
