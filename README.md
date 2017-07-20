@@ -42,7 +42,7 @@
         ...
     });
 
-    // 2. 자식클래스 정의
+    // 2. 자식클래스 정의 ==================================================================
     var ChildClass = ParentClass.extend({
         ...,
         open: function (flag){
@@ -53,8 +53,8 @@
     
     // or
     var ChildClass = axl.Class({
-        $extend: ParentClass,
-        ...,
+        $extend: ParentClass, // 부모클래스 지정
+        ...,
         open: function (flag){
             this.callParent(flag); // ParentClass.prototype.open 호출
             ...
@@ -95,8 +95,8 @@
             // 싱글톤 클래스 여부
             $singleton: true,
 
-            // 해당 모듈을 jQuery 플러그인방식으로 사용할 수 있도록 설정하는 옵션이다. 예) $('#d-tab').tabs({옵션들});
-            bindjQuery: 'tabs',
+            // 해당 모듈을 jQuery 플러그인방식으로 사용할 수 있도록 설정하는 옵션이다. 예) $('#d-tab').axlTab({옵션들});
+            bindjQuery: 'tab',
 
             // =========================================================================================
             // 이하 속성부터는 Tabs.prototype에 붙게된다
@@ -115,29 +115,30 @@
 
             // 내부에 속한 자식 엘리먼트에 이벤트 바인딩
             events: {
-                'click li.tab a': 'onTabSelect' // 'li.tab a'를 'click'할 때 클래스의 메소드인 'onTabSelect'함수를 호출하도록 설정. (인라인 함수도 가능)
-                // 즉, this.$el.find('li.tab a').on('click', this.onTabSelect.bind(this)); 코드를 자동화 시킨것이다.
+                'click li.tab a': 'onTabSelect' 
+                // 'li.tab a'를 'click'할 때 클래스의 메소드인 'onTabSelect'함수를 호출하도록 설정. 
+                // (즉시실행 함수도 가능)
+                // 이는, this.$el.find('li.tab a').on('click', this.onTabSelect.bind(this)); 코드를 자동화 시킨것이다.
                 // 단, context는 해당 노드가 아닌 클래스 인스턴스가 된다.
             },
 
-            // 생성자: jquery의 플러그인작성 스펙과 호환이 되도록, 이와 같은 인자(el, options)를 가진 함수로 작성해주는 게 좋다.
-            // $('#tab').tabs({selectedIndex:1});처럼 jQuery 플러그인방식으로 호출하였을 때, el에는 #tab이 options에는 {sel...}가 넘어온다.
-            // 이는 new vcui.ui.Tab('#tab', {selectedIndex:1}); 처럼 하는 것과 동일하다.
+            // $('#tab').axlTab({selectedIndex:1});처럼 jQuery 플러그인방식으로 호출하였을 때, el에는 #tab이 options에는 {sel...}가 넘어온다.
+            // or new vcui.ui.Tab('#tab', {selectedIndex:1}); 처럼 캑체를 직접 생성해도 됨.
             initialize: function (el, options) {
                 var me = this;
 
                 // vcui.ui.View를 상속받은 모듈은
                 // 반드시 부모생성자를 호출해주어야 다음과 같은 편리한 기능들이 붙게된다.
-                // el을 this.$el에 설정해준다.( this.$el = $(el); )
+                // el을 this.$el에 설정해준다.(  this.el = el; this.$el = $(el); )
                 // defaults와 options(우선권 높음)을 병합하여 me.options에 세팅. ( this.options = $.extend(true, {}, defaults, options); )
                 // selectors에 해당하는 엘리먼트들을 검색하여 주어진 이름의 멤버변수들에 설정
                 // events에 지정된 핸들러들을 바인딩
                 // 만약 부모 생성자에서 false가 반환된다면, 이미 해당 엘리먼트에 현재 UI모듈이 빌드되었거나,
                 // el노드가 페이지에 없다거나 disabled 상태임을 의미하므로, 모듈을 빌드하지 않고 빠져나가야 한다.
-                if (me.supr(el, options) === false) {
+                if (me.callParent(el, options) === false) {
                     return;
                 }
-                //또는 if(me.suprMethod('initialize', el, options) === false){ return; } 처럼 부모 클래스의 메소드를 명시적으로도 호출가능 함
+                //또는 if(me.superMethod('initialize', el, options) === false){ return; } 처럼 부모 클래스의 메소드를 명시적으로도 호출가능 함
 
                 me.select(me.options.selectedIndex);
             },
@@ -154,9 +155,10 @@
                 var me = this,
                     $tabs = me.$tabs, // selectors속의 tabs: 'li.tab' 에 의해 설정된 멤버변수
                     $contents = me.$contents; // selectors속의 contents 'div.cont' 에 의해 설정된 멤버변수
+                    
                 // index에 해당하는 탭 활성화
-                $tabs.filter('.on').removeClass('on').end().eq(index).addClass('on');
-                $contents.filter(':visible').hide().end().eq(index).show();
+                $tabs.removeClass('on').eq(index).addClass('on');
+                $contents.hide().eq(index).show();
 
                 me.trigger(Tabs.ON_CHANGED_TAB, [index]); // 탭이 변경되었을 때 changedTab 이벤트를 날림.
             }
