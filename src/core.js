@@ -1,6 +1,5 @@
 /*!
- * @author 바이널씨
- * @description 바이널씨 코어 라이브러리
+ * @author comaheaad@gmail.com
  * @license MIT License
  */
 
@@ -31,7 +30,7 @@
 
     var _configs = typeof vcuiConfigs === 'undefined' ? {} : vcuiConfigs;
 
-    window.LIB_NAME = _configs.name || 'vcui';
+    window.LIB_NAME = _configs.name || 'axl';
     //window.IMPORT_BASE = configs.importBasePath || '';
     window.IS_DEBUG = _configs.debug || location.href.indexOf('jsdebug=true') >= 0;
 
