@@ -1,3 +1,6 @@
+/**
+ * @author comahead@gmail.com
+ */
 ;(function (core, global, undefined) {
     /**
      * JSON객체 관련 유틸함수
