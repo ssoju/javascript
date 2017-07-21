@@ -10,6 +10,7 @@
             return $(el).is('a, button, input[type=password], input[type=text], input[type=file], input[type=checkbox], input[type=radio], select, textarea, [tabindex]');
         }
     });
+    
 
     /**
      * jQuery 객체
