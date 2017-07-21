@@ -1,3 +1,6 @@
+/**
+ * @author comahead@gmail.com
+ */
 ;(function (core, global, undefined) {
     /**
      * 문자열 관련 유틸 함수 모음
