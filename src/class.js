@@ -1,3 +1,6 @@
+/**
+ * @author comahead@gmail.com
+ */
 ;(function (core, global, undefined) {
     /**
      * 루트클래스로서, vcui.BaseClass나 vcui.Class를 이용해서 클래스를 구현할 경우 vcui.BaseClass를 상속받게 된다.
