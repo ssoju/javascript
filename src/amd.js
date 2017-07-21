@@ -1,4 +1,5 @@
 /**
+ * @author comahead@gmail.com
  * vcui.importJs
  */
 ;(function ($, core, global, undefined) {
