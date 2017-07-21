@@ -219,3 +219,7 @@ memory release code: UI모듈이 연결된 엘리먼트가 dom에서 제거됐�
     ...
 ```
 
+## diagram
+![diagram](https://raw.githubusercontent.com/ssoju/javascript/master/library-diagram.png "")
+
+
