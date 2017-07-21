@@ -1,3 +1,6 @@
+/**
+ * @author comahead@gmail.com
+ */
 ;(function (core, global, undefined) {
     "use strict";
 
