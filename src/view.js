@@ -1,3 +1,6 @@
+/**
+ * @author comahead@gmail.com
+ */
 ;(function ($, core, global, undefined) {
     var arraySlice = Array.prototype.slice;
     var doc = global.document;
