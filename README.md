@@ -6,19 +6,6 @@
 - framework core: https://github.com/ssoju/javascript/blob/master/src/core.js
 - ui modules by framework: https://github.com/ssoju/javascript/tree/master/src/ui
 
-*실제 사용된 사이트*
-- 멜론: http://www.melon.com/resource/script/web/common/melonweb_comm.js
-- 멜론: http://www.melon.com/resource/script/web/smartradio/melonweb_smartradio.js
-- 멜론: http://www.melon.com/resource/script/web/common/melonweb_masonryui.js
-- 이마트 스토아: http://store.emart.com/js/common/common.js
-- 이마트 스토아: http://store.emart.com/js/common/both-timeline.js
-- 이마트 스토아: http://emartapp.emart.com/js/pages/mmu/mmu1.js
-- 이마트 스토아: http://emartapp.emart.com/js/pages/mef/mef1.js
-- 이마트 스토아: http://store.emart.com/js/pages/smu/mediaelement-player.js
-- 이마트 스토아: http://store.emart.com/js/pages/sef/sef1_2_1_1.js
-- 삼성카드: https://static12.samsungcard.com/js/personal/scui.js
-- :
-
 *axljs framework 사용법*
 
 ```javascript
