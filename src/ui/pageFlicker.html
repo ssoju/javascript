@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="/assets/scripts/jquery.min.js"></script>
+    <script src="/assets/scripts/vcui.js"></script>
+    <style>
+        * {
+            font-family: '나눔고딕',NanumGothic,'돋움',Dotum,'굴림',Gulim,Helvetica,sans-serif!important;
+        }
+        a {
+            text-decoration: none;
+            -webkit-text-align: rgba(0, 0, 0, .1);
+        }
+        ul {
+            list-style: none;
+        }
+        html, body {
+            height: 100%;
+        }
+        body {
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav .scroll-wrap {
+            overflow: hidden;
+        }
+        .nav .nav-menu {
+            position: relative;
+            width: 380px;
+            display: table;
+            height: 43px;
+            padding: 0 15px;
+            white-space:nowrap;
+        }
+        .nav .nav-item {
+            display: table-cell;
+            margin: 0;
+            width: 200px;
+            white-space:nowrap;
+            text-align: center;
+        }
+        .nav .nav-item:first-child .nav-link {
+            margin-left:0;
+        }
+        .nav .nav-item.on .nav-link {
+            border-bottom: 2px solid blue;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        .nav .nav-link {
+            display: inline-block;
+            position: relative;
+            height: 40px;
+            margin-left: 5px;
+            padding: 0 5px;
+            font-size:15px;
+            font-weight: 700;
+            text-shadow: 0 -1px 1px rgba(255, 255, 255, .7);
+            line-height: 44px;
+        }
+        .content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .content-inner {
+            overflow: hidden;
+            z-index:2000;
+        }
+
+        .flick-container {
+            position: relative;
+            width:300%;
+            left: -100%;
+            top: 0;
+            transform: translate(0, 0);
+        }
+
+        .flick-panel {
+            width: 33.33333%;
+            float: left;;
+            word-wrap: break-word;
+            overflow: hidden;
+            min-height:1px;
+        }
+
+        .flick-panel.hidden {
+            height: 1px;
+            visibility: hidden;
+        }
+    </style>
+</head>
+<body>
+<div class="wrap ui-page-flicker">
+    <div id="nav" class="nav">
+        <div class="scroll-wrap">
+            <ul class="nav-menu ui-scroller">
+                <li class="nav-item on"><a href="news.html" class="nav-link">뉴스</a></li>
+                <li class="nav-item"><a href="ent.html" class="nav-link">연예</a></li>
+                <li class="nav-item"><a href="sports.html" class="nav-link">스포츠</a></li>
+                <li class="nav-item"><a href="food.html" class="nav-link">푸드</a></li>
+                <li class="nav-item"><a href="shopping.html" class="nav-link">쇼핑</a></li>
+                <li class="nav-item"><a href="video.html" class="nav-link">동영상</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="content">
+        <div class="content-inner">
+            <div class="flick-container">
+                <div class="flick-panel" style="background-color: red;"></div>
+                <div class="flick-panel" style="background-color: green;"></div>
+                <div class="flick-panel" style="background-color: blue;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="pageFlicker.js"></script>
+<script>
+    vcui.require(['ui/pageFlicker'], function (PageFlicker) {
+        new PageFlicker('.ui-page-flicker');
+    });
+</script>
+
+</body>
+</html>
