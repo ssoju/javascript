@@ -93,6 +93,11 @@
             defaults: {
                 selectedIndex: 1
             },
+            
+            // 템플릿 기능 
+            templayes: {
+                button: '<button type="button">{{text}}</button>'
+            }
 
             // 주어진 이름과 셀렉터를 바탕으로 this.el하위에서 검색하여 클래스의 멤버변수로 세팅된다.
             selectors: {
