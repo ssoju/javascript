@@ -1,6 +1,6 @@
 /*!
- * @author 바이널씨
- * @description 바이널씨 코어 라이브러리
+ * @author comahead@gmail.com
+ * @description axl js ui 라이브러리
  * @license MIT License
  */
 ;(function (global, undefined) {
