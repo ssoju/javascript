@@ -3,62 +3,23 @@
  */
 ;(function (core, global, undefined) {
     var arraySlice = Array.prototype.slice,
-        F = function () {
-        },
+        F = function () {},
         ignoreNames = ['superclass', 'members', 'statics', 'hooks'];
 
-    function wrap(k, fn, supr) {
-        return function () {
-            var tmp = this.callParent, ret;
+    function wrap(k, fn, supr) {...}
+    function inherits(what, o, supr) {...}
 
-            this.callParent = this.callParent = supr.prototype[k];
-            ret = undefined;
-            try {
-                ret = fn.apply(this, arguments);
-            } catch (e) {
-                console.error(e);
-            } finally {
-                this.callParent = this.callParent = tmp;
-            }
-            return ret;
-        };
-    }
-
-    function inherits(what, o, supr) {
-        core.each(o, function (v, k) {
-            what[k] = core.isFunction(v) && core.isFunction(supr.prototype[k]) ? wrap(k, v, supr) : v;
-        });
-    }
-
-    var classSyntax = {};
     function classExtend(name, attr, parentClass) {
-        var supr = parentClass || this,
-            statics, mixins, singleton, instance, hooks, requires, name, strFunc;
+        var supr = parentClass || this, _Class, statics, mixins, singleton, instance, hooks, requires, name, strFunc;
 
-        if (!core.type(name, 'string')) {
-            attr = name;
-            name = undefined;
+        if (!core.isString(name)) {
+            attr = name; name = undefined;
         }
-
-        if (core.type(attr, 'function')) {
-            attr = attr();
-        }
-
-        singleton = attr.$singleton || false;
-        statics = attr.$statics || false;
-        mixins = attr.$mixins || false;
-        hooks = attr.$hooks || false;
-        requires = attr.$requires || false;
-        name = name || attr.$name || 'BaseClass';
+        if (core.isFuunction(attr)) { attr = attr(); }
 
         !attr.initialize && (attr.initialize = supr.prototype.initialize || function () {});
-
         function constructor() {
-            if (singleton && instance) {
-                return instance;
-            } else {
-                instance = this;
-            }
+            if (singleton && instance) { return instance; } else { instance = this; }
 
             var args = arraySlice.call(arguments),
                 me = this,
@@ -70,101 +31,46 @@
                 supr.prototype.initialize && supr.prototype.initialize.apply(me, args);
             }
 
-
-        if (!singleton) {
-            strFunc = "return function " + name + "() { constructor.apply(this, arguments); }";
-        } else {
-            strFunc = "return function " + name + "() { if(instance) { return instance; } else { instance = this; } constructor.apply(this, arguments); }";
-        }
-
-        classSyntax[name] = new Function("constructor", "instance",
-            strFunc
-        )(constructor, instance);
-
-        F.prototype = supr.prototype;
-        classSyntax[name].superclass = supr.prototype;
-        classSyntax[name].prototype = new F;
-
-        classSyntax[name].extend = classExtend;
-        core.extend(classSyntax[name].prototype, {
-            constructor: classSyntax[name],
-            destroy: function () {},
-            proxy: function (fn) {
-                var me = this;
-                if (typeof fn === 'string') {
-                    fn = me[fn];
-                }
-                return function () {
-                    return fn.apply(me, arguments);
-                };
-            },
-
-            callParentByName: function (name) {
-                var args = arraySlice.call(arguments, 1);
-                return supr.prototype[name].apply(this, args);
+            if (!singleton) {
+                strFunc = "return function " + name + "() { constructor.apply(this, arguments); }";
+            } else {
+                strFunc = "return function " + name + "() { if(instance) { return instance; } else { instance = this; } constructor.apply(this, arguments); }";
             }
-        });
 
-        if (singleton) {
-            classSyntax[name].getInstance = function () {
-                var arg = arguments,
-                    len = arg.length;
-                if (!instance) {
-                    switch (true) {
-                        case !len:
-                            instance = new classSyntax[name];
-                            break;
-                        case len === 1:
-                            instance = new classSyntax[name](arg[0]);
-                            break;
-                        case len === 2:
-                            instance = new classSyntax[name](arg[0], arg[1]);
-                            break;
-                        default:
-                            instance = new classSyntax[name](arg[0], arg[1], arg[2]);
-                            break;
-                    }
-                }
-                return instance;
-            };
-        }
+            _Klass = new Function("constructor", "instance",
+                strFunc
+            )(constructor, instance);
 
-        classSyntax[name].hooks = {init: [], initialize: []};
-        core.extend(true, classSyntax[name].hooks, supr.hooks);
-        hooks && core.each(hooks, function (name, fn) {
-            classSyntax[name].hooks(name, fn);
-        });
+            F.prototype = supr.prototype;
+            _Class.superclass = supr.prototype;
+            _Class.prototype = new F;
 
-
-        classSyntax[name].mixins = function (o) {
-            var me = this;
-            if (!o.push) {
-                o = [o];
-            }
-            var proto = me.prototype;
-            core.each(o, function (mixObj, i) {
-                if (!mixObj) {
-                    return;
-                }
-                core.each(mixObj, function (fn, key) {
-                    if (key === 'build' && me.hooks) {
-                        me.hooks.init.push(fn);
-                    } else if (key === 'create' && me.hooks) {
-                        me.hooks.create.push(fn);
-                    } else {
-                        proto[key] = fn;
-                    }
-                });
+            _Class.extend = classExtend;
+            core.extend(_Class.prototype, {
+                constructor: _Class,
+                destroy: function () {},
+                proxy: function (fn) {...},
+                callParentByName: function (name) {...}
             });
-        };
-        mixins && classSyntax[name].mixins.call(classSyntax[name], mixins);
 
-        classSyntax[name].members = function (o) {
-            inherits(this.prototype, o, supr);
-        };
-        attr && classSyntax[name].members.call(classSyntax[name], attr);
+            if (singleton) {...}
 
-        classSyntax[name].statics = function (o) {
+            _Class.hooks = {init: [], initialize: []};
+            core.extend(true, classSyntax[name].hooks, supr.hooks);
+            hooks && core.each(hooks, function (name, fn) {
+                classSyntax[name].hooks(name, fn);
+            });
+
+
+            _Class.mixins = function (o) {...};
+            mixins && _Class.mixins.call(_Class, mixins);
+
+            _Class.members = function (o) {
+                inherits(this.prototype, o, supr);
+            };
+            attr && _Class.members.call(_Class, attr);
+
+        _Class.statics = function (o) {
             o = o || {};
             for (var k in o) {
                 if (core.array.indexOf(ignoreNames, k) < 0) {
@@ -173,10 +79,10 @@
             }
             return this;
         };
-        classSyntax[name].statics.call(classSyntax[name], supr);
-        statics && classSyntax[name].statics.call(classSyntax[name], statics);
+        _Class.statics.call(_Class, supr);
+        statics && _Class.statics.call(_Class, statics);
 
-        return classSyntax[name];
+        return _Class;
     }
 
     var BaseClass = function () {};
