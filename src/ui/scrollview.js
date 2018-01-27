@@ -1,7 +1,7 @@
 /*!
  * @author scrollview
  * @email comahead@gmail.com
- * @create 2013-12-11
+ * @create 2012-12-11
  * @license MIT License
  */
 (function ($, core, undefined) {
