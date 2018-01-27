@@ -9,16 +9,19 @@
     var $doc = $(document),
         $win = $(window),
         isTouch = core.browser.isTouch,
-		KEY_PAGEUP = 33,
-		KEY_PAGEDOWN = 34,
-		KEY_UP = 38,
-		KEY_DOWN = 40;
+	KEY_PAGEUP = 33,
+	KEY_PAGEDOWN = 34,
+	KEY_UP = 38,
+	KEY_DOWN = 40;
 
     // 커스텀 스크롤 클래스
     core.ui('Scrollview', {
-        bindjQuery: 'scrollview',
+        bindjQuery: true,  //$('..').Scrollvw()
         defaults: {
-
+	    vscroll: true,
+	    hscroll: fale,
+	    momentium: true,
+	    autohide: true
         },
         selectors: {
             scrollArea: '.ui_scrollarea',
@@ -31,31 +34,22 @@
             if (me.supr(el, options) === false) {
                 return;
             }
-
-            me.containerHeight = me.$scrollArea.height();
-            me.contentHeight = me.$content.height();
-            if (me.contentHeight <= me.containerHeight) {
-                me.$scrollBar.hide();
-                me.release();
-                return;
-            }
-
-
-            me.scrollRate = me.containerHeight / me.contentHeight;
-            me.scrollBarHeight = me.containerHeight * me.scrollRate;
-            me.scrollHeight = me.containerHeight - me.scrollBarHeight;
+		
             me.isMouseDown = false;
             me.moveY = 0;
+            me._calcSizes();
 
-            me.smoothAnimate = new core.ui.SmoothAnimator({max: me.$scrollArea.prop('scrollHeight') - me.containerHeight, min: 0});
-            me.smoothAnimate.on('move', function(e, data) {
+            me.smoothAnimator = new core.ui.SmoothAnimator({
+		max: me.$scrollArea.prop('scrollHeight') - me.containerHeight, 
+		min: 0
+	    });
+            me.smoothAnimator.on('move', function(e, data) {
                 me.$scrollArea.scrollTop(data.delta);
             });
 
             new core.ui.Gesture(me.$scrollBar, {
                 direction: 'vertical'
-            });
-            me.$scrollBar.on((function(){
+            }).on((function(){
                 var startY = 0;
                 return {
                     'gesturestart': function(e) {
@@ -75,20 +69,18 @@
                 if (!me.isMouseDown) {
                     me._updateScrollBar();
                 }
-                me.smoothAnimate.goto(me.$scrollArea.scrollTop(), false);
+                me.smoothAnimator.goto(me.$scrollArea.scrollTop(), false);
             }).on('mousewheel DOMMouseScroll', function(e) {
                 e.preventDefault();
                 e = e.originalEvent;
                 var delta = e.wheelDelta || -e.detail;
 
-                me.smoothAnimate.goto(me.$scrollArea.scrollTop() - delta);
+                me.smoothAnimator.goto(me.$scrollArea.scrollTop() - delta);
             });
 
             new core.ui.Gesture(me.$scrollArea, {
                 direction: 'vertical'
-            });
-
-            me.$scrollArea.on((function() {
+            }).on((function() {
                 return {
                     'gesturestart': function(e) {
                         me.smoothAnimate.start(0, me.$scrollArea.scrollTop());
