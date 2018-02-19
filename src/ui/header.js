@@ -123,20 +123,6 @@ define('ui/skbHeader', [
         _bindMouseEvents: function () {
             var self = this;
 
-            /*self.on('mouseleave', function (e) {
-                console.log(999)
-                $('.menu_over_wrap li.on:not(.active)', self.$gnb).removeClass('on')
-                    .filter('.nxt_step')
-                    .each(function () {
-                        $('>ul', this).hide();
-                    });
-            });*/
-
-            // 나가면 닫아준다.
-            self.$('.menus_sec').on('mouseleave', core.delayRun(function (e) {
-                self._close1Depth();
-            }, 200));
-
             // 1depth
             self.on('mouseenter', '.deps1, .util_menus > ul > li', function (e) {
                 e.preventDefault();
@@ -146,7 +132,7 @@ define('ui/skbHeader', [
             });
 
             // 2depth
-            self.on('mouseenter', '.deps2', function (e) {
+            self.on('mouseenter', '.deps2:not(.on)', function (e) {
                 var $li = $(this);
 
                 self._active2Depth($li);
@@ -169,18 +155,25 @@ define('ui/skbHeader', [
             $('.scroll_wrap', $li).vcScrollview('scrollTop', 0);
             $('li.on', $li).removeClass('on');
 
-            self.docOn('keydown', function (e) {
-                if (e.which === core.keyCode.ESCAPE) {
-                    self.$('.deps1.on>a').focus();
-                    self._close1Depth();
-                }
-            });
 
-            self.docOn('focusin', function (e) {
-                if (!$.contains(self.$menuContainer[0], e.target)) {
+            if (!core.detect.isTouch) {
+                self.docOn('keydown', function (e) {
+                    if (e.which === core.keyCode.ESCAPE) {
+                        self.$('.deps1.on>a').focus();
+                        self._close1Depth();
+                    }
+                });
+
+                self.docOn('mouseleave', '.menus_sec', function () {
                     self._close1Depth();
-                }
-            });
+                });
+
+                self.docOn('focusin', function (e) {
+                    if (!$.contains(self.$menuContainer[0], e.target)) {
+                        self._close1Depth();
+                    }
+                });
+            }
         },
 
         /**
@@ -196,7 +189,7 @@ define('ui/skbHeader', [
             self.$depth1Menus.removeClass('on');
             self.$utilMenus.removeClass('on');
 
-            self.docOff('keydown click focusin');
+            self.docOff('keydown click focusin mouseleave');
         },
 
         /**
@@ -207,8 +200,7 @@ define('ui/skbHeader', [
         _active2Depth: function ($li) {
             var self = this;
 
-            $li.activeItem('on');
-            $li.siblings().find('.nxt_step.on').removeClass('on').find('>ul').hide();
+            $li.activeItem('on').find('.nxt_step').removeClass('on').find('>ul').hide();
         },
 
         /**
