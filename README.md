@@ -3,7 +3,7 @@
 
 *자바스크립트 UI 프레임웍*
 
-- framework core: https://github.com/ssoju/javascript/blob/master/src/core.js
+- framework core: https://github.com/ssoju/javascript/blob/master/dist/vcui.js
 - ui modules by framework: https://github.com/ssoju/javascript/tree/master/src/ui
 
 *axljs framework 사용법*
