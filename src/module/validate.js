@@ -1,11 +1,15 @@
 /*!
- * @author 김승일(comahead@gmail.com)
-*/
-(function (undefined) {
+ * @module vcui.helper.Geolocation
+ * @license MIT License
+ * @description 지오로케이션 헬퍼
+ * @copyright VinylC UID Group
+ */
+define('ui/formValidator', ['jquery', 'vcui'], function ($, core) {
+    "use strict";
 
     var messages = {
         required: "'[name]'항목은 필수입력 항목입니다.",
-        matches: "'[name]'항목은 {0}항목과 동일해야 합니다.",
+        match: "'[name]'항목은 '{targetName}'항목과 동일해야 합니다.",
         email: "'[name]'항목이 이메일 형식에 맞지 않습니다.",
         minlength: "'[name]'항목의 최소길이는 {0}입니다.",
         maxlength: "'[name]'항목의 최대길이는 {0}입니다",
@@ -23,12 +27,12 @@
         nozero: "'[name]'항목은 0으로 시작하면 안됩니다.",
         file: "'[name]'항목은 {0}확장자만 유효합니다.",
         url: "url주소 형식이 잘못 되었습니다.",
-        tel: "전화번호 형식이 잘못 되었습니다.",
+        tel: "전화번호가 잘못 되었습니다.",
         mobile: "휴대폰번호 형식이 잘못 되었습니다.",
-        gt_date: "'[name]'날짜는 '[target_name']날짜보다 이후여야 합니다.",
-        lt_date: "'[name]'날짜는 '[target_name']날짜보다 이전이어야 합니다.",
-        eqgt_date: "'[name]'날짜는 '[target_name']날짜와 같거나 이후여야 합니다.",
-        eqlt_date: "'[name]'날짜는 '[target_name']날짜와 같거나 이전이어야 합니다.",
+        gt_date: "'[name]'날짜는 '{targetName}'날짜보다 이후여야 합니다.",
+        lt_date: "'[name]'날짜는 '{targetName}'날짜보다 이전이어야 합니다.",
+        eqgt_date: "'[name]'날짜는 '{targetName}'날짜와 같거나 이후여야 합니다.",
+        eqlt_date: "'[name]'날짜는 '{targetName}'날짜와 같거나 이전이어야 합니다.",
         regexp: "[data-pattern] 정규식에 안맞습니다."
     };
 
@@ -50,22 +54,26 @@
 
 
     function typeName(el) {
-        return (el.type||'').toLowerCase();
+        return (el.type || '').toLowerCase();
     }
 
     function tagName(el) {
-        return (el.tagName||'').toLowerCase();
+        return (el.tagName || '').toLowerCase();
     }
 
-    function getValue(el){
-        if(typeof el === 'string') { return el; }
+    function getValue(el) {
+        if (typeof el === 'string') {
+            return el;
+        }
 
         var type = typeName(el),
             items;
-        if(type === 'checkbox' || type === 'radio') {
+        if (type === 'checkbox' || type === 'radio') {
             items = [].slice.call(el.form.elements[el.name]);
-            for(var i = -1, item; item = items[++i]; ){
-                if(item.checked === true) { return item.value; }
+            for (var i = -1, item; item = items[++i];) {
+                if (item.checked === true) {
+                    return item.value;
+                }
             }
             return '';
         }
@@ -76,8 +84,8 @@
         var items = [].slice.call(el.form.elements[el.name]),
             cnt = 0;
 
-        for(var i = -1, item; item = items[++i]; ){
-            if(item.checked) {
+        for (var i = -1, item; item = items[++i];) {
+            if (item.checked) {
                 cnt += 1;
             }
         }
@@ -102,13 +110,20 @@
     }
 
     function getInputName(el) {
-        var x;
-        if(x = el.getAttribute('data-name')) {
-            return x;
+        var label;
+        if (el.length) {
+            el = el[0];
         }
-        if(x = el.getAttribute('id')) {
-            if(x = $('label[for='+x+']')[0]) {
-                return x.innerText;
+
+        if (label = el.getAttribute('data-name')) {
+            return label;
+        }
+        if (label = el.getAttribute('id')) {
+            if (label = $('label[for=' + label + ']')[0]) {
+                return label.innerText;
+            }
+            if ((label = $(el).closest('label')).length) {
+                return label[0].innerText;
             }
         }
         return el.name;
@@ -116,312 +131,468 @@
 
     function byteLength(value) {
         var l = 0;
-        for (var i=0, len = value.length; i < len; i++) {
+        for (var i = 0, len = value.length; i < len; i++) {
             l += (value.charCodeAt(i) > 255) ? 2 : 1;
         }
         return l;
     }
 
     var FormValidator = function (el, options) {
-        var me = this;
-        me.errors = [];
-        me.form = el;
-        me.messages = messages;
-        me.befores = {};
-        me.afters = {};
-        me.options = options || {};
+        var self = this;
 
-        $.each(me.options.validBefore||{}, function(k, v) {
-            me.addValidBefore(k, v);
+        self.errors = [];
+        self.$form = $(el);
+        self.form = self.$form.get(0);
+        self.messages = messages;
+        self.befores = {};
+        self.afters = {};
+
+        var opt = self.options = core.extend({
+            autoCheck: true,
+            notifyType: 'alert', // tooltip, none
+            tooltip: function () {
+            },
+            onSuccess: function () {
+            },
+            onFailure: function () {
+            },
+            onInvalid: function () {
+            },
+        }, options);
+
+        core.each(opt.validBefore || {}, function (v, k) {
+            self.addValidBefore(k, v);
         });
 
-        $.each(me.options.validAfter||{}, function(k, v) {
-            me.addValidAfter(k, v);
+        core.each(opt.validAfter || {}, function (v, k) {
+            self.addValidAfter(k, v);
         });
 
-        me.form.addEventListener('submit', function(e) {
-            if(!me.run()){
-                e.preventDefault();
-                return false;
-            }
-        })
+        if (opt.autoCheck) {
+            self.$form.on('submit', function (e) {
+                if (!self.run()) {
+                    e.preventDefault();
+                    opt.onFailure.call(self.form, e);
+                    return false;
+                }
+                opt.onSuccess.call(self.form, e);
+            });
+        }
+
+        if (opt.notifyType === 'tooltip') {
+            this._bindInputEvent();
+        }
     };
 
-    $.extend(FormValidator, {
+    core.extend(FormValidator, {
+        messages: messages,
         rules: {
-            required: function (element) {
-                var value = getValue(element);
-                return !!(value);
+            required: {
+                fn: function (element) {
+                    var value = getValue(element);
+                    return !!(value);
+                }
             },
-            match: function (element, matchName) {
-                var el = this.form[matchName];
+            match: {
+                fn: function (element, matchName) {
+                    var el = this.form[matchName];
+                    this.currentData.targetName = getInputName(el) || matchName;
 
-                if (el) {
-                    return element.value === getValue(el);
-                }
+                    if (el) {
+                        return element.value === getValue(el);
+                    }
 
-                return false;
-            },
-            email: function (element, other) {
-                var val = getValue(element), domain;
-                if(other && (domain = element.form.elements[other])) {
-                    val += '@' + getValue(domain);
-                }
-                return emailRegex.test(val);
-            },
-            tel: function (element, tel2name, tel3name) {
-                var val = getValue(element);
-                if(arguments.length > 1) {
-                    val += '-' + getValue(element.form[tel2name]) + '-' + getValue(element.form[tel3name]);
-                }
-                return telRegex.test(val);
-            },
-            mobile: function (element, tel2name, tel3name) {
-                var val = getValue(element);
-                if(arguments.length > 1) {
-                    val += '-' + getValue(element.form[tel2name]) + '-' + getValue(element.form[tel3name]);
-                }
-                return mobileRegex.test(val);
-            },
-            minlength: function (element, length) {
-                return (getValue(element).length >= parseInt(length, 10));
-            },
-            maxlength: function (element, length) {
-                return (getValue(element).length <= parseInt(length, 10));
-            },
-            exactlength: function (element, length) {
-                return (getValue(element).length === length|0);
-            },
-            rangelength: function(element, min, max){
-                var len = getValue(element).length;
-                return len >= min && len <= max;
-            },
-            minbyte: function (element, length) {
-                return (byteLength(getValue(element)) >= parseInt(length, 10));
-            },
-            maxbyte: function (element, length) {
-                return (byteLength(getValue(element)) <= parseInt(length, 10));
-            },
-            exactbyte: function (element, length) {
-                return (byteLength(getValue(element)) === length|0);
-            },
-            minchecked: function (element, min) {
-                return getCheckedCount(element) >= min|0;
-            },
-            maxchecked: function (element, max) {
-                return getCheckedCount(element) <= max|0;
-            },
-            exactchecked: function (element, cnt) {
-                return getCheckedCount(element) === cnt|0;
-            },
-            rangechecked: function(element, min, max){
-                var cnt = getCheckedCount(element);
-                if(typeof max === 'undefined'){ max = min; }
-                return cnt >= min && cnt <= max;
-            },
-            lt: function (element, param) {
-                if (!decimalRegex.test(getValue(element))) {
                     return false;
                 }
-
-                return (parseFloat(element.value) > parseFloat(param));
             },
-            gt: function (element, param) {
-                if (!decimalRegex.test(getValue(element))) {
-                    return false;
+            email: {
+                fn: function (element, other) {
+                    var val = getValue(element), domain;
+                    if (other && (domain = element.form.elements[other])) {
+                        val += '@' + getValue(domain);
+                    }
+                    return emailRegex.test(val);
                 }
-
-                return (parseFloat(getValue(element)) < parseFloat(param));
             },
-            alpha: function (element) {
-                return (alphaRegex.test(getValue(element)));
-            },
-            alnum: function (element) {
-                return (alphaNumericRegex.test(getValue(element)));
-            },
-            numeric: function (element) {
-                return (numericRegex.test(getValue(element)));
-            },
-            integer: function (element) {
-                return (integerRegex.test(getValue(element)));
-            },
-            decimal: function (element) {
-                return (decimalRegex.test(getValue(element)));
-            },
-            nozero: function (element) {
-                return (naturalNoZeroRegex.test(getValue(element)));
-            },
-            url: function (element) {
-                return (urlRegex.test(getValue(element)));
-            },
-            file: function (element, type) {
-                if (element.type !== 'file') {
-                    return true;
+            tel: {
+                fn: function (element, tel2name, tel3name) {
+                    var val = getValue(element);
+                    if (arguments.length > 1) {
+                        val += '-' + getValue(element.form[tel2name]) + '-' + getValue(element.form[tel3name]);
+                    }
+                    return telRegex.test(val);
                 }
+            },
+            mobile: {
+                fn: function (element, tel2name, tel3name) {
+                    var val = getValue(element);
+                    if (arguments.length > 1) {
+                        val += '-' + getValue(element.form[tel2name]) + '-' + getValue(element.form[tel3name]);
+                    }
+                    return mobileRegex.test(val);
+                }
+            },
+            minlength: {
+                fn: function (element, length) {
+                    return (getValue(element).length >= parseInt(length, 10));
+                }
+            },
+            maxlength: {
+                fn: function (element, length) {
+                    return (getValue(element).length <= parseInt(length, 10));
+                }
+            },
+            exactlength: {
+                fn: function (element, length) {
+                    return (getValue(element).length === length | 0);
+                }
+            },
+            rangelength: {
+                fn: function (element, min, max) {
+                    var len = getValue(element).length;
+                    return len >= min && len <= max;
+                }
+            },
+            minbyte: {
+                fn: function (element, length) {
+                    return (byteLength(getValue(element)) >= parseInt(length, 10));
+                }
+            },
+            maxbyte: {
+                fn: function (element, length) {
+                    return (byteLength(getValue(element)) <= parseInt(length, 10));
+                }
+            },
+            exactbyte: {
+                fn: function (element, length) {
+                    return (byteLength(getValue(element)) === length | 0);
+                }
+            },
+            minchecked: {
+                fn: function (element, min) {
+                    return getCheckedCount(element) >= min | 0;
+                }
+            },
+            maxchecked: {
+                fn: function (element, max) {
+                    return getCheckedCount(element) <= max | 0;
+                }
+            },
+            exactchecked: {
+                fn: function (element, cnt) {
+                    return getCheckedCount(element) === cnt | 0;
+                }
+            },
+            rangechecked: {
+                fn: function (element, min, max) {
+                    var cnt = getCheckedCount(element);
+                    if (typeof max === 'undefined') {
+                        max = min;
+                    }
+                    return cnt >= min && cnt <= max;
+                }
+            },
+            lt: {
+                fn: function (element, param) {
+                    if (!decimalRegex.test(getValue(element))) {
+                        return false;
+                    }
 
-                var ext = element.value.substr((getValue(element).lastIndexOf('.') + 1)),
-                    typeArray = type.split(';'),
-                    inArray = false,
-                    i = 0,
-                    len = typeArray.length;
+                    return (parseFloat(element.value) > parseFloat(param));
+                }
+            },
+            gt: {
+                fn: function (element, param) {
+                    if (!decimalRegex.test(getValue(element))) {
+                        return false;
+                    }
 
-                for (i; i < len; i++) {
-                    if (ext == typeArray[i]) {
-                        inArray = true; break;
+                    return (parseFloat(getValue(element)) < parseFloat(param));
+                }
+            },
+            alpha: {
+                fn: function (element) {
+                    return (alphaRegex.test(getValue(element)));
+                }
+            },
+            alnum: {
+                fn: function (element) {
+                    return (alphaNumericRegex.test(getValue(element)));
+                }
+            },
+            numeric: {
+                fn: function (element) {
+                    return (numericRegex.test(getValue(element)));
+                }
+            },
+            integer: {
+                fn: function (element) {
+                    return (integerRegex.test(getValue(element)));
+                }
+            },
+            decimal: {
+                fn: function (element) {
+                    return (decimalRegex.test(getValue(element)));
+                }
+            },
+            nozero: {
+                fn: function (element) {
+                    return (naturalNoZeroRegex.test(getValue(element)));
+                }
+            },
+            url: {
+                fn: function (element) {
+                    return (urlRegex.test(getValue(element)));
+                }
+            },
+            file: {
+                fn: function (element, type) {
+                    if (element.type !== 'file') {
+                        return true;
+                    }
+
+                    var ext = element.value.substr((getValue(element).lastIndexOf('.') + 1)),
+                        typeArray = type.split(';'),
+                        inArray = false,
+                        i = 0,
+                        len = typeArray.length;
+
+                    for (i; i < len; i++) {
+                        if (ext == typeArray[i]) {
+                            inArray = true;
+                            break;
+                        }
+                    }
+
+                    return inArray;
+                }
+            },
+            date: {
+                fn: function (element, format) {
+                    return dateRegex.test(getValue(element));
+                }
+            },
+            gt_date: {
+                fn: function (element, date) {
+                    var enteredDate = parseDate(getValue(element)),
+                        validDate = parseDate(element.form[date] ? getValue(element.form[date]) : date);
+
+                    if (!validDate || !enteredDate) {
+                        return false;
+                    }
+                    if (enteredDate > validDate) {
+                        return true;
+                    }
+                    else {
+                        element.form[date] && (this.currentTarget = element.form[date]);
+                        return false;
                     }
                 }
-
-                return inArray;
             },
-            date: function(element, format) {
-                return dateRegex.test(getValue(element));
-            },
-            gt_date: function (element, date) {
-                var enteredDate = parseDate(getValue(element)),
-                    validDate = parseDate(element.form[date] ? getValue(element.form[date]) : date);
+            lt_date: {
+                fn: function (element, date) {
+                    var enteredDate = parseDate(getValue(element)),
+                        validDate = parseDate(element.form[date] ? getValue(element.form[date]) : date);
 
-                if (!validDate || !enteredDate) {
-                    return false;
-                }
-                if(enteredDate > validDate) { return true; }
-                else {
-                    element.form[date] && (this.currentTarget = element.form[date]);
-                    return false;
-                }
-            },
-            lt_date: function (element, date) {
-                var enteredDate = parseDate(getValue(element)),
-                    validDate = parseDate(element.form[date] ? getValue(element.form[date]) : date);
+                    if (!validDate || !enteredDate) {
+                        return false;
+                    }
 
-                if (!validDate || !enteredDate) {
-                    return false;
-                }
-
-                if(enteredDate < validDate) { return true; }
-                else {
-                    element.form[date] && (this.currentTarget = element.form[date]);
-                    return false;
+                    if (enteredDate < validDate) {
+                        return true;
+                    }
+                    else {
+                        element.form[date] && (this.currentTarget = element.form[date]);
+                        return false;
+                    }
                 }
             },
-            eqgt_date: function (element, date) {
-                var enteredDate = parseDate(getValue(element)),
-                    validDate = parseDate(element.form[date] ? getValue(element.form[date]) : date);
+            eqgt_date: {
+                fn: function (element, date) {
+                    var enteredDate = parseDate(getValue(element)),
+                        validDate = parseDate(element.form[date] ? getValue(element.form[date]) : date);
 
-                if (!validDate || !enteredDate) {
-                    return false;
-                }
+                    if (!validDate || !enteredDate) {
+                        return false;
+                    }
 
-                if(enteredDate >= validDate) { return true; }
-                else {
-                    element.form[date] && (this.currentTarget = element.form[date]);
-                    return false;
-                }
-            },
-            eqlt_date: function (element, date) {
-                var enteredDate = parseDate(getValue(element)),
-                    validDate = parseDate(element.form[date] ? getValue(element.form[date]) : date);
-
-                if (!validDate || !enteredDate) {
-                    return false;
-                }
-
-                if(enteredDate <= validDate) { return true; }
-                else {
-                    element.form[date] && (this.currentTarget = element.form[date]);
-                    return false;
+                    if (enteredDate >= validDate) {
+                        return true;
+                    }
+                    else {
+                        element.form[date] && (this.currentTarget = element.form[date]);
+                        return false;
+                    }
                 }
             },
-            regexp: function(element) {
-                var regstr = element.getAttribute('data-pattern');
-                var regexp =new RegExp(regstr);
-                return regexp.test(getValue(element));
+            eqlt_date: {
+                fn: function (element, date) {
+                    var enteredDate = parseDate(getValue(element)),
+                        validDate = parseDate(element.form[date] ? getValue(element.form[date]) : date);
+
+                    if (!validDate || !enteredDate) {
+                        return false;
+                    }
+
+                    if (enteredDate <= validDate) {
+                        return true;
+                    }
+                    else {
+                        element.form[date] && (this.currentTarget = element.form[date]);
+                        return false;
+                    }
+                }
+            },
+            regexp: {
+                fn: function (element) {
+                    var regstr = element.getAttribute('data-pattern');
+                    var regexp = new RegExp(regstr);
+                    return regexp.test(getValue(element));
+                }
             }
         },
-        addRule: function(name, handler) {
+        addRule: function (name, handler) {
             this.rules[name] = handler;
         }
     });
 
     FormValidator.prototype = {
         constructor: FormValidator,
+        _bindInputEvent: function () {
+            var els = this.form.elements;
+            var el;
+
+            for (var i = -1; el = els[++i]; ) {
+                $(el).on('input paste cut', function (e) {
+                    $(this).parent().removeClass('error');
+                });
+            }
+        },
         setMessage: function (rule, message) {
             this.messages[rule] = message;
 
             return this;
         },
-        addValidBefore: function(name, handler) {
+        addValidBefore: function (name, handler) {
             if (name && typeof this.form[name] && handler && typeof handler === 'function') {
                 this.befores[name] = handler;
             }
         },
-        addValidAfter: function(name, handler) {
+        addValidAfter: function (name, handler) {
             if (name && typeof this.form[name] && handler && typeof handler === 'function') {
                 this.afters[name] = handler;
             }
         },
         run: function () {
-            if(!this._validateForm()){
-                this._showError();
+            var self = this,
+                opt = self.options;
+
+            if (!self._validateForm()) {
+                opt.onInvalid.call(self.form, self._getLastError());
+                if (opt.notifyType !== 'none') {
+                    self._showError();
+                }
+                return false;
+            }
+            return true;
+        },
+        _normalizeMessage: function (el, msg, params, data) {
+            data = data || {};
+
+            return msg && msg.replace(/\[name\]/ig, function (v, s) {
+                return getInputName(el);
+            }).replace(/\{([a-z0-9-]+)\}/ig, function (v, s) {
+                if (/[0-9]+/.test(s)) {
+                    return params[s] || '';
+                } else {
+                    return el.getAttribute('data-' + s) || data[s] || 'unknown';
+                }
+            }).replace(/\[([a-z0-9-]+)\]/ig, function (v, s) {
+                return el.getAttribute(s) || '';
+            }) || 'unknown msg';
+        },
+        _getLastError: function () {
+            return this.errors[this.errors.length - 1];
+        },
+        _showError: function () {
+            if (!this.errors.length) {
+                return;
+            }
+
+            switch (this.options.notifyType) {
+                case 'alert':
+                    var error = this._getLastError();
+                    var message = this._normalizeMessage(error.el, error.msg || messages[error.rule], error.params, error.data);
+
+                    alert(message);
+                    error.el.focus();
+                    error.el.select();
+                    break;
+                case 'tooltip':
+                    for (var i = 0, len = this.errors.length; i < len; i++) {
+                        var error = this.errors[i];
+                        var $tooltip = $(error.el).next();
+                        var message = this._normalizeMessage(error.el, error.msg || messages[error.rule], error.params, error.data);
+
+                        if ($tooltip.length) {
+                            $tooltip.html(message).parent().addClass('error');
+                        }
+                    }
+                    this.errors[0].el.focus();
+                    this.errors[0].el.select();
+                    break;
             }
         },
-        _normalizeMessage: function(el, msg, params) {
-            return msg && msg.replace(/\[name\]/, function(v, s) {
-                    return getInputName(el);
-                }).replace(/\{([a-z0-9-]+)\}/g, function(v, s) {
-                    if(/[0-9]+/.test(s)){
-                        return params[s|0] || '';
-                    } else {
-                        return el.getAttribute('data-' + s) || params[s] || 'unknown';
-                    }
-                }).replace(/\[([a-z0-9-]+)\]/g, function(v, s) {
-                    return el.getAttribute(s) || '';
-                }) || 'unknown msg';
-        },
-        _showError: function() {
-            var error = this.errors[0],
-                el = error.el,
-                params = error.params;
-
-            alert(this._normalizeMessage(el, this.errors[0].msg || messages[this.errors[0].rule], params));
-            this.errors[0].el.focus();
-        },
         _validateForm: function () {
-            var me = this,
-                elements = me.form.elements,
+            var self = this,
+                elements = self.form.elements,
                 success = true,
                 fn;
 
-            me.errors = [];
-            if(!elements.length) { return true; }
+            self.errors = [];
+            if (!elements.length) {
+                return true;
+            }
 
-            for (var i = -1, element; element = elements[++i]; ) {
-                if ((fn = me.befores[element.name]) && !fn.call(me, element)) { success = false; break; }
-                if(success && me._validateField(element)) {
-                    if (fn = me.afters[element.name]) {
-                        if (!fn.call(me, element)) { success = false; break; }
+            try {
+                for (var i = -1, element; element = elements[++i];) {
+                    if ((fn = self.befores[element.name]) && fn.call(self, element) === false) {
+                        success = false;
+                        break;
                     }
-                } else {
-                    success = false;
-                    break;
+                    if (success && self._validateField(element)) {
+                        if (fn = self.afters[element.name]) {
+                            if (fn.call(self, element) === false) {
+                                success = false;
+                                break;
+                            }
+                        }
+                    } else {
+                        success = false;
+                        break;
+                    }
                 }
+            } catch (ex) {
+                alert(ex);
+                return false;
             }
 
             return success;
         },
-        _parseRules: (function(){
+        _parseRules: (function () {
             var paramRegex = /^([a-z]+)(?:\((.+)\)$)*/;
-            return function(element){
-                var rules = (element.getAttribute('data-valid')||'').split('|'),
+            return function (element) {
+                var rules = (element.getAttribute('data-valid') || '').split('|'),
                     matches, result = {};
 
-                if(element.hasAttribute('required')){
+                if (element.hasAttribute('required')) {
                     result['required'] = true;
                     element.removeAttribute('required');
                 }
-                for(var i = -1, rule; (rule = rules[++i]) && (matches = rule.match(paramRegex)); ) {
+                for (var i = -1, rule; (rule = rules[++i]) && (matches = rule.match(paramRegex));) {
                     result[matches[1]] = {
-                        params: matches[2] ? (matches[2]||'').split(/,\s*/g).map(function(val) {
-                            return typeof val == 'number' ? val|0 : val;
+                        params: matches[2] ? (matches[2] || '').split(/,\s*/g).map(function (val) {
+                            return typeof val == 'number' ? val | 0 : val;
                         }) : []
                     }
                 }
@@ -429,25 +600,32 @@
             };
         })(),
         _validateField: function (element) {
-            var me = this,
-                rules =  me._parseRules(element),
-                fn;
+            var self = this,
+                rules = self._parseRules(element),
+                rule;
 
-            for(var name in rules) { if(!rules.hasOwnProperty(name)){ continue; }
-                if(!rules['required'] && !element.value.trim()){ continue; }
-                if(fn = FormValidator.rules[name]) {
-                    delete me['currentTarget'];
-                    if(!fn.apply(me, [element].concat(rules[name].params))){
-                        me.errors.push({
+            for (var name in rules) {
+                if (!rules.hasOwnProperty(name)) {
+                    continue;
+                }
+                if (!rules['required'] && !element.value.trim()) {
+                    continue;
+                }
+                if (rule = FormValidator.rules[name]) {
+                    delete self['currentTarget'];
+                    self.currentData = {};
+                    if (!rule.fn.apply(self, [element].concat(rules[name].params))) {
+                        self.errors.push({
                             rule: name,
                             el: element,
-                            target: me.currentTarget,
-                            params: rules[name].params
+                            target: self.currentTarget,
+                            params: rules[name].params,
+                            data: self.currentData
                         });
                         return false;
                     }
                 } else {
-                    throw new Error('[Validator] '+name+'는 지원하지 않는 규칙입니다.');
+                    throw new Error('[Validator] ' + name + '는 지원하지 않는 규칙입니다.');
                 }
             }
 
@@ -455,10 +633,84 @@
         }
     };
 
-    window.FormValidator = FormValidator;
-    $.fn.validator = function(options){
+    //window.FormValidator = FormValidator;
+    /*$.fn.validator = function(options){
         return this.each(function() {
             new FormValidator(this, options);
         });
-    };
-})();
+    };*/
+    return FormValidator;
+});
+
+/*
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        dt {
+            float: left;
+            width: 80px;
+        }
+
+        dd .message {
+            display: none;
+        }
+
+        dd.error .message {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+<div>
+    <h1>폼 밸리데이션</h1>
+    <form action="" id="frm">
+        <dl>
+            <dt>이름</dt>
+            <dd>
+                <input type="text" data-valid="required">
+                <span class="message"></span>
+            </dd>
+            <dt>이메일</dt>
+            <dd>
+                <input type="text" data-valid="required|email">
+                <span class="message"></span>
+            </dd>
+            <dt>전화번호</dt>
+            <dd>
+                <input type="text" data-valid="required|tel">
+                <span class="message"></span>
+            </dd>
+        </dl>
+        <button>등록</button>
+    </form>
+</div>
+
+<div id="modal1" class="ui_modal" style="display: none;">
+    <div class="modal_header">헤더</div>
+    <div class="modal_content">본문</div>
+    <div class="modal_footer">푸터 <br><button type="button" class="ui_modal_close">닫기</button> </div>
+</div>
+<script src="/js/libs/jquery-1.11.2.min.js"></script>
+<script src="/js/vcui.js"></script>
+<script src="/js/vinylc.site.js"></script>
+<script>
+    $(function () {
+        vcui.require([
+            'ui/formValidator'
+        ], function (FormValidator) {
+            new FormValidator($('#frm'), {
+                notifyType: 'tooltip', // alert, custom
+                tooltip: function (input) {
+                    return $(input).next('.message');
+                }
+            });
+        })
+    });
+</script>
+</body>
+</html>
+*/
