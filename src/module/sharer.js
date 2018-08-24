@@ -4,7 +4,7 @@
  * @create 2013-11-25
  * @license MIT License
  */
-(function($, core) {
+define('helper/sharer', ['jquery', 'vcui'], function ($, core) {
     "use strict";
 
     var $doc = core.$doc,
@@ -17,66 +17,116 @@
         APP: 4
     };
 
+    var defaultOption = {
+        selector: '.ui-sharer',
+        attr: 'data-service',
+        metas: {
+            title: {},
+            description: {},
+            image: {}
+        },
+        onBeforeShare: function () {
+        },
+        onShrered: function () {
+        }
+    };
+
     var Sharer = /** @lends axl.module.Sharer */{
-        types: /** @lends axl.module.Sharer.types */{ //['facebook', 'twitter', 'kakaotalk', 'kakaostory'/* , 'googleplus'*/],
-            'facebook': /** @lends axl.module.Sharer.types.facebook */{
+        support: detect,
+        services: /** @lends axl.module.Sharer.services */{ //['facebook', 'twitter', 'kakaotalk', 'kakaostory'/* , 'googleplus'*/],
+            'facebook': /** @lends axl.module.Sharer.services.facebook */{
                 name: '페이스북',
                 support: detect.PC | detect.MOBILE,
                 size: [500, 300],
-                baseUrl: 'https://www.facebook.com/sharer.php?',
-                makeParam: function(data) {
+                url: 'https://www.facebook.com/sharer.php?',
+                makeParam: function makeParam(data) {
                     data.url = core.uri.addParam(data.url, {
-                        '_t': +new Date
+                        '_t': +new Date()
                     });
-                    return 'u=' + enc(data.url) + (data.title && '&t=' + enc(data.title));
+                    return {u: data.url, t: data.title || ''};
                 }
             },
-            'twitter': /** @lends axl.module.Sharer.types.twitter */{
+            'twitter': /** @lends axl.module.Sharer.services.twitter */{
                 name: '트위터',
                 support: detect.PC | detect.MOBILE,
                 size: [550, 300],
-                baseUrl: 'https://twitter.com/intent/tweet?',
-                makeParam: function(data) {
+                url: 'https://twitter.com/intent/tweet?',
+                makeParam: function makeParam(data) {
                     data.desc = data.desc || '';
 
-                    var length = 140 - data.url.length - 6, // ... 갯수
+                    var length = 140 - data.url.length - 6,
+                        // ... 갯수
                         txt = data.title + ' - ' + data.desc;
 
                     txt = txt.length > length ? txt.substr(0, length) + '...' : txt;
-                    return 'text=' + enc(txt + ' ' + data.url);
+                    return {text: txt + ' ' + data.url};
                 }
             },
-            'kakaotalk': /** @lends axl.module.Sharer.types.kakaotalk */{
-                name: '카카오톡',
-                support: detect.APP | detect.MOBILE,
+            'googleplus': /** @lends axl.module.Sharer.services.googleplus */{
+                name: '구글플러스',
+                support: detect.PC | detect.MOBILE,
+                size: [400, 420],
+                url: 'https://plus.google.com/share?',
+                makeParam: function makeParam(data) {
+                    return {url: data.url};
+                }
+            },
+            'pinterest': /** @lends axl.module.Sharer.services.pinterest */{
+                name: '핀터레스트',
+                support: detect.PC | detect.MOBILE,
+                size: [740, 740],
+                url: 'https://www.pinterest.com/pin/create/button/?',
+                makeParam: function makeParam(data) {
+                    return {
+                        url: data.url,
+                        media: data.image,
+                        description: data.desc
+                    };
+                }
+            },
+            'linkedin': {
+                name: '링크드인',
+                support: detect.PC | detect.MOBILE,
+                url: 'https://www.linkedin.com/shareArticle',
                 makeParam: function(data) {
                     return {
-                        msg: data.title + "\n" + (data.desc||''),
+                        url: data.url,
+                        mini: true
+                    };
+                }
+            },
+            'kakaotalk': /** @lends axl.module.Sharer.services.kakaotalk */{
+                name: '카카오톡',
+                support: detect.APP | detect.MOBILE,
+                makeParam: function makeParam(data) {
+                    return {
+                        msg: data.title + "\n" + (data.desc || ''),
                         url: data.url,
                         appid: "common store",
                         appver: "0.1",
                         type: "link",
-                        appname: "이마트스토어"
+                        appname: data.title
                     };
                 }
             },
-            'kakaostory': /** @lends axl.module.Sharer.types.kakaostory */{
+            'kakaostory': /** @lends axl.module.Sharer.services.kakaostory */{
                 name: '카카오스토리',
                 support: detect.APP | detect.MOBILE,
-                makeParam: function(data) {
+                makeParam: function makeParam(data) {
                     return {
-                        post: data.title + "\n" + (data.desc||'')+"\n"+data.url,
+                        post: data.title + "\n" + (data.desc || '') + "\n" + data.url,
                         appid: "axl.com",
                         appver: "1.0",
                         apiver: "1.0",
-                        appname: "이마트 스토어"
+                        appname: data.title
                     };
                 }
             },
-            'line': /** @lends axl.module.Sharer.types.line */{
+            'line': /** @lends axl.module.Sharer.services.line */{
                 name: '라인',
                 support: detect.APP | detect.MOBILE,
-                baseUrl: 'line://msg/text/',
+                appUrl: 'http://line.me/R/msg/text/',
+                url: 'line://msg/text/',
                 store: {
                     android: {
                         intentPrefix: "intent://msg/text/",
@@ -84,28 +134,19 @@
                     },
                     ios: "http://itunes.apple.com/jp/app/line/id443904275"
                 },
-                makeParam: function(data) {
-                    return '';
+                makeParam: function makeParam(data) {
+                    return {};
                 }
             },
-            'googleplus': /** @lends axl.module.Sharer.types.googleplus */{
-                name: '구글플러스',
+            'copy_url': {
                 support: detect.PC | detect.MOBILE,
-                baseUrl: 'https://plus.google.com/share?',
-                makeParam: function(data) {
-                    return 'url=' + enc(data.title + ' ' + data.url);
-                }
-            },
-            'pinterest': /** @lends axl.module.Sharer.types.pinterest */
-            {
-                name: '핀터레스트',
-                detects: detect.PC | detect.MOBILE,
-                size: [740, 300],
-                baseUrl: 'https://www.pinterest.com/pin/create/button/?',
-                makeParam: function(data) {
-                    return 'url=' + enc(data.url) + '&media=' + enc(data.image) + '&description=' + enc(data.desc);
+                run: function (el) {
+
                 }
             }
+        },
+        addService: function (name, options) {
+            this.services[name] = options;
         },
 
         /**
@@ -117,59 +158,120 @@
          * @param {string} params.image 이미지
          * @param {string} params.desc 설명
          */
-        _send: function(type, params) {
-            var service = this.types[type];
+        share: function share(type, params) {
+            var service = this.services[type];
+            var sizeFeature = '';
             if (!service) {
                 return;
             }
 
-            params.url = (params.url + '').replace(/#$/g, '');
-            params.url = params.url || location.href.replace(/#$/g, '');
-            params.title = params.title || document.title;
+            if (service.support & (detect.PC | detect.MOBILE)) {
+                if (core.isFunction(service.run)) {
+                    service.run(params.target);
+                } else {
+                    params.url = (params.url + '').replace(/#$/g, '');
+                    params.url = params.url || location.href.replace(/#$/g, '');
+                    params.title = params.title || document.title;
+
+                    if (service.size) {
+                        sizeFeature += ', height=' + service.size[1] + ', width=' + service.size[0];
+                    }
+                    window.open(service.url + core.json.toQueryString(service.makeParam(params)),
+                        type,
+                        'menubar=no' + sizeFeature
+                    );
+                }
+            } else if (service.support & detect.APP) {
+
+            }
+        },
+
+        _getMetaInfo: function (type, service) {
+            var metas = this.options.metas;
+            var name = metas[type][service] || type;
 
             switch (type) {
-                case 'facebook':
-                case 'twitter':
-                case 'pinterest':
-                    window.open(
-                        service.baseUrl + service.makeParam(params),
-                        type, 'menubar=no,height=' + service.size[1] + ', width=' + service.size[0]);
-                    break;
+                case 'title':
+                case 'description':
+                case 'image':
+                    if (core.isFunction(name)) {
+                        return name(type, service);
+                    } else {
+                        return $('head meta').filter('[name$="' + name + '"], ' +
+                            '[property$="' + name + '"]').eq(0).attr('content') || '';
+                    }
             }
+
+            return '';
         },
 
         /**
          * 공유하기 실행
          * @param {jQuery|Element|string} el 버튼
-         * @param {string} type sns벤더명
+         * @param {string} service sns벤더명
          */
-        share: function(el, type) {
+        _share: function _share(el, service) {
             var $el = $(el),
                 url = ($el.attr('href') || '').replace(/^#/, '') || $el.attr('data-url') || location.href,
-                title = $el.attr('data-title') || $('head meta[property$=title]').attr('content') || document.title,
-                desc = $el.attr('data-desc') || $('head meta[property$=description]').attr('content') || $('head meta[name=description]').attr('content') || '',
-                image = $el.attr('data-image') || $('head meta[property$=image]').attr('content') || '';
+                title = $el.attr('data-title') || this._getMetaInfo('title', service) || document.title,
+                desc = $el.attr('data-desc') || this._getMetaInfo('description', service) || '',
+                image = $el.attr('data-image') || this._getMetaInfo('image', service) || '',
+                data;
 
-            type || (type = $el.attr('data-sns'));
-
-            if (!type) {
-                alert('공유할 SNS타입을 지정해주세요.');
-                return;
-            }
-
-            core.sns._send(type, {
+            this.share(service, data = {
+                target: el,
                 url: url,
                 title: title,
                 desc: desc,
                 image: image
             });
+
+            data.service = service;
+            this.options.onShrered($el, data);
+        },
+
+        init: function init(options) {
+            var self = this,
+                services = core.object.keys(this.services);
+
+            self.options = core.extend(true, defaultOption, options);
+
+            function hasClass($el) {
+                var service;
+                core.each(self.services, function (item, svc) {
+                    if ($el.hasClass(svc)) {
+                        service = svc;
+                        return false;
+                    }
+                });
+                return service;
+            }
+
+            $(document).on('click.sharer', self.options.selector, function (e) {
+                e.preventDefault();
+
+                var $el = $(this),
+                    service = '';
+
+                if (self.options.attr === 'class') {
+                    service = hasClass($el);
+                } else {
+                    service = $el.attr(self.options.attr);
+                }
+
+                if (self.options.onBeforeShare($el, {service: service}) === false) {
+                    return;
+                }
+
+                if (!service || !core.array.include(services, service)) {
+                    alert('공유할 SNS타입을 지정해주세요.');
+                    return;
+                }
+
+                self._share($el.get(0), service);
+            });
         }
     };
 
-    if (typeof define === "function" && define.amd) {
-        define([], function() {
-            return Sharer;
-        });
-    }
-
-})(jQuery, window[LIB_NAME]);
+    return Sharer;
+});
