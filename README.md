@@ -33,7 +33,7 @@
     var ChildClass = ParentClass.extend({
         ...,
         open: function (flag){
-            this.callParent(flag); // ParentClass.prototype.open 호출
+            this.supr(flag); // ParentClass.prototype.open 호출
             ...
         }
     });
@@ -43,7 +43,7 @@
         $extend: ParentClass, // 부모클래스 지정
         ...,
         open: function (flag){
-            this.callParent(flag); // ParentClass.prototype.open 호출
+            this.supr(flag); // ParentClass.prototype.open 호출
             ...
         }
     });    
@@ -63,7 +63,7 @@
         "use strict"; // 암묵적인 자바스크립트 에러를 더 세밀하게 짚어준다.
 
         // 전역공간이 더럽히거나, 함수나 변수이름의 충돌을 미연에 방지하기 위해,
-        // 되도록이면 즉시실행 함수을 만들어서 그 내부에 코드를 작성하는걸 추천한다.
+        // 되도록이면 즉시실행 함수 내부에서 코드를 작성하는걸 추천한다.
 
         // UI모듈 작성 방법: 탭컨트롤을 예로 들어 설명하겠다.
         core.ui('Tabs', {    // vcui.ui('모듈명', {...옵션, 메소드 등...});
@@ -95,7 +95,7 @@
             },
             
             // 템플릿 기능 
-            templayes: {
+            templates: {
                 button: '<button type="button">{{text}}</button>'
             }
 
@@ -127,7 +127,7 @@
                 // events에 지정된 핸들러들을 바인딩
                 // 만약 부모 생성자에서 false가 반환된다면, 이미 해당 엘리먼트에 현재 UI모듈이 빌드되었거나,
                 // el노드가 페이지에 없다거나 disabled 상태임을 의미하므로, 모듈을 빌드하지 않고 빠져나가야 한다.
-                if (me.callParent(el, options) === false) {
+                if (me.supr(el, options) === false) {
                     return;
                 }
                 //또는 if(me.superMethod('initialize', el, options) === false){ return; } 처럼 부모 클래스의 메소드를 명시적으로도 호출가능 함
