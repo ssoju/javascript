@@ -3,8 +3,6 @@
  * vcui.importJs
  */
 ;(function ($, core, global, undefined) {
-    // benchmark: https://github.com/malko/l.js/blob/master/l.js
-
     var isA = function (a, b) {
             return a instanceof (b || Array);
         },
