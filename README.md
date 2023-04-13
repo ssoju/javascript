@@ -1,7 +1,7 @@
 
 ## email: comahead@gmail.com
 
-*자바스크립트 UI 프레임웍*
+*자체 개발 자바스크립트 UI 프레임웍*
 
 - framework core: https://github.com/ssoju/javascript/blob/master/dist/vcui.js
 - ui modules by framework: https://github.com/ssoju/javascript/tree/master/src/ui
