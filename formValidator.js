@@ -1,7 +1,7 @@
 /*!
- * @module vcui.helper.Geolocation
+ * @module ui/formValidator
  * @license MIT License
- * @description 지오로케이션 헬퍼
+ * @description 자동 폼밸리데이터
  * @copyright VinylC UID Group
  */
 define('ui/formValidator', ['jquery', 'vcui'], function ($, core) {
